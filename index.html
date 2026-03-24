@@ -789,7 +789,18 @@ async function doLogin() {
     // MODO SUPABASE
     const data = await sb.signIn(email, password);
     if (data.error) {
-      showAuthMsg(data.error.message || 'E-mail ou senha incorretos.');
+      // Erro específico de email não confirmado
+      const msg = data.error.message || '';
+      if (msg.toLowerCase().includes('email not confirmed') || msg.toLowerCase().includes('not confirmed')) {
+        showAuthMsg('⚠️ Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.');
+      } else {
+        showAuthMsg(msg || 'E-mail ou senha incorretos.');
+      }
+      btn.disabled=false; btn.textContent='ENTRAR'; return;
+    }
+    // Checa se o email foi confirmado (campo email_confirmed_at)
+    if (data.user && !data.user.email_confirmed_at) {
+      showAuthMsg('⚠️ Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada e clique no link de confirmação.');
       btn.disabled=false; btn.textContent='ENTRAR'; return;
     }
     enterApp(data.user);
@@ -831,8 +842,8 @@ async function doRegister() {
     if (data.user?.identities?.length === 0) {
       showAuthMsg('Este e-mail já está cadastrado.'); btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
     }
-    showAuthMsg('Conta criada! Verifique seu e-mail para confirmar. ✅', 'success');
-    setTimeout(() => switchAuthTab('login'), 2500);
+    showAuthMsg('✅ Conta criada! Enviamos um link de confirmação para ' + email + '. Confirme seu e-mail para entrar.', 'success');
+    setTimeout(() => switchAuthTab('login'), 3000);
   }
   btn.disabled=false; btn.textContent='CRIAR CONTA';
 }
