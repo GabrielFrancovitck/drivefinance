@@ -8,6 +8,14 @@
 <title>DriveFinance</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════
+   ⚙️  SUPABASE CONFIG
+   Substitua os valores abaixo pelas suas
+   credenciais do painel Supabase:
+   Settings → API → Project URL / anon key
+   ══════════════════════════════════════ */
+/* As variáveis ficam no JS — veja SUPABASE_URL e SUPABASE_KEY */
+
 :root{
   --bg:#0b0d12;--surface:#13161f;--card:#191d2a;--border:#232840;
   --accent:#f5c518;--accent2:#ff6b35;--green:#22c55e;--red:#ef4444;
@@ -207,6 +215,123 @@ input[type=date].date-picker{
 .fab:active{transform:scale(.88)}
 .empty-state{text-align:center;color:var(--muted);padding:32px 0;font-size:13px;line-height:1.7}
 
+/* ── AUTH SCREEN ── */
+#auth-screen{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  padding:0;overflow-y:auto;
+  max-width:430px;margin:0 auto;
+}
+.auth-hero{
+  width:100%;padding:64px 28px 32px;
+  background:linear-gradient(160deg,#131827 0%,#0b0d12 60%);
+  text-align:center;position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.auth-hero::before{
+  content:'';position:absolute;width:260px;height:260px;
+  background:radial-gradient(circle,rgba(245,197,24,.13) 0%,transparent 70%);
+  top:-60px;left:50%;transform:translateX(-50%);
+}
+.auth-hero::after{
+  content:'';position:absolute;width:140px;height:140px;
+  background:radial-gradient(circle,rgba(255,107,53,.08) 0%,transparent 70%);
+  bottom:-20px;right:20px;
+}
+.auth-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:3px;
+  color:var(--accent);position:relative;z-index:1;line-height:1;
+}
+.auth-logo span{color:var(--text)}
+.auth-logo-sub{font-size:13px;color:var(--muted);margin-top:6px;position:relative;z-index:1;letter-spacing:.3px}
+.auth-icon{font-size:48px;margin-bottom:10px;position:relative;z-index:1}
+
+.auth-body{
+  width:100%;padding:28px 24px calc(40px + var(--sb));
+  flex:1;
+}
+.auth-tabs{
+  display:grid;grid-template-columns:1fr 1fr;
+  background:var(--card);border-radius:12px;padding:4px;
+  gap:4px;margin-bottom:24px;border:1px solid var(--border);
+}
+.auth-tab{
+  padding:10px;border-radius:9px;border:none;
+  background:transparent;color:var(--muted);
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.auth-tab.active{background:var(--accent);color:#000;}
+
+.auth-form{display:none}
+.auth-form.active{display:block}
+
+.auth-field{margin-bottom:14px}
+.auth-field label{
+  display:block;font-size:11px;color:var(--muted);
+  margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;
+}
+.auth-field input{
+  width:100%;background:var(--card);border:1px solid var(--border);
+  color:var(--text);border-radius:12px;padding:14px 16px;
+  font-size:15px;font-family:'DM Sans',sans-serif;outline:none;
+  -webkit-appearance:none;transition:border-color .2s;
+}
+.auth-field input:focus{border-color:var(--accent)}
+.auth-field input::placeholder{color:var(--muted)}
+
+.auth-btn{
+  width:100%;padding:16px;
+  background:var(--accent);color:#000;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;
+  border:none;border-radius:12px;cursor:pointer;
+  transition:transform .1s,opacity .15s;-webkit-appearance:none;
+  margin-top:4px;
+}
+.auth-btn:active{transform:scale(.97);opacity:.85}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.auth-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:18px 0;color:var(--muted);font-size:12px;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+
+.auth-msg{
+  padding:12px 14px;border-radius:10px;font-size:13px;
+  margin-bottom:14px;display:none;line-height:1.4;
+}
+.auth-msg.error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.auth-msg.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac}
+.auth-msg.show{display:block}
+
+.auth-footer{text-align:center;margin-top:20px;font-size:13px;color:var(--muted)}
+.auth-footer a{color:var(--accent);cursor:pointer;font-weight:600}
+
+/* user badge in topbar */
+.user-info{display:flex;align-items:center;gap:6px;cursor:pointer}
+.user-name{font-size:12px;color:var(--muted);max-width:80px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* logout dropdown */
+.user-menu{
+  position:absolute;top:calc(100% + 8px);right:18px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:6px;z-index:200;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;min-width:160px;
+}
+.user-menu.open{display:block}
+.user-menu-item{
+  padding:10px 12px;border-radius:8px;cursor:pointer;
+  font-size:13px;transition:background .15s;
+  display:flex;align-items:center;gap:8px;
+}
+.user-menu-item:hover{background:var(--card)}
+.user-menu-item.danger{color:var(--red)}
+
 /* HERO-MINI - saldo compacto no topo da análise */
 .hero-mini{background:linear-gradient(135deg,#1a2038,#1e2844);border-radius:var(--radius);
   padding:16px;margin-bottom:12px;border:1px solid var(--border);
@@ -218,10 +343,85 @@ input[type=date].date-picker{
 </head>
 <body>
 
-<div class="topbar">
+<!-- ══════════ AUTH SCREEN ══════════ -->
+<div id="auth-screen">
+  <div class="auth-hero">
+    <div class="auth-icon">🚗</div>
+    <div class="auth-logo">Drive<span>Finance</span></div>
+    <div class="auth-logo-sub">Finanças inteligentes para motoristas</div>
+  </div>
+
+  <div class="auth-body">
+    <!-- Tab toggle -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login"    onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchAuthTab('register')">Criar conta</button>
+    </div>
+
+    <!-- Message -->
+    <div class="auth-msg" id="auth-msg"></div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="form-login">
+      <div class="auth-field">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label>Senha</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="auth-btn" id="btn-login" onclick="doLogin()">ENTRAR</button>
+      <div class="auth-footer">
+        <a onclick="switchAuthTab('register')">Não tem conta? Criar agora</a>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="form-register">
+      <div class="auth-field">
+        <label>Nome completo</label>
+        <input type="text" id="reg-name" placeholder="Seu nome" autocomplete="name"/>
+      </div>
+      <div class="auth-field">
+        <label>E-mail</label>
+        <input type="email" id="reg-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label>Senha</label>
+        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+      </div>
+      <button class="auth-btn" id="btn-register" onclick="doRegister()">CRIAR CONTA</button>
+      <div class="auth-footer">
+        <a onclick="switchAuthTab('login')">Já tenho conta</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app-screen" style="display:none;flex-direction:column;flex:1;width:100%">
+
+<div class="topbar" style="position:relative">
   <div class="logo">Drive<span>Finance</span></div>
   <div style="font-size:12px;color:var(--muted);background:var(--card);padding:5px 10px;border-radius:99px;border:1px solid var(--border)" id="today-badge"></div>
-  <div class="avatar">GF</div>
+  <div class="user-info" onclick="toggleUserMenu()">
+    <div class="avatar" id="user-avatar">?</div>
+  </div>
+  <!-- User dropdown -->
+  <div class="user-menu" id="user-menu">
+    <div class="user-menu-item" style="pointer-events:none;opacity:.6">
+      <span>👤</span><span id="menu-user-name" style="font-size:12px">—</span>
+    </div>
+    <div class="user-menu-item" style="pointer-events:none;opacity:.6">
+      <span>📧</span><span id="menu-user-email" style="font-size:11px;color:var(--muted)">—</span>
+    </div>
+    <div style="height:1px;background:var(--border);margin:4px 0"></div>
+    <div class="user-menu-item danger" onclick="doLogout()">
+      <span>🚪</span><span>Sair da conta</span>
+    </div>
+  </div>
 </div>
 
 <div class="nav-tabs">
@@ -229,6 +429,7 @@ input[type=date].date-picker{
   <div class="tab" onclick="showPage('analise')">Análise</div>
   <div class="tab" onclick="showPage('lancamentos')">Lançamentos</div>
   <div class="tab" onclick="showPage('resumo')">Resumo</div>
+  <div class="tab" onclick="showPage('dicas')">Dicas</div>
 </div>
 
 <div class="content">
@@ -295,7 +496,7 @@ input[type=date].date-picker{
     <button class="period-btn"        id="ap-week"    onclick="setAnalysePeriod('week')">Semanal</button>
     <button class="period-btn"        id="ap-month"   onclick="setAnalysePeriod('month')">Mensal</button>
     <button class="period-btn"        id="ap-year"    onclick="setAnalysePeriod('year')">Anual</button>
-    <button class="period-btn"        id="ap-custom"  onclick="setAnalysePeriod('custom')">Data</button>
+    <button class="period-btn"        id="ap-custom"  onclick="setAnalysePeriod('custom')">📅 Data</button>
   </div>
 
   <!-- Date navigation -->
@@ -465,7 +666,239 @@ input[type=date].date-picker{
   </div>
 </div>
 
+</div><!-- /app-screen -->
+
 <script>
+// ══════════════════════════════════════════════════════════
+// ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
+//     Painel Supabase → Settings → API
+// ══════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
+
+// ──────────────────────────────────────────────────────────
+
+// ── Supabase Client leve (sem SDK externo) ────────────────
+const sb = {
+  _token: null,
+  _user:  null,
+  _hdr() {
+    return {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${this._token || SUPABASE_KEY}`,
+    };
+  },
+  async signUp(email, password, name) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+      method:'POST', headers:this._hdr(),
+      body: JSON.stringify({ email, password, data:{ full_name:name } }),
+    });
+    return r.json();
+  },
+  async signIn(email, password) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method:'POST', headers:this._hdr(),
+      body: JSON.stringify({ email, password }),
+    });
+    const d = await r.json();
+    if (d.access_token) {
+      this._token = d.access_token;
+      this._user  = d.user;
+      localStorage.setItem('df_session', JSON.stringify({ token:d.access_token, user:d.user }));
+    }
+    return d;
+  },
+  signOut() {
+    this._token = null; this._user = null;
+    localStorage.removeItem('df_session');
+    localStorage.removeItem('df_local_logged');
+  },
+  restoreSession() {
+    try {
+      const s = JSON.parse(localStorage.getItem('df_session') || 'null');
+      if (s?.token) { this._token = s.token; this._user = s.user; return true; }
+    } catch(e) {}
+    return false;
+  },
+
+  // ── Lançamentos no banco Supabase ────────────────────────
+  async getTxns() {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${this._user.id}&order=date.desc,created_at.desc`,
+      { headers: this._hdr() }
+    );
+    if (!r.ok) return [];
+    return r.json();
+  },
+  async insertTxn(txn) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/transactions`, {
+      method: 'POST',
+      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      body: JSON.stringify({ ...txn, user_id: this._user?.id }),
+    });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return rows[0] || null;
+  },
+  async deleteTxn(id) {
+    await fetch(`${SUPABASE_URL}/rest/v1/transactions?id=eq.${id}`, {
+      method: 'DELETE', headers: this._hdr(),
+    });
+  },
+};
+
+const USE_SUPABASE = SUPABASE_URL !== 'https://mzjvdyuircoylkawaqgx.supabase.co';
+
+// ── AUTH HELPERS ──────────────────────────────────────────
+function showAuthMsg(msg, type='error') {
+  const el = document.getElementById('auth-msg');
+  el.textContent = msg;
+  el.className = `auth-msg ${type} show`;
+}
+function clearAuthMsg() { document.getElementById('auth-msg').className = 'auth-msg'; }
+
+function switchAuthTab(tab) {
+  clearAuthMsg();
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('form-login').classList.toggle('active', tab==='login');
+  document.getElementById('form-register').classList.toggle('active', tab==='register');
+}
+
+async function doLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  clearAuthMsg();
+  if (!email || !password) { showAuthMsg('Preencha e-mail e senha.'); return; }
+
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.textContent = 'ENTRANDO...';
+
+  if (!USE_SUPABASE) {
+    // MODO LOCAL (sem Supabase configurado)
+    const stored = JSON.parse(localStorage.getItem('df_local_user') || 'null');
+    if (!stored || stored.email !== email || stored.password !== btoa(password)) {
+      showAuthMsg('E-mail ou senha incorretos.');
+      btn.disabled=false; btn.textContent='ENTRAR'; return;
+    }
+    sb._user = stored;
+    localStorage.setItem('df_local_logged','1');
+    enterApp(stored);
+  } else {
+    // MODO SUPABASE
+    const data = await sb.signIn(email, password);
+    if (data.error) {
+      showAuthMsg(data.error.message || 'E-mail ou senha incorretos.');
+      btn.disabled=false; btn.textContent='ENTRAR'; return;
+    }
+    enterApp(data.user);
+  }
+  btn.disabled=false; btn.textContent='ENTRAR';
+}
+
+async function doRegister() {
+  const name     = document.getElementById('reg-name').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  clearAuthMsg();
+  if (!name)                { showAuthMsg('Informe seu nome.'); return; }
+  if (!email)               { showAuthMsg('Informe seu e-mail.'); return; }
+  if (password.length < 6)  { showAuthMsg('Senha deve ter pelo menos 6 caracteres.'); return; }
+
+  const btn = document.getElementById('btn-register');
+  btn.disabled=true; btn.textContent='CRIANDO...';
+
+  if (!USE_SUPABASE) {
+    // MODO LOCAL
+    const existing = JSON.parse(localStorage.getItem('df_local_user') || 'null');
+    if (existing?.email === email) {
+      showAuthMsg('Este e-mail já está em uso.'); btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+    }
+    const user = { id: Date.now().toString(), name, email, password: btoa(password) };
+    localStorage.setItem('df_local_user', JSON.stringify(user));
+    localStorage.setItem('df_local_logged','1');
+    sb._user = user;
+    showAuthMsg('Conta criada com sucesso! 🎉', 'success');
+    setTimeout(() => enterApp(user), 800);
+  } else {
+    // MODO SUPABASE
+    const data = await sb.signUp(email, password, name);
+    if (data.error) {
+      showAuthMsg(data.error.message || 'Erro ao criar conta.');
+      btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+    }
+    if (data.user?.identities?.length === 0) {
+      showAuthMsg('Este e-mail já está cadastrado.'); btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+    }
+    showAuthMsg('Conta criada! Verifique seu e-mail para confirmar. ✅', 'success');
+    setTimeout(() => switchAuthTab('login'), 2500);
+  }
+  btn.disabled=false; btn.textContent='CRIAR CONTA';
+}
+
+async function enterApp(user) {
+  const name = user.name || user.user_metadata?.full_name || user.email || '?';
+  const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('menu-user-name').textContent  = name;
+  document.getElementById('menu-user-email').textContent = user.email || '—';
+
+  document.getElementById('auth-screen').style.display = 'none';
+  const appEl = document.getElementById('app-screen');
+  appEl.style.cssText = 'display:flex;flex-direction:column;flex:1;width:100%';
+
+  document.getElementById('today-badge').textContent =
+    new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+  updateCatOptions();
+
+  // Carrega lançamentos
+  if (USE_SUPABASE) {
+    // Mostra loading enquanto busca do banco
+    transactions = [];
+    renderHome(); renderAnalyse(); renderResumo();
+    const remote = await sb.getTxns();
+    if (Array.isArray(remote)) {
+      // Normaliza campo id (Supabase usa UUID, app usa número — mantemos como string)
+      transactions = remote.map(t => ({ ...t }));
+    }
+  } else {
+    // Modo local: localStorage + dados de exemplo se vazio
+    try { transactions = JSON.parse(localStorage.getItem('df_txns') || '[]'); } catch(e) { transactions = []; }
+    if (!transactions.length) {
+      transactions = DEMO_TRANSACTIONS();
+      save();
+    }
+  }
+
+  renderHome(); renderAnalyse(); renderResumo();
+}
+
+function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.user-info') && !e.target.closest('#user-menu'))
+    document.getElementById('user-menu').classList.remove('open');
+});
+
+function doLogout() {
+  sb.signOut();
+  document.getElementById('user-menu').classList.remove('open');
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.cssText = 'display:flex;flex-direction:column';
+  clearAuthMsg(); switchAuthTab('login');
+  ['login-email','login-password'].forEach(id=>document.getElementById(id).value='');
+}
+
+// Restaura sessão ao abrir
+(function initAuth() {
+  if (USE_SUPABASE && sb.restoreSession()) { enterApp(sb._user); return; }
+  if (!USE_SUPABASE && localStorage.getItem('df_local_logged')) {
+    const s = JSON.parse(localStorage.getItem('df_local_user') || 'null');
+    if (s) { sb._user = s; enterApp(s); return; }
+  }
+  document.getElementById('auth-screen').style.cssText = 'display:flex;flex-direction:column';
+})();
+
 // ─── CONSTANTS ───────────────────────────────────────────
 const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAYS_PT=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -487,37 +920,37 @@ const PLATFORM_COLORS={
 };
 
 // ─── STATE ───────────────────────────────────────────────
-let transactions=[];
-try{transactions=JSON.parse(localStorage.getItem('df_txns')||'[]');}catch(e){}
-let currentType='receita';
-let viewMonth=new Date().getMonth(), viewYear=new Date().getFullYear();
-let analysePeriod='day';
-let analyseOffset=0; // days/weeks/months/years offset from today
-let customDate=null;
+let transactions = [];
+let currentType  = 'receita';
+let viewMonth    = new Date().getMonth();
+let viewYear     = new Date().getFullYear();
+let analysePeriod = 'day';
+let analyseOffset = 0;
+let customDate    = null;
 
-// ─── DEMO DATA ───────────────────────────────────────────
-if(!transactions.length){
+// ─── DEMO DATA (só usado em modo local sem Supabase) ─────
+const DEMO_TRANSACTIONS = () => {
   const n=new Date(),y=n.getFullYear(),m=String(n.getMonth()+1).padStart(2,'0');
-  const dd=(delta,d2=n.getDate())=>{ const v=Math.max(d2-delta,1); return `${y}-${m}-${String(v).padStart(2,'0')}`; };
-  transactions=[
-    {id:1,type:'receita',desc:'Corridas manhã',val:120,cat:'Uber',plataforma:'Uber',viagens:8,horas:3,km:80,date:dd(0)},
-    {id:2,type:'receita',desc:'Corridas tarde',val:95,cat:'99',plataforma:'99',viagens:6,horas:2.5,km:60,date:dd(0)},
-    {id:3,type:'gasto',desc:'Gasolina Shell',val:130,cat:'Combustível',plataforma:'',viagens:0,horas:0,km:0,date:dd(0)},
-    {id:4,type:'receita',desc:'Corridas Uber',val:210,cat:'Uber',plataforma:'Uber',viagens:14,horas:5,km:150,date:dd(1)},
-    {id:5,type:'gasto',desc:'Almoço',val:25,cat:'Alimentação',plataforma:'',viagens:0,horas:0,km:0,date:dd(1)},
-    {id:6,type:'receita',desc:'Entregas iFood',val:88,cat:'Entrega',plataforma:'iFood',viagens:10,horas:4,km:40,date:dd(2)},
-    {id:7,type:'gasto',desc:'Troca de óleo',val:120,cat:'Manutenção',plataforma:'',viagens:0,horas:0,km:0,date:dd(2)},
-    {id:8,type:'receita',desc:'Corridas 99',val:145,cat:'99',plataforma:'99',viagens:9,horas:3.5,km:95,date:dd(3)},
-    {id:9,type:'gasto',desc:'Gasolina',val:110,cat:'Combustível',plataforma:'',viagens:0,horas:0,km:0,date:dd(3)},
-    {id:10,type:'receita',desc:'Corridas InDriver',val:78,cat:'InDriver',plataforma:'InDriver',viagens:5,horas:2,km:50,date:dd(4)},
-    {id:11,type:'gasto',desc:'Lavagem',val:35,cat:'Lavagem',plataforma:'',viagens:0,horas:0,km:0,date:dd(5)},
-    {id:12,type:'receita',desc:'Corridas Uber',val:190,cat:'Uber',plataforma:'Uber',viagens:12,horas:4.5,km:130,date:dd(6)},
+  const dd=delta=>{ const v=Math.max(n.getDate()-delta,1); return `${y}-${m}-${String(v).padStart(2,'0')}`; };
+  return [
+    {id:1,type:'receita',description:'Corridas manhã',val:120,cat:'Uber',plataforma:'Uber',viagens:8,horas:3,km:80,date:dd(0)},
+    {id:2,type:'receita',description:'Corridas tarde',val:95,cat:'99',plataforma:'99',viagens:6,horas:2.5,km:60,date:dd(0)},
+    {id:3,type:'gasto',description:'Gasolina Shell',val:130,cat:'Combustível',plataforma:'',viagens:0,horas:0,km:0,date:dd(0)},
+    {id:4,type:'receita',description:'Corridas Uber',val:210,cat:'Uber',plataforma:'Uber',viagens:14,horas:5,km:150,date:dd(1)},
+    {id:5,type:'gasto',description:'Almoço',val:25,cat:'Alimentação',plataforma:'',viagens:0,horas:0,km:0,date:dd(1)},
+    {id:6,type:'receita',description:'Entregas iFood',val:88,cat:'Entrega',plataforma:'iFood',viagens:10,horas:4,km:40,date:dd(2)},
+    {id:7,type:'gasto',description:'Troca de óleo',val:120,cat:'Manutenção',plataforma:'',viagens:0,horas:0,km:0,date:dd(2)},
+    {id:8,type:'receita',description:'Corridas 99',val:145,cat:'99',plataforma:'99',viagens:9,horas:3.5,km:95,date:dd(3)},
+    {id:9,type:'gasto',description:'Gasolina',val:110,cat:'Combustível',plataforma:'',viagens:0,horas:0,km:0,date:dd(3)},
+    {id:10,type:'receita',description:'Corridas InDriver',val:78,cat:'InDriver',plataforma:'InDriver',viagens:5,horas:2,km:50,date:dd(4)},
+    {id:11,type:'gasto',description:'Lavagem',val:35,cat:'Lavagem',plataforma:'',viagens:0,horas:0,km:0,date:dd(5)},
+    {id:12,type:'receita',description:'Corridas Uber',val:190,cat:'Uber',plataforma:'Uber',viagens:12,horas:4.5,km:130,date:dd(6)},
   ];
-  save();
-}
+};
 
 // ─── UTILS ───────────────────────────────────────────────
-function save(){localStorage.setItem('df_txns',JSON.stringify(transactions));}
+// save() — só usado em modo local (sem Supabase)
+function save(){ if(!USE_SUPABASE) localStorage.setItem('df_txns',JSON.stringify(transactions)); }
 function fmtBRL(v){return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 function fmtShort(v){
   if(v===0) return 'R$0';
@@ -755,7 +1188,7 @@ function mkTxnEl(t,showDel=false){
   div.innerHTML=`
     <div class="txn-icon">${info.icon}</div>
     <div class="txn-info">
-      <div class="txn-desc">${t.desc}</div>
+      <div class="txn-desc">${t.description}</div>
       <div class="txn-meta">${t.cat}${platTag}${tripTag} · ${dStr}</div>
     </div>
     <div class="txn-right">
@@ -764,7 +1197,14 @@ function mkTxnEl(t,showDel=false){
     </div>`;
   return div;
 }
-function deleteTxn(id){transactions=transactions.filter(t=>t.id!==id);save();renderAll();renderHome();renderAnalyse();}
+async function deleteTxn(id){
+  if (USE_SUPABASE) {
+    await sb.deleteTxn(id);
+  }
+  transactions = transactions.filter(t => String(t.id) !== String(id));
+  save();
+  renderAll(); renderHome(); renderAnalyse();
+}
 
 // ─── HOME ────────────────────────────────────────────────
 function renderHome(){
@@ -927,8 +1367,8 @@ function openModal(){
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
-function addTransaction(){
-  const desc=document.getElementById('f-desc').value.trim();
+async function addTransaction(){
+  const description=document.getElementById('f-desc').value.trim();
   const val=parseFloat(document.getElementById('f-val').value);
   const cat=document.getElementById('f-cat').value;
   const plat=currentType==='receita'?document.getElementById('f-plataforma').value:'';
@@ -936,21 +1376,38 @@ function addTransaction(){
   const horas=parseFloat(document.getElementById('f-horas').value)||0;
   const km=parseFloat(document.getElementById('f-km').value)||0;
   const date=document.getElementById('f-date').value;
-  if(!desc){document.getElementById('f-desc').focus();return;}
+  if(!description){document.getElementById('f-desc').focus();return;}
   if(!val||val<=0){document.getElementById('f-val').focus();return;}
   if(!date) return;
-  transactions.push({id:Date.now(),type:currentType,desc,val,cat,plataforma:plat,viagens,horas,km,date});
-  save();closeModal();
+
+  const btnAdd = document.querySelector('.btn-add');
+  btnAdd.disabled = true; btnAdd.textContent = 'SALVANDO...';
+
+  const newTxn = {type:currentType,description,val,cat,plataforma:plat,viagens,horas,km,date};
+
+  if (USE_SUPABASE) {
+    // Salva no banco e usa o registro retornado (com UUID real)
+    const saved = await sb.insertTxn(newTxn);
+    if (saved) {
+      transactions.unshift(saved);
+    } else {
+      // Fallback: adiciona localmente com id temporário
+      transactions.unshift({ ...newTxn, id: Date.now() });
+    }
+  } else {
+    transactions.push({ ...newTxn, id: Date.now() });
+    save();
+  }
+
+  btnAdd.disabled = false; btnAdd.textContent = 'ADICIONAR';
+  closeModal();
   ['f-desc','f-val','f-km','f-viagens','f-horas'].forEach(id=>document.getElementById(id).value='');
-  renderHome();renderAll();
+  renderHome(); renderAll();
 }
 
-// ─── INIT ────────────────────────────────────────────────
-document.getElementById('today-badge').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
-updateCatOptions();
-renderHome();
-renderAnalyse();
-renderResumo();
+// ─── INIT (feito pelo auth) ──────────────────────────────
+// A inicialização do app é feita pela função enterApp()
+// chamada após login bem-sucedido.
 </script>
 </body>
 </html>
