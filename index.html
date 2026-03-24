@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>DriveFinance</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12;
+  --surface: #13161f;
+  --card: #191d2a;
+  --border: #232840;
+  --accent: #f5c518;
+  --accent2: #ff6b35;
+  --green: #22c55e;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --purple: #a855f7;
+  --text: #eceef5;
+  --muted: #5a6280;
+  --radius: 18px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  max-width: 430px; margin: 0 auto;
+  display: flex; flex-direction: column;
+  overflow-x: hidden; min-height: 100vh;
+}
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 52px 20px 10px;
+  background: var(--bg); position: sticky; top: 0; z-index: 100;
+}
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); }
+.logo span { color: var(--text); }
+.date-badge {
+  font-size: 12px; color: var(--muted); font-weight: 500;
+  background: var(--card); padding: 5px 10px; border-radius: 99px;
+  border: 1px solid var(--border);
+}
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #000; cursor: pointer;
+}
+.nav-tabs {
+  display: flex; gap: 4px; padding: 8px 20px;
+  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0; padding: 7px 15px; border-radius: 50px;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1px solid transparent; transition: all .2s;
+  color: var(--muted); background: transparent; user-select: none;
+}
+.tab.active { background: var(--accent); color: #000; font-weight: 700; }
+.content { padding: 10px 20px calc(80px + var(--safe-bottom)); flex: 1; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* PERIOD TOGGLE */
+.period-toggle {
+  display: flex; background: var(--card); border-radius: 12px;
+  padding: 4px; gap: 4px; margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+.period-btn {
+  flex: 1; padding: 9px; border-radius: 9px; border: none;
+  background: transparent; color: var(--muted);
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.period-btn.active { background: var(--accent); color: #000; }
+
+/* HERO CARD */
+.hero-card {
+  border-radius: var(--radius); padding: 22px; margin-bottom: 14px;
+  border: 1px solid var(--border); position: relative; overflow: hidden;
+}
+.hero-card.day-card  { background: linear-gradient(135deg, #1a2038 0%, #1e2844 100%); }
+.hero-card.month-card { background: linear-gradient(135deg, #1a2038 0%, #231e44 100%); }
+.hero-card::before {
+  content: ''; position: absolute; width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(245,197,24,.1) 0%, transparent 70%);
+  top: -50px; right: -50px; pointer-events: none;
+}
+.hero-label {
+  font-size: 11px; color: var(--muted); letter-spacing: 1px;
+  text-transform: uppercase; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+.hero-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px; letter-spacing: 1px; line-height: 1; margin-bottom: 18px;
+}
+.hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hstat { background: rgba(255,255,255,.04); border-radius: 12px; padding: 12px; }
+.hstat-label { font-size: 10px; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: .5px; }
+.hstat-val { font-weight: 700; font-size: 16px; }
+.hstat-val.pos { color: var(--green); }
+.hstat-val.neg { color: var(--red); }
+
+/* KPIs */
+.kpi-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.kpi {
+  background: var(--card); border-radius: 14px;
+  padding: 13px 10px; text-align: center; border: 1px solid var(--border);
+}
+.kpi-icon { font-size: 20px; margin-bottom: 3px; }
+.kpi-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--accent); }
+.kpi-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* PLATFORM STRIP */
+.platform-strip { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
+.platform-strip::-webkit-scrollbar { display: none; }
+.pcard {
+  flex-shrink: 0; background: var(--card); border-radius: 14px;
+  padding: 12px 14px; border: 1px solid var(--border); min-width: 110px;
+}
+.pcard-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.pcard-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; }
+
+/* CHART */
+.chart-card {
+  background: var(--card); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 14px; border: 1px solid var(--border);
+}
+.chart-legend { display: flex; gap: 14px; margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+.bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bar-pair { display: flex; gap: 2px; align-items: flex-end; width: 100%; }
+.bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 3px; transition: height .5s cubic-bezier(.34,1.56,.64,1); }
+.bar.rec { background: linear-gradient(180deg, var(--green), rgba(34,197,94,.2)); }
+.bar.gas { background: linear-gradient(180deg, var(--accent2), rgba(255,107,53,.2)); }
+.bar-lbl { font-size: 9px; color: var(--muted); }
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 12px; font-weight: 600; letter-spacing: .5px;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 10px; margin-top: 4px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.section-title a { color: var(--accent); font-size: 12px; text-transform: none; cursor: pointer; }
+
+/* TXN */
+.txn-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.txn {
+  background: var(--card); border-radius: 14px;
+  padding: 13px 14px; display: flex; align-items: center; gap: 11px;
+  border: 1px solid var(--border); animation: fadeIn .25s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+.txn-icon {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+}
+.txn-info { flex: 1; min-width: 0; }
+.txn-desc { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.txn-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.txn-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+.txn-amt { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; }
+.txn-amt.pos { color: var(--green); }
+.txn-amt.neg { color: var(--red); }
+.txn-del { font-size: 10px; color: var(--muted); cursor: pointer; background: none; border: none; padding: 0; font-family: 'DM Sans', sans-serif; }
+
+/* RESUMO */
+.month-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card); border-radius: var(--radius);
+  padding: 13px 18px; margin-bottom: 14px; border: 1px solid var(--border);
+}
+.month-nav button { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+.month-name { font-weight: 600; font-size: 15px; }
+.cat-list { display: flex; flex-direction: column; gap: 7px; }
+.cat-item { background: var(--card); border-radius: 13px; padding: 12px 14px; border: 1px solid var(--border); }
+.cat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cat-name { flex: 1; font-size: 13px; font-weight: 500; }
+.cat-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; }
+.cat-pct { font-size: 11px; color: var(--muted); }
+.prog-wrap { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 99px; }
+
+/* TIPS */
+.tip-card {
+  background: linear-gradient(135deg, rgba(245,197,24,.07), rgba(255,107,53,.05));
+  border: 1px solid rgba(245,197,24,.2);
+  border-radius: var(--radius); padding: 16px; margin-bottom: 10px;
+}
+.tip-icon { font-size: 22px; margin-bottom: 5px; }
+.tip-title { font-weight: 700; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+.tip-text { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.75);
+  z-index: 200; display: none; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 24px 24px 0 0;
+  padding: 24px 22px calc(30px + var(--safe-bottom));
+  width: 100%; max-width: 430px;
+  animation: slideUp .3s ease; max-height: 92vh; overflow-y: auto;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 18px; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; margin-bottom: 16px; }
+.type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.type-btn {
+  padding: 11px; border-radius: 11px; border: 2px solid var(--border);
+  background: transparent; color: var(--muted);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.type-btn.active-rec { border-color: var(--green); color: var(--green); background: rgba(34,197,94,.08); }
+.type-btn.active-gas { border-color: var(--red); color: var(--red); background: rgba(239,68,68,.08); }
+.field { margin-bottom: 11px; }
+.field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.field input, .field select {
+  width: 100%; background: var(--card); border: 1px solid var(--border);
+  color: var(--text); border-radius: 11px; padding: 12px 14px;
+  font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; -webkit-appearance: none;
+}
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field select option { background: var(--card); }
+.btn-add {
+  width: 100%; padding: 15px; background: var(--accent); color: #000;
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px;
+  border: none; border-radius: 13px; cursor: pointer; margin-top: 8px;
+  transition: transform .1s; -webkit-appearance: none;
+}
+.btn-add:active { transform: scale(.97); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: rgba(11,13,18,.96); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 10px 0 calc(12px + var(--safe-bottom)); z-index: 99;
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; color: var(--muted); font-size: 10px; transition: color .2s; user-select: none;
+}
+.nav-item.active { color: var(--accent); }
+.nav-item svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.fab {
+  width: 50px; height: 50px; border-radius: 50%;
+  background: var(--accent); color: #000;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; cursor: pointer; margin-top: -20px;
+  box-shadow: 0 4px 22px rgba(245,197,24,.35); transition: transform .2s; user-select: none;
+}
+.fab:active { transform: scale(.88); }
+.empty-state { text-align: center; color: var(--muted); padding: 36px 0; font-size: 14px; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Drive<span>Finance</span></div>
+  <div class="date-badge" id="today-badge"></div>
+  <div class="avatar">JS</div>
+</div>
+
+<div class="nav-tabs">
+  <div class="tab active" onclick="showPage('inicio')">Início</div>
+  <div class="tab" onclick="showPage('lancamentos')">Lançamentos</div>
+  <div class="tab" onclick="showPage('resumo')">Resumo</div>
+  <div class="tab" onclick="showPage('dicas')">Dicas</div>
+</div>
+
+<div class="content">
+
+  <!-- INÍCIO -->
+  <div class="page active" id="page-inicio">
+    <div class="period-toggle">
+      <button class="period-btn active" id="period-day"   onclick="setPeriod('day')">📅 Hoje</button>
+      <button class="period-btn"        id="period-month" onclick="setPeriod('month')">📆 Este Mês</button>
+    </div>
+
+    <div class="hero-card day-card" id="hero-card">
+      <div class="hero-label"><span class="dot"></span><span id="hero-label-txt">Saldo de Hoje</span></div>
+      <div class="hero-value" id="hero-saldo">R$ 0,00</div>
+      <div class="hero-stats">
+        <div class="hstat">
+          <div class="hstat-label">📈 Receitas</div>
+          <div class="hstat-val pos" id="hero-rec">R$ 0,00</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-label">📉 Gastos</div>
+          <div class="hstat-val neg" id="hero-gas">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-icon">⛽</div><div class="kpi-val" id="kpi-comb">R$0</div><div class="kpi-label">Combustível</div></div>
+      <div class="kpi"><div class="kpi-icon">🛣️</div><div class="kpi-val" id="kpi-km">0 km</div><div class="kpi-label">Km rodados</div></div>
+      <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-val" id="kpi-pkm">R$0</div><div class="kpi-label">Por km</div></div>
+    </div>
+
+    <div class="section-title">Por plataforma</div>
+    <div class="platform-strip" id="platform-strip"></div>
+
+    <div class="chart-card">
+      <div class="section-title" style="margin:0 0 6px">7 dias — Receitas vs Gastos</div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Receita</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div>Gasto</div>
+      </div>
+      <div class="chart-bars" id="chart-bars"></div>
+    </div>
+
+    <div class="section-title">Últimas movimentações <a onclick="showPage('lancamentos')">Ver todas →</a></div>
+    <div class="txn-list" id="txn-home"></div>
+  </div>
+
+  <!-- LANÇAMENTOS -->
+  <div class="page" id="page-lancamentos">
+    <div class="section-title">Todos os lançamentos</div>
+    <div class="txn-list" id="txn-all"></div>
+    <div class="empty-state" id="txn-empty" style="display:none">
+      Nenhum lançamento ainda.<br>Toque em <b style="color:var(--accent)">+</b> para adicionar!
+    </div>
+  </div>
+
+  <!-- RESUMO -->
+  <div class="page" id="page-resumo">
+    <div class="month-nav">
+      <button onclick="changeMonth(-1)">‹</button>
+      <div class="month-name" id="month-name-display"></div>
+      <button onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="hero-card month-card" style="margin-bottom:14px">
+      <div class="hero-label"><span class="dot" style="background:var(--purple)"></span>Resultado do Mês</div>
+      <div class="hero-value" style="font-size:40px" id="res-saldo">R$ 0,00</div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-label">📈 Receitas</div><div class="hstat-val pos" id="res-rec">R$ 0,00</div></div>
+        <div class="hstat"><div class="hstat-label">📉 Gastos</div><div class="hstat-val neg" id="res-gas">R$ 0,00</div></div>
+      </div>
+    </div>
+    <div class="section-title">Receitas por plataforma</div>
+    <div class="platform-strip" id="res-platform-strip" style="margin-bottom:14px"></div>
+    <div class="section-title">Gastos por categoria</div>
+    <div class="cat-list" id="cat-list"></div>
+  </div>
+
+  <!-- DICAS -->
+  <div class="page" id="page-dicas">
+    <div class="section-title">Dicas para motoristas</div>
+    <div class="tip-card"><div class="tip-icon">⛽</div><div class="tip-title">Controle o combustível</div><div class="tip-text">Registre cada abastecimento. Divida os km pelos litros para saber o consumo real. Pneu calibrado economiza até 8% de combustível.</div></div>
+    <div class="tip-card"><div class="tip-icon">📊</div><div class="tip-title">Lucro real por plataforma</div><div class="tip-text">Uber e 99 cobram ~25% por corrida. Compare o ganho líquido por hora entre plataformas no resumo mensal e foque onde você ganha mais.</div></div>
+    <div class="tip-card"><div class="tip-icon">🔧</div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem cuidado tem menos quebra e maior valorização.</div></div>
+    <div class="tip-card"><div class="tip-icon">🎯</div><div class="tip-title">Use a meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis para saber quanto precisa fazer por dia. O painel "Hoje" mostra em tempo real se você está no ritmo certo.</div></div>
+    <div class="tip-card"><div class="tip-icon">💡</div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores. Concentre horas nesses períodos.</div></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="nav-inicio" onclick="showPage('inicio')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início
+  </div>
+  <div class="nav-item" id="nav-lancamentos" onclick="showPage('lancamentos')">
+    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Lançamentos
+  </div>
+  <div class="fab" onclick="openModal()">+</div>
+  <div class="nav-item" id="nav-resumo" onclick="showPage('resumo')">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Resumo
+  </div>
+  <div class="nav-item" id="nav-dicas" onclick="showPage('dicas')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Dicas
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Novo Lançamento</div>
+    <div class="type-toggle">
+      <button class="type-btn active-rec" id="btn-rec" onclick="setType('receita')">📈 Receita</button>
+      <button class="type-btn" id="btn-gas" onclick="setType('gasto')">📉 Gasto</button>
+    </div>
+    <div class="field"><label>Descrição</label><input type="text" id="f-desc" placeholder="Ex: Corridas da manhã, Gasolina..."/></div>
+    <div class="field"><label>Valor (R$)</label><input type="number" id="f-val" placeholder="0,00" step="0.01" min="0" inputmode="decimal"/></div>
+    <div class="field"><label>Categoria</label><select id="f-cat"></select></div>
+    <div class="field" id="field-plataforma">
+      <label>Plataforma</label>
+      <select id="f-plataforma">
+        <option value="Uber">🟢 Uber</option>
+        <option value="99">🟠 99</option>
+        <option value="InDriver">🔵 InDriver</option>
+        <option value="iFood">🔴 iFood</option>
+        <option value="Rappi">🟣 Rappi</option>
+        <option value="Lalamove">🟡 Lalamove</option>
+        <option value="Particular">⚪ Particular</option>
+        <option value="Outro">⚫ Outro</option>
+      </select>
+    </div>
+    <div class="field"><label>Km rodados <span style="color:var(--muted)">(opcional)</span></label><input type="number" id="f-km" placeholder="0" min="0" inputmode="numeric"/></div>
+    <div class="field"><label>Data</label><input type="date" id="f-date"/></div>
+    <button class="btn-add" onclick="addTransaction()">ADICIONAR</button>
+  </div>
+</div>
+
+<script>
+const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const CAT_RECEITA = [
+  {v:'Uber',     icon:'🟢',color:'#1dbf73'},
+  {v:'99',       icon:'🟠',color:'#ff6b35'},
+  {v:'InDriver', icon:'🔵',color:'#3b82f6'},
+  {v:'Corrida',  icon:'🚗',color:'#22c55e'},
+  {v:'Entrega',  icon:'📦',color:'#a78bfa'},
+  {v:'Frete',    icon:'🚛',color:'#64748b'},
+  {v:'Outros',   icon:'💼',color:'#6b7280'},
+];
+const CAT_GASTO = [
+  {v:'Combustível', icon:'⛽',color:'#f5c518'},
+  {v:'Manutenção',  icon:'🔧',color:'#f97316'},
+  {v:'Seguro',      icon:'🛡️',color:'#a855f7'},
+  {v:'IPVA / Multa',icon:'📋',color:'#ef4444'},
+  {v:'Alimentação', icon:'🍔',color:'#ec4899'},
+  {v:'Lavagem',     icon:'🚿',color:'#22d3ee'},
+  {v:'Outros',      icon:'💼',color:'#6b7280'},
+];
+const PLATFORM_COLORS = {
+  'Uber':'#1dbf73','99':'#ff6b35','InDriver':'#3b82f6',
+  'iFood':'#ef4444','Rappi':'#7c3aed','Lalamove':'#eab308',
+  'Particular':'#94a3b8','Outro':'#6b7280',
+};
+
+let transactions = [];
+try { transactions = JSON.parse(localStorage.getItem('df_txns')||'[]'); } catch(e){}
+let currentType = 'receita';
+let currentPeriod = 'day';
+let viewMonth = new Date().getMonth();
+let viewYear  = new Date().getFullYear();
+
+
+function save(){ localStorage.setItem('df_txns',JSON.stringify(transactions)); }
+function fmtBRL(v){ return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function fmtDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function todayStr(){ return fmtDate(new Date()); }
+function getTodayTxns(){ return transactions.filter(t=>t.date===todayStr()); }
+function getThisMonthTxns(){ const n=new Date(); return transactions.filter(t=>{ const d=new Date(t.date+'T00:00:00'); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }); }
+function getViewMonthTxns(){ return transactions.filter(t=>{ const d=new Date(t.date+'T00:00:00'); return d.getMonth()===viewMonth&&d.getFullYear()===viewYear; }); }
+function catInfo(cat,type){ return (type==='receita'?CAT_RECEITA:CAT_GASTO).find(c=>c.v===cat)||{icon:'💼',color:'#6b7280'}; }
+
+// Today badge
+const TODAY=new Date();
+document.getElementById('today-badge').textContent=TODAY.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+
+function setPeriod(p){
+  currentPeriod=p;
+  document.getElementById('period-day').classList.toggle('active',p==='day');
+  document.getElementById('period-month').classList.toggle('active',p==='month');
+  renderHero(); renderKPIs(); renderPlatforms();
+}
+
+function renderHero(){
+  const txns=currentPeriod==='day'?getTodayTxns():getThisMonthTxns();
+  const rec=txns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
+  const gas=txns.filter(t=>t.type==='gasto').reduce((s,t)=>s+t.val,0);
+  const saldo=rec-gas;
+  document.getElementById('hero-label-txt').textContent=currentPeriod==='day'?'Saldo de Hoje':'Saldo do Mês';
+  const h=document.getElementById('hero-saldo');
+  h.textContent=fmtBRL(Math.abs(saldo));
+  h.style.color=saldo>=0?'var(--green)':'var(--red)';
+  document.getElementById('hero-rec').textContent=fmtBRL(rec);
+  document.getElementById('hero-gas').textContent=fmtBRL(gas);
+  document.getElementById('hero-card').className='hero-card '+(currentPeriod==='day'?'day-card':'month-card');
+}
+
+function renderKPIs(){
+  const txns=currentPeriod==='day'?getTodayTxns():getThisMonthTxns();
+  const comb=txns.filter(t=>t.cat==='Combustível').reduce((s,t)=>s+t.val,0);
+  const km=txns.reduce((s,t)=>s+(+t.km||0),0);
+  const rec=txns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
+  document.getElementById('kpi-comb').textContent=fmtBRL(comb).replace('R$ ','R$');
+  document.getElementById('kpi-km').textContent=km+' km';
+  document.getElementById('kpi-pkm').textContent=km>0?'R$'+(rec/km).toFixed(2):'R$0';
+}
+
+function mkPlatformStrip(txns,cid){
+  const el=document.getElementById(cid); el.innerHTML='';
+  const map={};
+  txns.filter(t=>t.type==='receita'&&t.plataforma).forEach(t=>{ map[t.plataforma]=(map[t.plataforma]||0)+t.val; });
+  if(!Object.keys(map).length){ el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:6px 0">Nenhuma receita ainda.</div>'; return; }
+  Object.entries(map).sort((a,b)=>b[1]-a[1]).forEach(([plat,val])=>{
+    const c=PLATFORM_COLORS[plat]||'#6b7280';
+    el.innerHTML+=`<div class="pcard"><div class="pcard-name">${plat}</div><div class="pcard-val" style="color:${c}">${fmtBRL(val)}</div></div>`;
+  });
+}
+
+function renderPlatforms(){
+  mkPlatformStrip(currentPeriod==='day'?getTodayTxns():getThisMonthTxns(),'platform-strip');
+}
+
+function renderChart(){
+  const el=document.getElementById('chart-bars'); el.innerHTML='';
+  const DAYS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const days=Array.from({length:7},(_,i)=>{ const d=new Date(); d.setDate(d.getDate()-(6-i)); return d; });
+  const recs=days.map(d=>transactions.filter(t=>t.type==='receita'&&t.date===fmtDate(d)).reduce((s,t)=>s+t.val,0));
+  const gass=days.map(d=>transactions.filter(t=>t.type==='gasto'&&t.date===fmtDate(d)).reduce((s,t)=>s+t.val,0));
+  const mx=Math.max(...recs,...gass,1);
+  days.forEach((d,i)=>{
+    const rh=Math.round((recs[i]/mx)*68)||3;
+    const gh=Math.round((gass[i]/mx)*68)||3;
+    el.innerHTML+=`<div class="bar-group"><div class="bar-pair"><div class="bar rec" style="height:${rh}px"></div><div class="bar gas" style="height:${gh}px"></div></div><div class="bar-lbl">${DAYS[d.getDay()]}</div></div>`;
+  });
+}
+
+function mkTxnEl(t,showDel=false){
+  const div=document.createElement('div'); div.className='txn';
+  const sign=t.type==='receita'?'+':'-';
+  const cls=t.type==='receita'?'pos':'neg';
+  const info=catInfo(t.cat,t.type);
+  const dStr=new Date(t.date+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+  const platTag=t.plataforma?` · ${t.plataforma}`:'';
+  div.innerHTML=`
+    <div class="txn-icon">${info.icon}</div>
+    <div class="txn-info">
+      <div class="txn-desc">${t.desc}</div>
+      <div class="txn-meta">${t.cat}${platTag} · ${dStr}</div>
+    </div>
+    <div class="txn-right">
+      <div class="txn-amt ${cls}">${sign}${fmtBRL(t.val)}</div>
+      ${showDel?`<button class="txn-del" onclick="deleteTxn(${t.id})">✕ excluir</button>`:''}
+    </div>`;
+  return div;
+}
+
+function deleteTxn(id){ transactions=transactions.filter(t=>t.id!==id); save(); renderAll(); renderHome(); }
+
+function renderHome(){
+  renderHero(); renderKPIs(); renderPlatforms(); renderChart();
+  const l=document.getElementById('txn-home'); l.innerHTML='';
+  [...transactions].reverse().slice(0,5).forEach(t=>l.appendChild(mkTxnEl(t)));
+}
+
+function renderAll(){
+  const l=document.getElementById('txn-all'),e=document.getElementById('txn-empty');
+  l.innerHTML='';
+  if(!transactions.length){ e.style.display='block'; return; }
+  e.style.display='none';
+  [...transactions].reverse().forEach(t=>l.appendChild(mkTxnEl(t,true)));
+}
+
+function renderResumo(){
+  document.getElementById('month-name-display').textContent=MONTHS[viewMonth]+' '+viewYear;
+  const txns=getViewMonthTxns();
+  const rec=txns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
+  const gas=txns.filter(t=>t.type==='gasto').reduce((s,t)=>s+t.val,0);
+  const saldo=rec-gas;
+  const rs=document.getElementById('res-saldo');
+  rs.textContent=fmtBRL(Math.abs(saldo)); rs.style.color=saldo>=0?'var(--green)':'var(--red)';
+  document.getElementById('res-rec').textContent=fmtBRL(rec);
+  document.getElementById('res-gas').textContent=fmtBRL(gas);
+  mkPlatformStrip(txns,'res-platform-strip');
+  const cats={};
+  txns.filter(t=>t.type==='gasto').forEach(t=>cats[t.cat]=(cats[t.cat]||0)+t.val);
+  const total=Object.values(cats).reduce((s,v)=>s+v,0)||1;
+  const cl=document.getElementById('cat-list'); cl.innerHTML='';
+  Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{
+    const info=catInfo(cat,'gasto'),pct=Math.round(val/total*100);
+    cl.innerHTML+=`<div class="cat-item"><div class="cat-row"><div class="cat-dot" style="background:${info.color}"></div><span class="cat-name">${info.icon} ${cat}</span><span class="cat-val" style="color:${info.color}">${fmtBRL(val)}</span><span class="cat-pct">${pct}%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${info.color}"></div></div></div>`;
+  });
+  if(!Object.keys(cats).length) cl.innerHTML='<div class="empty-state">Nenhum gasto neste mês.</div>';
+}
+
+function changeMonth(dir){
+  viewMonth+=dir;
+  if(viewMonth<0){viewMonth=11;viewYear--;} if(viewMonth>11){viewMonth=0;viewYear++;}
+  renderResumo();
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p)?.classList.add('active');
+  ['inicio','lancamentos','resumo','dicas'].forEach((n,i)=>{ if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active'); });
+  if(p==='inicio') renderHome();
+  if(p==='lancamentos') renderAll();
+  if(p==='resumo') renderResumo();
+}
+
+function updateCatOptions(){
+  const s=document.getElementById('f-cat');
+  s.innerHTML=(currentType==='receita'?CAT_RECEITA:CAT_GASTO).map(c=>`<option value="${c.v}">${c.icon} ${c.v}</option>`).join('');
+}
+
+function setType(t){
+  currentType=t;
+  document.getElementById('btn-rec').className='type-btn'+(t==='receita'?' active-rec':'');
+  document.getElementById('btn-gas').className='type-btn'+(t==='gasto'?' active-gas':'');
+  document.getElementById('field-plataforma').style.display=t==='receita'?'block':'none';
+  updateCatOptions();
+}
+
+function openModal(){
+  document.getElementById('f-date').value=todayStr();
+  setType('receita');
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('f-desc').focus(),350);
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function addTransaction(){
+  const desc=document.getElementById('f-desc').value.trim();
+  const val=parseFloat(document.getElementById('f-val').value);
+  const cat=document.getElementById('f-cat').value;
+  const plat=currentType==='receita'?document.getElementById('f-plataforma').value:'';
+  const km=parseFloat(document.getElementById('f-km').value)||0;
+  const date=document.getElementById('f-date').value;
+  if(!desc){ document.getElementById('f-desc').focus(); return; }
+  if(!val||val<=0){ document.getElementById('f-val').focus(); return; }
+  if(!date) return;
+  transactions.push({id:Date.now(),type:currentType,desc,val,cat,plataforma:plat,km,date});
+  save(); closeModal();
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-val').value='';
+  document.getElementById('f-km').value='';
+  renderHome(); renderAll();
+}
+
+updateCatOptions();
+renderHome();
+renderResumo();
+</script>
+</body>
+</html>
