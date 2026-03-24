@@ -636,11 +636,11 @@ input[type=date].date-picker{
     </div>
     <div class="field"><label>Descrição</label><input type="text" id="f-desc" placeholder="Ex: Corridas da manhã, Gasolina..."/></div>
     <div class="field"><label>Valor (R$)</label><input type="number" id="f-val" placeholder="0,00" step="0.01" min="0" inputmode="decimal"/></div>
-    <div class="field"><label>Categoria</label><select id="f-cat"></select></div>
+    <!-- Plataforma: só aparece para Receita -->
     <div class="field" id="field-plataforma">
       <label>Plataforma</label>
       <select id="f-plataforma">
-        <option value="Uber">🟢 Uber</option>
+        <option value="Uber"     selected>🟢 Uber</option>
         <option value="99">🟠 99</option>
         <option value="InDriver">🔵 InDriver</option>
         <option value="iFood">🔴 iFood</option>
@@ -650,6 +650,8 @@ input[type=date].date-picker{
         <option value="Outro">⚫ Outro</option>
       </select>
     </div>
+    <!-- Categoria: só aparece para Gasto -->
+    <div class="field" id="field-cat" style="display:none"><label>Categoria</label><select id="f-cat"></select></div>
     <div class="field" id="field-viagens">
       <label>Nº de viagens <span style="color:var(--muted)">(opcional)</span></label>
       <input type="number" id="f-viagens" placeholder="0" min="0" inputmode="numeric"/>
@@ -1359,13 +1361,15 @@ function showPage(p){
 // ─── MODAL ───────────────────────────────────────────────
 function updateCatOptions(){
   const s=document.getElementById('f-cat');
-  s.innerHTML=(currentType==='receita'?CAT_RECEITA:CAT_GASTO).map(c=>`<option value="${c.v}">${c.icon} ${c.v}</option>`).join('');
+  s.innerHTML=CAT_GASTO.map(c=>`<option value="${c.v}">${c.icon} ${c.v}</option>`).join('');
 }
 function setType(t){
   currentType=t;
   document.getElementById('btn-rec').className='type-btn'+(t==='receita'?' active-rec':'');
   document.getElementById('btn-gas').className='type-btn'+(t==='gasto'?' active-gas':'');
+  // Receita → mostra Plataforma; Gasto → mostra Categoria
   document.getElementById('field-plataforma').style.display=t==='receita'?'block':'none';
+  document.getElementById('field-cat').style.display=t==='gasto'?'block':'none';
   document.getElementById('field-viagens').style.display=t==='receita'?'block':'none';
   document.getElementById('field-horas').style.display=t==='receita'?'block':'none';
   updateCatOptions();
@@ -1381,8 +1385,8 @@ function closeModalOutside(e){if(e.target===document.getElementById('modal-overl
 async function addTransaction(){
   const description=document.getElementById('f-desc').value.trim();
   const val=parseFloat(document.getElementById('f-val').value);
-  const cat=document.getElementById('f-cat').value;
-  const plat=currentType==='receita'?document.getElementById('f-plataforma').value:'';
+  const plat = currentType==='receita' ? document.getElementById('f-plataforma').value : '';
+  const cat  = currentType==='receita' ? plat : document.getElementById('f-cat').value;
   const viagens=parseInt(document.getElementById('f-viagens').value)||0;
   const horas=parseFloat(document.getElementById('f-horas').value)||0;
   const km=parseFloat(document.getElementById('f-km').value)||0;
