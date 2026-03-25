@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>DriveFinance</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/umd/lucide.min.js"></script>
 <style>
 /* ══════════════════════════════════════
    ⚙️  SUPABASE CONFIG
@@ -355,6 +356,17 @@ input[type=date].date-picker{
 .proj-label{font-size:13px;color:var(--muted)}
 .proj-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent)}
 
+/* ── LUCIDE ICONS ── */
+.licon{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.licon svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tip-icon .licon svg,.tip-icon svg{width:26px;height:26px}
+.mcard-icon .licon svg,.mcard-icon svg{width:18px;height:18px}
+.txn-icon .licon svg,.txn-icon svg{width:20px;height:20px}
+.fixa-icon .licon svg,.fixa-icon svg{width:20px;height:20px}
+.kpi-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.auth-icon-wrap svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-item svg{width:20px;height:20px}
+
 /* ── PDF PRINT ── */
 @media print{
   body{background:#fff!important;color:#000!important;max-width:100%!important}
@@ -379,7 +391,11 @@ input[type=date].date-picker{
 <!-- ══════════ AUTH SCREEN ══════════ -->
 <div id="auth-screen">
   <div class="auth-hero">
-    <div class="auth-icon">🚗</div>
+    <div class="auth-icon-wrap" style="margin-bottom:10px">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v1"/><rect x="13" y="11" width="10" height="10" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="20" r="2"/>
+      </svg>
+    </div>
     <div class="auth-logo">Drive<span>Finance</span></div>
     <div class="auth-logo-sub">Finanças inteligentes para motoristas</div>
   </div>
@@ -407,8 +423,10 @@ input[type=date].date-picker{
         <div style="position:relative">
           <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
             oninput="clearFieldError('login-password')" style="padding-right:44px"/>
-          <button type="button" id="login-pw-eye" onclick="togglePwVisibility('login-password','login-pw-eye')"
-            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0">👁️</button>
+          <button type="button" id="login-pw-eye" onclick="togglePwVisibility('login-password','login-pw-eye-icon')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;color:var(--muted);display:flex;align-items:center">
+            <svg id="login-pw-eye-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
         <div id="login-password-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
@@ -437,8 +455,10 @@ input[type=date].date-picker{
         <div style="position:relative">
           <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"
             oninput="clearFieldError('reg-password');updatePasswordStrength(this.value)" style="padding-right:44px"/>
-          <button type="button" id="reg-pw-eye" onclick="togglePwVisibility('reg-password','reg-pw-eye')"
-            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0">👁️</button>
+          <button type="button" id="reg-pw-eye" onclick="togglePwVisibility('reg-password','reg-pw-eye-icon')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;color:var(--muted);display:flex;align-items:center">
+            <svg id="reg-pw-eye-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
         <!-- Barra de força da senha -->
         <div style="height:4px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden">
@@ -468,14 +488,17 @@ input[type=date].date-picker{
   <!-- User dropdown -->
   <div class="user-menu" id="user-menu">
     <div class="user-menu-item" style="pointer-events:none;opacity:.6">
-      <span>👤</span><span id="menu-user-name" style="font-size:12px">—</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="menu-user-name" style="font-size:12px">—</span>
     </div>
     <div class="user-menu-item" style="pointer-events:none;opacity:.6">
-      <span>📧</span><span id="menu-user-email" style="font-size:11px;color:var(--muted)">—</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span id="menu-user-email" style="font-size:11px;color:var(--muted)">—</span>
     </div>
     <div style="height:1px;background:var(--border);margin:4px 0"></div>
     <div class="user-menu-item danger" onclick="doLogout()">
-      <span>🚪</span><span>Sair da conta</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Sair da conta</span>
     </div>
   </div>
 </div>
@@ -545,6 +568,20 @@ input[type=date].date-picker{
   <!-- Últimas -->
   <div class="section-title">Últimas movimentações <a onclick="showPage('lancamentos')">Ver todas →</a></div>
   <div class="txn-list" id="txn-home"></div>
+
+  <!-- FAB PDF flutuante -->
+  <div onclick="openPdfModal()" style="
+    position:fixed;bottom:calc(80px + var(--sb));right:20px;
+    width:52px;height:52px;border-radius:50%;
+    background:linear-gradient(135deg,#1e2540,#2a3560);
+    border:1px solid rgba(245,197,24,.35);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;cursor:pointer;z-index:98;
+    box-shadow:0 4px 18px rgba(0,0,0,.4);
+    transition:transform .2s,box-shadow .2s;
+  " title="Exportar PDF" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  </div>
 </div>
 
 <!-- ══════════════ ANÁLISE ══════════════ -->
@@ -556,7 +593,9 @@ input[type=date].date-picker{
     <button class="period-btn"        id="ap-week"    onclick="setAnalysePeriod('week')">Semanal</button>
     <button class="period-btn"        id="ap-month"   onclick="setAnalysePeriod('month')">Mensal</button>
     <button class="period-btn"        id="ap-year"    onclick="setAnalysePeriod('year')">Anual</button>
-    <button class="period-btn"        id="ap-custom"  onclick="setAnalysePeriod('custom')">📅 Data</button>
+    <button class="period-btn" id="ap-custom" onclick="setAnalysePeriod('custom')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Data
+    </button>
   </div>
 
   <!-- Date navigation -->
@@ -654,23 +693,6 @@ input[type=date].date-picker{
   </div>
   <div class="section-title">Gastos por categoria</div>
   <div class="cat-list" id="cat-list"></div>
-
-  <!-- Botão exportar PDF -->
-  <div style="margin-top:18px;margin-bottom:4px">
-    <button onclick="openPdfModal()" style="
-      width:100%;padding:14px;
-      background:linear-gradient(135deg,#1e2540,#252b40);
-      border:1px solid var(--border);border-radius:var(--radius);
-      color:var(--text);font-size:14px;font-weight:600;
-      cursor:pointer;font-family:'DM Sans',sans-serif;
-      display:flex;align-items:center;justify-content:center;gap:10px;
-      transition:border-color .2s;
-    " onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-      <span style="font-size:20px">📄</span>
-      <span>Exportar Relatório PDF</span>
-      <span style="font-size:11px;color:var(--muted);margin-left:4px" id="pdf-month-label"></span>
-    </button>
-  </div>
 </div>
 
 <!-- ══════════════ DESPESAS FIXAS ══════════════ -->
@@ -730,11 +752,11 @@ input[type=date].date-picker{
 <!-- ══════════════ DICAS ══════════════ -->
 <div class="page" id="page-dicas">
   <div class="section-title">Dicas para motoristas</div>
-  <div class="tip-card"><div class="tip-icon">⛽</div><div class="tip-title">Controle o combustível</div><div class="tip-text">Registre cada abastecimento com os km. Divida km pelos litros para saber seu consumo real. Pneu calibrado economiza até 8%.</div></div>
-  <div class="tip-card"><div class="tip-icon">📊</div><div class="tip-title">Lucro real por plataforma</div><div class="tip-text">Uber e 99 cobram ~25% por corrida. Use a aba Análise para comparar lucro por hora entre plataformas e focar onde você ganha mais.</div></div>
-  <div class="tip-card"><div class="tip-icon">🔧</div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem mantido tem menos quebra e maior valorização.</div></div>
-  <div class="tip-card"><div class="tip-icon">🎯</div><div class="tip-title">Meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis. Use a aba Análise → Diário para ver se está no ritmo certo cada dia.</div></div>
-  <div class="tip-card"><div class="tip-icon">💡</div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V12M12 22V2M21 22V12"/></svg></div><div class="tip-title">Controle o combustível</div><div class="tip-text">Registre cada abastecimento com os km. Divida km pelos litros para saber seu consumo real. Pneu calibrado economiza até 8%.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><div class="tip-title">Lucro real por plataforma</div><div class="tip-text">Uber e 99 cobram ~25% por corrida. Use a aba Análise para comparar lucro por hora entre plataformas e focar onde você ganha mais.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M4.93 4.93l1.41 1.41"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M20 12h2"/><path d="M2 12h2"/><path d="M19.07 19.07l-1.41-1.41"/><path d="M4.93 19.07l1.41-1.41"/></svg></div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem mantido tem menos quebra e maior valorização.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tip-title">Meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis. Use a aba Análise → Diário para ver se está no ritmo certo cada dia.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores.</div></div>
 </div>
 
 </div><!-- /content -->
@@ -762,8 +784,12 @@ input[type=date].date-picker{
     <div class="modal-handle"></div>
     <div class="modal-title">Novo Lançamento</div>
     <div class="type-toggle">
-      <button class="type-btn active-rec" id="btn-rec" onclick="setType('receita')">📈 Receita</button>
-      <button class="type-btn" id="btn-gas" onclick="setType('gasto')">📉 Gasto</button>
+      <button class="type-btn active-rec" id="btn-rec" onclick="setType('receita')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Receita
+      </button>
+      <button class="type-btn" id="btn-gas" onclick="setType('gasto')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>Gasto
+      </button>
     </div>
     <div class="field"><label>Descrição</label><input type="text" id="f-desc" placeholder="Ex: Corridas da manhã, Gasolina..."/></div>
     <div class="field"><label>Valor (R$)</label><input type="number" id="f-val" placeholder="0,00" step="0.01" min="0" inputmode="decimal"/></div>
@@ -771,14 +797,14 @@ input[type=date].date-picker{
     <div class="field" id="field-plataforma">
       <label>Plataforma</label>
       <select id="f-plataforma">
-        <option value="Uber"     selected>🟢 Uber</option>
-        <option value="99">🟠 99</option>
-        <option value="InDriver">🔵 InDriver</option>
-        <option value="iFood">🔴 iFood</option>
-        <option value="Rappi">🟣 Rappi</option>
-        <option value="Lalamove">🟡 Lalamove</option>
-        <option value="Particular">⚪ Particular</option>
-        <option value="Outro">⚫ Outro</option>
+        <option value="Uber"      selected>Uber</option>
+        <option value="99">99</option>
+        <option value="InDriver">InDriver</option>
+        <option value="iFood">iFood</option>
+        <option value="Rappi">Rappi</option>
+        <option value="Lalamove">Lalamove</option>
+        <option value="Particular">Particular</option>
+        <option value="Outro">Outro</option>
       </select>
     </div>
     <!-- Categoria: só aparece para Gasto -->
@@ -816,27 +842,27 @@ input[type=date].date-picker{
     <div class="field">
       <label>Categoria</label>
       <select id="fx-cat">
-        <option value="Financiamento">🚗 Financiamento do carro</option>
-        <option value="Aluguel">🏠 Aluguel / Moradia</option>
-        <option value="Seguro">🛡️ Seguro do carro</option>
-        <option value="IPVA">📋 IPVA</option>
-        <option value="Plano de saúde">❤️ Plano de saúde</option>
-        <option value="Aluguel do carro">🔑 Aluguel do carro</option>
-        <option value="Internet">📱 Internet / Celular</option>
-        <option value="Empréstimo">💳 Empréstimo</option>
-        <option value="Outro fixo">💼 Outro</option>
+        <option value="Financiamento">Financiamento do carro</option>
+        <option value="Aluguel">Aluguel / Moradia</option>
+        <option value="Seguro">Seguro do carro</option>
+        <option value="IPVA">IPVA</option>
+        <option value="Plano de saúde">Plano de saúde</option>
+        <option value="Aluguel do carro">Aluguel do carro</option>
+        <option value="Internet">Internet / Celular</option>
+        <option value="Empréstimo">Empréstimo</option>
+        <option value="Outro fixo">Outro</option>
       </select>
     </div>
     <div class="field">
       <label>Frequência</label>
       <select id="fx-freq">
-        <option value="semanal">📅 Semanal</option>
-        <option value="quinzenal">📅 Quinzenal</option>
-        <option value="mensal" selected>📆 Mensal</option>
-        <option value="bimestral">📆 Bimestral</option>
-        <option value="trimestral">📆 Trimestral</option>
-        <option value="semestral">📆 Semestral</option>
-        <option value="anual">📆 Anual</option>
+        <option value="semanal">Semanal</option>
+        <option value="quinzenal">Quinzenal</option>
+        <option value="mensal" selected>Mensal</option>
+        <option value="bimestral">Bimestral</option>
+        <option value="trimestral">Trimestral</option>
+        <option value="semestral">Semestral</option>
+        <option value="anual">Anual</option>
       </select>
     </div>
     <div class="field">
@@ -864,45 +890,42 @@ input[type=date].date-picker{
 <div class="modal-overlay" id="pdf-modal-overlay" onclick="closePdfModalOutside(event)">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Exportar Relatório PDF</div>
-
-    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Período</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap" id="pdf-period-btns">
-        <button class="period-btn active" onclick="setPdfMonth(0,this)">Mês atual</button>
-        <button class="period-btn" onclick="setPdfMonth(-1,this)">Mês passado</button>
-        <button class="period-btn" onclick="setPdfMonth(-2,this)">2 meses atrás</button>
-        <button class="period-btn" onclick="setPdfMonth(-3,this)">3 meses atrás</button>
-      </div>
+    <div class="modal-title" style="display:flex;align-items:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Exportar Relatório
     </div>
 
-    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Incluir no relatório</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="pdf-opt-resumo" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          📊 Resumo do mês (faturamento, despesa, saldo)
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="pdf-opt-metricas" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          📈 Métricas (km, horas, viagens, médias)
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="pdf-opt-plataformas" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          🚗 Faturamento por plataforma
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="pdf-opt-fixas" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          📅 Despesas fixas
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
-          <input type="checkbox" id="pdf-opt-lancamentos" checked style="width:16px;height:16px;accent-color:var(--accent)">
-          🧾 Todos os lançamentos detalhados
-        </label>
-      </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">
+      Escolha o período e gere um PDF com todos os lançamentos detalhados — pronto para enviar ao contador.
     </div>
 
-    <button class="btn-add" id="pdf-btn-export" onclick="exportPDF()">📄 GERAR PDF</button>
+    <!-- Seleção de período: mês -->
+    <div class="field">
+      <label>Mês</label>
+      <select id="pdf-sel-month">
+        <option value="0">Janeiro</option><option value="1">Fevereiro</option>
+        <option value="2">Março</option><option value="3">Abril</option>
+        <option value="4">Maio</option><option value="5">Junho</option>
+        <option value="6">Julho</option><option value="7">Agosto</option>
+        <option value="8">Setembro</option><option value="9">Outubro</option>
+        <option value="10">Novembro</option><option value="11">Dezembro</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Ano</label>
+      <select id="pdf-sel-year"></select>
+    </div>
+
+    <!-- Preview rápido -->
+    <div id="pdf-preview" style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Preview</div>
+      <div id="pdf-preview-content" style="font-size:13px;color:var(--text)">—</div>
+    </div>
+
+    <button class="btn-add" id="pdf-btn-export" onclick="exportPDF()" style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      GERAR PDF
+    </button>
   </div>
 </div>
 
@@ -913,8 +936,10 @@ input[type=date].date-picker{
 // ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
 //     Painel Supabase → Settings → API
 // ══════════════════════════════════════════════════════════
+
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
+
 // ──────────────────────────────────────────────────────────
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
@@ -944,7 +969,11 @@ const sb = {
     if (d.access_token) {
       this._token = d.access_token;
       this._user  = d.user;
-      localStorage.setItem('df_session', JSON.stringify({ token:d.access_token, user:d.user }));
+      localStorage.setItem('df_session', JSON.stringify({
+        token: d.access_token,
+        refresh_token: d.refresh_token,
+        user: d.user,
+      }));
     }
     return d;
   },
@@ -956,68 +985,88 @@ const sb = {
   restoreSession() {
     try {
       const s = JSON.parse(localStorage.getItem('df_session') || 'null');
-      if (s?.token) { this._token = s.token; this._user = s.user; return true; }
+      if (s?.token) {
+        this._token = s.token;
+        this._user  = s.user;
+        return true;
+      }
     } catch(e) {}
     return false;
   },
 
   // ── Lançamentos no banco Supabase ────────────────────────
+  async _fetch(url, opts={}) {
+    // Primeira tentativa
+    let r = await fetch(url, { ...opts, headers: { ...this._hdr(), ...(opts.headers||{}) } });
+    // Se 401, tenta renovar o token e repetir uma vez
+    if (r.status === 401) {
+      const refreshed = await this.refreshToken();
+      if (refreshed) {
+        r = await fetch(url, { ...opts, headers: { ...this._hdr(), ...(opts.headers||{}) } });
+      } else {
+        // Token expirado e não conseguiu renovar — força logout
+        this.signOut();
+        window.location.reload();
+        return null;
+      }
+    }
+    return r;
+  },
+
   async getTxns() {
-    const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${this._user.id}&order=date.desc,created_at.desc`,
-      { headers: this._hdr() }
+    const r = await this._fetch(
+      `${SUPABASE_URL}/rest/v1/transactions?user_id=eq.${this._user.id}&order=date.desc,created_at.desc`
     );
-    if (!r.ok) return [];
+    if (!r || !r.ok) return [];
     return r.json();
   },
   async insertTxn(txn) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/transactions`, {
+    const r = await this._fetch(`${SUPABASE_URL}/rest/v1/transactions`, {
       method: 'POST',
-      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify({ ...txn, user_id: this._user?.id }),
     });
-    if (!r.ok) return null;
+    if (!r || !r.ok) return null;
     const rows = await r.json();
     return rows[0] || null;
   },
   async deleteTxn(id) {
-    await fetch(`${SUPABASE_URL}/rest/v1/transactions?id=eq.${id}`, {
-      method: 'DELETE', headers: this._hdr(),
+    await this._fetch(`${SUPABASE_URL}/rest/v1/transactions?id=eq.${id}`, {
+      method: 'DELETE',
     });
   },
 
   // ── Despesas Fixas no banco Supabase ─────────────────────
   async getFixas() {
-    const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/fixed_expenses?user_id=eq.${this._user.id}&order=created_at.asc`,
-      { headers: this._hdr() }
+    const r = await this._fetch(
+      `${SUPABASE_URL}/rest/v1/fixed_expenses?user_id=eq.${this._user.id}&order=created_at.asc`
     );
-    if (!r.ok) return [];
+    if (!r || !r.ok) return [];
     return r.json();
   },
   async insertFixa(fixa) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses`, {
+    const r = await this._fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses`, {
       method: 'POST',
-      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify({ ...fixa, user_id: this._user?.id }),
     });
-    if (!r.ok) return null;
+    if (!r || !r.ok) return null;
     const rows = await r.json();
     return rows[0] || null;
   },
   async updateFixa(id, fixa) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
+    const r = await this._fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
       method: 'PATCH',
-      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      headers: { 'Prefer': 'return=representation' },
       body: JSON.stringify(fixa),
     });
-    if (!r.ok) return null;
+    if (!r || !r.ok) return null;
     const rows = await r.json();
     return rows[0] || null;
   },
   async deleteFixa(id) {
-    await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
-      method: 'DELETE', headers: this._hdr(),
+    await this._fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
+      method: 'DELETE',
     });
   },
 
@@ -1025,24 +1074,48 @@ const sb = {
   async refreshToken() {
     try {
       const s = JSON.parse(localStorage.getItem('df_session') || 'null');
-      if (!s?.user?.refresh_token) return false;
+      // refresh_token pode estar em s.refresh_token ou s.user.refresh_token
+      const rt = s?.refresh_token || s?.user?.refresh_token;
+      if (!rt) return false;
       const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-        method: 'POST', headers: this._hdr(),
-        body: JSON.stringify({ refresh_token: s.user.refresh_token }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+        body: JSON.stringify({ refresh_token: rt }),
       });
       const d = await r.json();
       if (d.access_token) {
         this._token = d.access_token;
         this._user  = d.user;
-        localStorage.setItem('df_session', JSON.stringify({ token: d.access_token, user: d.user }));
+        localStorage.setItem('df_session', JSON.stringify({
+          token: d.access_token,
+          refresh_token: d.refresh_token,
+          user: d.user,
+        }));
         return true;
       }
-    } catch(e) {}
+    } catch(e) { console.warn('Token refresh failed:', e); }
     return false;
   },
 };
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY && SUPABASE_URL.startsWith('https://') && SUPABASE_URL.includes('supabase'));
+
+// ── LUCIDE ICON HELPER ────────────────────────────────────
+// Returns an SVG string for a given Lucide icon name and size
+function icon(name, size=18, color='currentColor', extraClass=''){
+  const i = lucide && lucide.icons && lucide.icons[name];
+  if(!i) return `<span style="display:inline-block;width:${size}px;height:${size}px"></span>`;
+  // Build SVG from lucide icon data [tag, attrs, children]
+  function buildNode([tag, attrs={}, children=[]]) {
+    const a = Object.entries(attrs).map(([k,v])=>`${k}="${v}"`).join(' ');
+    const c = children.map(buildNode).join('');
+    return `<${tag} ${a}>${c}</${tag}>`;
+  }
+  const [,svgAttrs, children] = i;
+  const attrStr = `width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="licon-svg ${extraClass}" style="display:inline-block;vertical-align:middle"`;
+  const childStr = children.map(buildNode).join('');
+  return `<svg ${attrStr}>${childStr}</svg>`;
+}
 
 // ── AUTH HELPERS ──────────────────────────────────────────
 function showAuthMsg(msg, type='error') {
@@ -1085,11 +1158,17 @@ function updatePasswordStrength(pw){
   lbl.style.color = colors[s];
 }
 
-function togglePwVisibility(inputId, btnId){
+function togglePwVisibility(inputId, iconId){
   const inp = document.getElementById(inputId);
-  const btn = document.getElementById(btnId);
-  if(inp.type==='password'){ inp.type='text'; btn.textContent='🙈'; }
-  else { inp.type='password'; btn.textContent='👁️'; }
+  const ico = document.getElementById(iconId);
+  if(inp.type==='password'){
+    inp.type='text';
+    if(ico) ico.outerHTML = `<svg id="${iconId}" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  } else {
+    inp.type='password';
+    const cur = document.getElementById(iconId);
+    if(cur) cur.outerHTML = `<svg id="${iconId}" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  }
 }
 
 // Limpa erro de um campo específico
@@ -1138,7 +1217,7 @@ async function doLogin() {
       if (data.error) {
         const msg = (data.error.message || '').toLowerCase();
         if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
-          showAuthMsg('⚠️ Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada e clique no link que enviamos.');
+          showAuthMsg('Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada e clique no link que enviamos.');
         } else if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('wrong password')) {
           showAuthMsg('E-mail ou senha incorretos. Verifique e tente novamente.');
         } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
@@ -1151,7 +1230,7 @@ async function doLogin() {
         btn.disabled=false; btn.textContent='ENTRAR'; return;
       }
       if (data.user && !data.user.email_confirmed_at) {
-        showAuthMsg('⚠️ Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada.');
+        showAuthMsg('Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada.');
         btn.disabled=false; btn.textContent='ENTRAR'; return;
       }
       enterApp(data.user);
@@ -1203,7 +1282,7 @@ async function doRegister() {
     localStorage.setItem('df_local_user', JSON.stringify(user));
     localStorage.setItem('df_local_logged','1');
     sb._user = user;
-    showAuthMsg('Conta criada com sucesso! 🎉', 'success');
+    showAuthMsg('Conta criada com sucesso!', 'success');
     setTimeout(() => enterApp(user), 800);
   } else {
     try {
@@ -1223,7 +1302,7 @@ async function doRegister() {
         showFieldError('reg-email','Este e-mail já está cadastrado.');
         btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
       }
-      showAuthMsg(`✅ Conta criada! Enviamos um link de confirmação para <b>${email}</b>. Confirme para entrar.`, 'success');
+      showAuthMsg(`Conta criada! Enviamos um link de confirmação para <b>${email}</b>. Confirme para entrar.`, 'success');
       setTimeout(() => switchAuthTab('login'), 3500);
     } catch(e) {
       showAuthMsg('Sem conexão. Verifique sua internet e tente novamente.');
@@ -1288,20 +1367,77 @@ function doLogout() {
   document.getElementById('auth-screen').style.cssText = 'display:flex;flex-direction:column';
 })();
 
+// ─── LUCIDE SVG STRINGS FOR ICONS ────────────────────────
+// Amber/gold tone to match app accent — category icons use their own colors via CSS
+const IC_CLR = 'var(--accent)';   // amber #f5c518
+const IC_SM  = 14;
+const IC_MD  = 18;
+
+function mkSvg(paths, size=IC_MD, color=IC_CLR) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0">${paths}</svg>`;
+}
+
+const IC = {
+  car:     mkSvg(`<path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v1"/><rect x="13" y="11" width="10" height="10" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="20" r="2"/>`),
+  truck:   mkSvg(`<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>`),
+  pkg:     mkSvg(`<line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 001 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>`),
+  brief:   mkSvg(`<rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>`),
+  fuel:    mkSvg(`<line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 00-2-2H6a2 2 0 00-2 2v18"/><path d="M14 13h2a2 2 0 012 2v2a2 2 0 002 2h0a2 2 0 002-2V9.83a2 2 0 00-.59-1.42L17 4"/>`),
+  wrench:  mkSvg(`<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>`),
+  shield:  mkSvg(`<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>`),
+  file:    mkSvg(`<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`),
+  food:    mkSvg(`<path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>`),
+  drop:    mkSvg(`<path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/>`),
+  home:    mkSvg(`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`),
+  key:     mkSvg(`<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>`),
+  phone:   mkSvg(`<rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>`),
+  credit:  mkSvg(`<rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>`),
+  heart:   mkSvg(`<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>`),
+  // metrics — softer tone so they don't compete with values
+  map:     mkSvg(`<polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>`, IC_MD, '#94a3b8'),
+  clock:   mkSvg(`<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`, IC_MD, '#94a3b8'),
+  dollar:  mkSvg(`<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>`, IC_MD, IC_CLR),
+  barChart:mkSvg(`<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>`, IC_MD, '#94a3b8'),
+  zap:     mkSvg(`<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`, IC_MD, IC_CLR),
+  arrowDn: mkSvg(`<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>`, IC_MD, '#ef4444'),
+  check:   mkSvg(`<polyline points="20 6 9 17 4 12"/>`, IC_MD, '#22c55e'),
+  // small action icons — muted/colored as context
+  edit:    mkSvg(`<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>`, IC_SM, '#94a3b8'),
+  trash:   mkSvg(`<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>`, IC_SM, '#ef4444'),
+  pause:   mkSvg(`<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>`, IC_SM, '#94a3b8'),
+  play:    mkSvg(`<polygon points="5 3 19 12 5 21 5 3"/>`, IC_SM, '#22c55e'),
+  eyeOff:  mkSvg(`<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`, 17, '#94a3b8'),
+  eyeOn:   mkSvg(`<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`, 17, '#94a3b8'),
+  trendUp: mkSvg(`<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>`, IC_SM, '#22c55e'),
+  trendDn: mkSvg(`<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>`, IC_SM, '#ef4444'),
+  warn:    mkSvg(`<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`, IC_SM, IC_CLR),
+  logout:  mkSvg(`<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>`, IC_SM, '#ef4444'),
+  user:    mkSvg(`<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>`, IC_SM, '#94a3b8'),
+  mail:    mkSvg(`<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>`, IC_SM, '#94a3b8'),
+  pdf:     mkSvg(`<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>`, 18, IC_CLR),
+  cal:     mkSvg(`<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>`, IC_SM, IC_CLR),
+};
+
 // ─── CONSTANTS ───────────────────────────────────────────
 const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DAYS_PT=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CAT_RECEITA=[
-  {v:'Uber',icon:'🟢',color:'#1dbf73'},{v:'99',icon:'🟠',color:'#ff6b35'},
-  {v:'InDriver',icon:'🔵',color:'#3b82f6'},{v:'Corrida',icon:'🚗',color:'#22c55e'},
-  {v:'Entrega',icon:'📦',color:'#a78bfa'},{v:'Frete',icon:'🚛',color:'#64748b'},
-  {v:'Outros',icon:'💼',color:'#6b7280'},
+  {v:'Uber',     icon:IC.car,    color:'#1dbf73'},
+  {v:'99',       icon:IC.car,    color:'#ff6b35'},
+  {v:'InDriver', icon:IC.car,    color:'#3b82f6'},
+  {v:'Corrida',  icon:IC.car,    color:'#22c55e'},
+  {v:'Entrega',  icon:IC.pkg,    color:'#a78bfa'},
+  {v:'Frete',    icon:IC.truck,  color:'#64748b'},
+  {v:'Outros',   icon:IC.brief,  color:'#6b7280'},
 ];
 const CAT_GASTO=[
-  {v:'Combustível',icon:'⛽',color:'#f5c518'},{v:'Manutenção',icon:'🔧',color:'#f97316'},
-  {v:'Seguro',icon:'🛡️',color:'#a855f7'},{v:'IPVA / Multa',icon:'📋',color:'#ef4444'},
-  {v:'Alimentação',icon:'🍔',color:'#ec4899'},{v:'Lavagem',icon:'🚿',color:'#22d3ee'},
-  {v:'Outros',icon:'💼',color:'#6b7280'},
+  {v:'Combustível', icon:IC.fuel,   color:'#f5c518'},
+  {v:'Manutenção',  icon:IC.wrench, color:'#f97316'},
+  {v:'Seguro',      icon:IC.shield, color:'#a855f7'},
+  {v:'IPVA / Multa',icon:IC.file,   color:'#ef4444'},
+  {v:'Alimentação', icon:IC.food,   color:'#ec4899'},
+  {v:'Lavagem',     icon:IC.drop,   color:'#22d3ee'},
+  {v:'Outros',      icon:IC.brief,  color:'#6b7280'},
 ];
 const PLATFORM_COLORS={
   'Uber':'#1dbf73','99':'#ff6b35','InDriver':'#3b82f6','iFood':'#ef4444',
@@ -1348,7 +1484,7 @@ function fmtShort(v){
 }
 function fmtDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function todayStr(){return fmtDate(new Date());}
-function catInfo(cat,type){return (type==='receita'?CAT_RECEITA:CAT_GASTO).find(c=>c.v===cat)||{icon:'💼',color:'#6b7280'};}
+function catInfo(cat,type){return (type==='receita'?CAT_RECEITA:CAT_GASTO).find(c=>c.v===cat)||{icon:IC.brief,color:'#6b7280'};}
 function parseLocalDate(s){const[y,m,d]=s.split('-'); return new Date(+y,+m-1,+d);}
 
 // ─── DATE RANGE HELPERS ──────────────────────────────────
@@ -1419,19 +1555,19 @@ function calcMetrics(txns){
 }
 
 const METRIC_DEFS=[
-  {key:'viagens',     icon:'🚗',label:'Viagens\nregistradas',  fmt:v=>v.toFixed(0)},
-  {key:'horas',       icon:'⏱️',label:'Horas\ntrabalhadas',    fmt:v=>v.toFixed(1)+'h'},
-  {key:'km',          icon:'🛣️',label:'Km\nrodados',          fmt:v=>v.toFixed(0)+' km'},
-  {key:'fat',         icon:'💵',label:'Faturamento\nviagens',  fmt:fmtShort},
-  {key:'fatPorViagem',icon:'📊',label:'Fat. médio\npor viagem',fmt:fmtShort},
-  {key:'fatMedioPorHora',icon:'⚡',label:'Fat. médio\npor hora',fmt:fmtShort},
-  {key:'fatMedioPorKm', icon:'🛣️',label:'Fat. médio\npor km',  fmt:v=>'R$'+(v).toFixed(2)},
-  {key:'custoPorViagem',icon:'💸',label:'Custo\npor viagem',   fmt:fmtShort},
-  {key:'custoPorHora',  icon:'💸',label:'Custo\npor hora',     fmt:fmtShort},
-  {key:'custoPorKm',    icon:'💸',label:'Custo\npor km',       fmt:v=>'R$'+(v).toFixed(2)},
-  {key:'lucroPorViagem',icon:'✅',label:'Lucro\npor viagem',   fmt:fmtShort},
-  {key:'lucroPorHora',  icon:'✅',label:'Lucro\npor hora',     fmt:fmtShort},
-  {key:'lucroPorKm',    icon:'✅',label:'Lucro\npor km',       fmt:v=>'R$'+(v).toFixed(2)},
+  {key:'viagens',        icon:IC.car,     label:'Viagens\nregistradas',  fmt:v=>v.toFixed(0)},
+  {key:'horas',          icon:IC.clock,   label:'Horas\ntrabalhadas',    fmt:v=>v.toFixed(1)+'h'},
+  {key:'km',             icon:IC.map,     label:'Km\nrodados',           fmt:v=>v.toFixed(0)+' km'},
+  {key:'fat',            icon:IC.dollar,  label:'Faturamento\nviagens',  fmt:fmtShort},
+  {key:'fatPorViagem',   icon:IC.barChart,label:'Fat. médio\npor viagem',fmt:fmtShort},
+  {key:'fatMedioPorHora',icon:IC.zap,     label:'Fat. médio\npor hora',  fmt:fmtShort},
+  {key:'fatMedioPorKm',  icon:IC.map,     label:'Fat. médio\npor km',    fmt:v=>'R$'+(v).toFixed(2)},
+  {key:'custoPorViagem', icon:IC.arrowDn, label:'Custo\npor viagem',     fmt:fmtShort},
+  {key:'custoPorHora',   icon:IC.arrowDn, label:'Custo\npor hora',       fmt:fmtShort},
+  {key:'custoPorKm',     icon:IC.arrowDn, label:'Custo\npor km',         fmt:v=>'R$'+(v).toFixed(2)},
+  {key:'lucroPorViagem', icon:IC.check,   label:'Lucro\npor viagem',     fmt:fmtShort},
+  {key:'lucroPorHora',   icon:IC.check,   label:'Lucro\npor hora',       fmt:fmtShort},
+  {key:'lucroPorKm',     icon:IC.check,   label:'Lucro\npor km',         fmt:v=>'R$'+(v).toFixed(2)},
 ];
 
 function renderMetricsGrid(txns,containerId){
@@ -1582,7 +1718,7 @@ function mkTxnEl(t,showDel=false){
     </div>
     <div class="txn-right">
       <div class="txn-amt ${cls}">${sign}${fmtBRL(t.val)}</div>
-      ${showDel?`<button class="txn-del" onclick="deleteTxn(${t.id})">✕ excluir</button>`:''}
+      ${showDel?`<button class="txn-del" onclick="deleteTxn(${t.id})" style="display:flex;align-items:center;gap:3px">${IC.trash} excluir</button>`:''}
     </div>`;
   return div;
 }
@@ -1624,7 +1760,7 @@ function renderHome(){
   const fixasAlertEl = document.getElementById('fixas-home-alert');
   if(fixas.length && fixasDia > 0){
     if(fixasAlertEl){
-      fixasAlertEl.innerHTML = `⚠️ Suas despesas fixas custam <b>${fmtBRL(fixasDia)}</b> por dia. Já deduzido do saldo.`;
+      fixasAlertEl.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Suas despesas fixas custam <b>${fmtBRL(fixasDia)}</b> por dia. Já deduzido do saldo.</span>`;
       fixasAlertEl.style.display='block';
     }
   } else if(fixasAlertEl){
@@ -1711,9 +1847,6 @@ function renderAll(){
 // ─── RESUMO ──────────────────────────────────────────────
 function renderResumo(){
   document.getElementById('month-name-display').textContent=MONTHS[viewMonth]+' '+viewYear;
-  // Sincroniza label do botão PDF com o mês visualizado
-  const pdfLbl = document.getElementById('pdf-month-label');
-  if(pdfLbl) pdfLbl.textContent = `(${MONTHS[viewMonth]} ${viewYear})`;
   const txns=transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getMonth()===viewMonth&&d.getFullYear()===viewYear;});
   const m=calcMetrics(txns);
   document.getElementById('r-fat').textContent=fmtShort(m.fat);
@@ -1763,9 +1896,15 @@ const FREQ_PER_MONTH = {
   bimestral:0.5, trimestral:1/3, semestral:1/6, anual:1/12
 };
 const FIXA_CAT_ICONS = {
-  'Financiamento':'🚗','Aluguel':'🏠','Seguro':'🛡️','IPVA':'📋',
-  'Plano de saúde':'❤️','Aluguel do carro':'🔑','Internet':'📱',
-  'Empréstimo':'💳','Outro fixo':'💼'
+  'Financiamento': IC.car,
+  'Aluguel':       IC.home,
+  'Seguro':        IC.shield,
+  'IPVA':          IC.file,
+  'Plano de saúde':IC.heart,
+  'Aluguel do carro':IC.key,
+  'Internet':      IC.phone,
+  'Empréstimo':    IC.credit,
+  'Outro fixo':    IC.brief,
 };
 
 let fixas = [];
@@ -1800,7 +1939,7 @@ function renderFixas(){
 
   fixas.forEach(f => {
     const equiv = fixaMensal(f);
-    const icon = FIXA_CAT_ICONS[f.cat] || '💼';
+    const icon = FIXA_CAT_ICONS[f.cat] || IC.brief;
     const vencStr = f.venc ? `dia <span>${f.venc}</span>` : 'sem vencimento';
     const deduzir = f.deduzir !== false;
     const div = document.createElement('div');
@@ -1817,17 +1956,22 @@ function renderFixas(){
         <div class="fixa-right">
           <div class="fixa-val">${fmtBRL(f.valor)}</div>
           <div class="fixa-freq-badge" style="color:${deduzir?'var(--red)':'var(--muted)'}">
-            ${deduzir ? '📉 Deduzindo' : '⏸️ Não deduz'}
+            ${deduzir
+              ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg> Deduzindo`
+              : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Não deduz`}
           </div>
         </div>
       </div>
       <div class="fixa-bottom">
         <div class="fixa-venc">Vencimento: ${vencStr}</div>
         <div class="fixa-actions">
-          <button class="fixa-btn" style="color:${deduzir?'var(--muted)':'var(--green)'}"
-            onclick="toggleDeduzir('${f.id}')">${deduzir?'⏸️ Pausar':'▶️ Deduzir'}</button>
-          <button class="fixa-btn edit" onclick="editFixa('${f.id}')">✏️</button>
-          <button class="fixa-btn del" onclick="deleteFixa('${f.id}')">✕</button>
+          <button class="fixa-btn" style="color:${deduzir?'var(--muted)':'var(--green)'};display:flex;align-items:center;gap:4px"
+            onclick="toggleDeduzir('${f.id}')">
+            ${deduzir ? IC.pause : IC.play}
+            ${deduzir ? 'Pausar' : 'Deduzir'}
+          </button>
+          <button class="fixa-btn edit" style="display:flex;align-items:center;gap:4px" onclick="editFixa('${f.id}')">${IC.edit}</button>
+          <button class="fixa-btn del" style="display:flex;align-items:center;gap:4px" onclick="deleteFixa('${f.id}')">${IC.trash}</button>
         </div>
       </div>`;
     list.appendChild(div);
@@ -2017,198 +2161,174 @@ async function addTransaction(){
 
 // ─── PDF EXPORT ──────────────────────────────────────────
 const MONTHS_PDF = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-let pdfMonthOffset = 0; // 0 = atual, -1 = passado, etc.
 
 function openPdfModal(){
-  pdfMonthOffset = 0;
-  // Sincroniza com o mês visualizado no Resumo
-  const hoje = new Date();
-  const m = new Date(hoje.getFullYear(), hoje.getMonth() + pdfMonthOffset, 1);
-  document.getElementById('pdf-month-label').textContent = `(${MONTHS_PDF[m.getMonth()]} ${m.getFullYear()})`;
-  // Reset botões
-  document.querySelectorAll('#pdf-period-btns .period-btn').forEach((b,i)=>{
-    b.classList.toggle('active', i===0);
-  });
+  // Popula anos disponíveis baseado nos lançamentos existentes
+  const yearsSet = new Set(transactions.map(t=>t.date?.slice(0,4)).filter(Boolean));
+  const currentYear = new Date().getFullYear();
+  [currentYear-1, currentYear].forEach(y=>yearsSet.add(String(y)));
+  const years = [...yearsSet].sort((a,b)=>b-a);
+  const selYear = document.getElementById('pdf-sel-year');
+  selYear.innerHTML = years.map(y=>`<option value="${y}" ${+y===currentYear?'selected':''}>${y}</option>`).join('');
+
+  // Seleciona mês atual
+  document.getElementById('pdf-sel-month').value = new Date().getMonth();
+
+  updatePdfPreview();
+
+  // Atualiza preview ao mudar seleção
+  document.getElementById('pdf-sel-month').onchange = updatePdfPreview;
+  document.getElementById('pdf-sel-year').onchange  = updatePdfPreview;
+
   document.getElementById('pdf-modal-overlay').classList.add('open');
 }
+
+function updatePdfPreview(){
+  const mo = parseInt(document.getElementById('pdf-sel-month').value);
+  const yr = parseInt(document.getElementById('pdf-sel-year').value);
+  const txns = transactions.filter(t=>{
+    const d = parseLocalDate(t.date);
+    return d.getMonth()===mo && d.getFullYear()===yr;
+  });
+  const rec = txns.filter(t=>t.type==='receita');
+  const gas = txns.filter(t=>t.type==='gasto');
+  const fat = rec.reduce((s,t)=>s+t.val,0);
+  const desp = gas.reduce((s,t)=>s+t.val,0);
+  const el = document.getElementById('pdf-preview-content');
+  if(!txns.length){
+    el.innerHTML = `<span style="color:var(--muted)">Nenhum lançamento em ${MONTHS_PDF[mo]} ${yr}.</span>`;
+    return;
+  }
+  el.innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <span style="background:rgba(34,197,94,.12);color:#4ade80;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">${rec.length} receitas · ${fmtBRL(fat)}</span>
+      <span style="background:rgba(239,68,68,.12);color:#f87171;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">${gas.length} gastos · ${fmtBRL(desp)}</span>
+      <span style="background:rgba(245,197,24,.1);color:var(--accent);padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600">${txns.length} total</span>
+    </div>`;
+}
+
 function closePdfModal(){ document.getElementById('pdf-modal-overlay').classList.remove('open'); }
 function closePdfModalOutside(e){ if(e.target===document.getElementById('pdf-modal-overlay')) closePdfModal(); }
 
-function setPdfMonth(offset, btn){
-  pdfMonthOffset = offset;
-  document.querySelectorAll('#pdf-period-btns .period-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-function getPdfMonthTxns(){
-  const hoje = new Date();
-  const base = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-  const target = new Date(base.getFullYear(), base.getMonth() + pdfMonthOffset, 1);
-  const y = target.getFullYear(), mo = target.getMonth();
-  return transactions.filter(t=>{
-    const d = parseLocalDate(t.date);
-    return d.getFullYear()===y && d.getMonth()===mo;
-  });
-}
-
 function exportPDF(){
-  const hoje = new Date();
-  const target = new Date(hoje.getFullYear(), hoje.getMonth() + pdfMonthOffset, 1);
-  const mesNome = MONTHS_PDF[target.getMonth()] + ' ' + target.getFullYear();
-  const txns = getPdfMonthTxns();
-  const m = calcMetrics(txns);
+  const mo = parseInt(document.getElementById('pdf-sel-month').value);
+  const yr = parseInt(document.getElementById('pdf-sel-year').value);
+  const mesNome = MONTHS_PDF[mo] + ' ' + yr;
   const userName = document.getElementById('menu-user-name').textContent || 'Motorista';
 
-  const optResumo      = document.getElementById('pdf-opt-resumo').checked;
-  const optMetricas    = document.getElementById('pdf-opt-metricas').checked;
-  const optPlataformas = document.getElementById('pdf-opt-plataformas').checked;
-  const optFixas       = document.getElementById('pdf-opt-fixas').checked;
-  const optLancamentos = document.getElementById('pdf-opt-lancamentos').checked;
+  const txns = transactions.filter(t=>{
+    const d = parseLocalDate(t.date);
+    return d.getMonth()===mo && d.getFullYear()===yr;
+  });
 
-  // Calcula por plataforma
+  if(!txns.length){
+    alert(`Nenhum lançamento em ${mesNome}.`);
+    return;
+  }
+
+  const sorted = [...txns].sort((a,b)=>a.date.localeCompare(b.date));
+  const m = calcMetrics(txns);
+  const fixasMes = totalFixasMensal();
+  const saldoFinal = m.saldo - fixasMes;
+
+  // Agrupa por plataforma
   const platMap = {};
   txns.filter(t=>t.type==='receita'&&t.plataforma).forEach(t=>{
-    platMap[t.plataforma] = (platMap[t.plataforma]||0) + t.val;
+    platMap[t.plataforma]=(platMap[t.plataforma]||0)+t.val;
   });
   const platEntries = Object.entries(platMap).sort((a,b)=>b[1]-a[1]);
+  const totalPlat = platEntries.reduce((s,[,v])=>s+v,0)||1;
+  const platColors = {'Uber':'#1dbf73','99':'#ff6b35','InDriver':'#3b82f6','iFood':'#ef4444','Rappi':'#7c3aed','Lalamove':'#eab308','Particular':'#94a3b8','Outro':'#6b7280'};
 
-  // Calcula gastos por categoria
-  const catMap = {};
-  txns.filter(t=>t.type==='gasto').forEach(t=>{
-    catMap[t.cat] = (catMap[t.cat]||0) + t.val;
-  });
+  const style = `<style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1a2e;background:#fff;font-size:13px;line-height:1.5}
+    .header{background:linear-gradient(135deg,#0b0d12,#1a2038);color:#fff;padding:28px 32px}
+    .header-logo{font-size:30px;font-weight:900;letter-spacing:3px;color:#f5c518}
+    .header-logo span{color:#fff}
+    .header-sub{font-size:11px;color:#64748b;margin-top:4px}
+    .header-row{display:flex;justify-content:space-between;align-items:flex-end}
+    .header-right{text-align:right}
+    .header-month{font-size:22px;font-weight:800;color:#f5c518}
+    .header-meta{font-size:11px;color:#64748b;margin-top:2px}
+    .section{padding:22px 32px;border-bottom:1px solid #f1f5f9}
+    .section:last-of-type{border-bottom:none}
+    .sec-title{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin-bottom:14px}
+    /* Cards resumo */
+    .cards{display:flex;gap:10px;margin-bottom:0}
+    .card{flex:1;border-radius:12px;padding:14px 10px;text-align:center}
+    .card.g{background:#f0fdf4;border:1px solid #bbf7d0}
+    .card.r{background:#fef2f2;border:1px solid #fecaca}
+    .card.y{background:#fefce8;border:1px solid #fef08a}
+    .card-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:4px}
+    .card-val{font-size:18px;font-weight:900;font-family:monospace}
+    .cv-g{color:#16a34a}.cv-r{color:#dc2626}.cv-y{color:#ca8a04}
+    /* Plataformas */
+    .plat-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f8fafc}
+    .plat-row:last-child{border-bottom:none}
+    .plat-name{font-weight:600;font-size:12px;min-width:75px}
+    .plat-bar-bg{flex:1;height:7px;background:#f1f5f9;border-radius:99px;overflow:hidden}
+    .plat-bar{height:100%;border-radius:99px}
+    .plat-pct{font-size:10px;color:#94a3b8;min-width:30px;text-align:right}
+    .plat-val{font-weight:700;font-family:monospace;font-size:12px;min-width:80px;text-align:right}
+    /* Tabela lançamentos */
+    table{width:100%;border-collapse:collapse}
+    thead tr{background:#f8fafc}
+    th{padding:9px 10px;text-align:left;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;border-bottom:2px solid #e2e8f0}
+    td{padding:8px 10px;font-size:12px;border-bottom:1px solid #f8fafc;vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#fafafa}
+    .badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700}
+    .b-rec{background:#dcfce7;color:#15803d}
+    .b-gas{background:#fee2e2;color:#b91c1c}
+    .amount-rec{color:#16a34a;font-weight:700;font-family:monospace}
+    .amount-gas{color:#dc2626;font-weight:700;font-family:monospace}
+    /* Total row */
+    .total-row td{background:#f8fafc;font-weight:700;border-top:2px solid #e2e8f0}
+    /* Footer */
+    .footer{background:#f8fafc;padding:16px 32px;text-align:center;font-size:10px;color:#94a3b8}
+    @media print{
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .no-print{display:none}
+    }
+  </style>`;
 
-  // Monta HTML do PDF
-  const style = `
-    <style>
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1a2e;background:#fff;font-size:13px}
-      .header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:0}
-      .header-logo{font-size:28px;font-weight:900;letter-spacing:3px;color:#f5c518}
-      .header-logo span{color:#fff}
-      .header-sub{font-size:12px;color:#8892b0;margin-top:4px}
-      .header-right{text-align:right}
-      .header-month{font-size:20px;font-weight:700;color:#f5c518}
-      .header-user{font-size:11px;color:#8892b0;margin-top:2px}
-      .header-row{display:flex;justify-content:space-between;align-items:flex-end}
-      .section{padding:20px 32px;border-bottom:1px solid #eef0f6}
-      .section:last-child{border-bottom:none}
-      .section-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8892b0;margin-bottom:14px}
-      .cards-row{display:flex;gap:12px;margin-bottom:0}
-      .card{flex:1;border-radius:12px;padding:14px 12px;text-align:center}
-      .card.green{background:#f0fdf4;border:1px solid #bbf7d0}
-      .card.red{background:#fef2f2;border:1px solid #fecaca}
-      .card.yellow{background:#fefce8;border:1px solid #fde047}
-      .card-label{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-      .card-val{font-size:20px;font-weight:800;font-family:monospace}
-      .card-val.g{color:#16a34a}.card-val.r{color:#dc2626}.card-val.y{color:#ca8a04}
-      .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-      .met{background:#f8fafc;border-radius:10px;padding:10px;text-align:center;border:1px solid #e2e8f0}
-      .met-icon{font-size:18px;margin-bottom:3px}
-      .met-val{font-size:13px;font-weight:700;color:#1e40af;font-family:monospace}
-      .met-label{font-size:9px;color:#94a3b8;margin-top:2px}
-      .plat-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
-      .plat-row:last-child{border-bottom:none}
-      .plat-bar-wrap{flex:1;height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden}
-      .plat-bar-fill{height:100%;border-radius:99px}
-      .plat-name{min-width:80px;font-weight:600;font-size:12px}
-      .plat-pct{min-width:36px;text-align:right;font-size:11px;color:#6b7280}
-      .plat-val{min-width:80px;text-align:right;font-weight:700;font-size:12px;font-family:monospace}
-      .fixa-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9}
-      .fixa-row:last-child{border-bottom:none}
-      .fixa-left{flex:1}
-      .fixa-nome-pdf{font-weight:600;font-size:13px}
-      .fixa-meta{font-size:10px;color:#6b7280;margin-top:2px}
-      .fixa-val-pdf{font-weight:700;font-family:monospace;color:#dc2626}
-      table{width:100%;border-collapse:collapse}
-      th{background:#f8fafc;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e2e8f0}
-      td{padding:7px 10px;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
-      tr:last-child td{border-bottom:none}
-      .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
-      .badge.rec{background:#dcfce7;color:#166534}
-      .badge.gas{background:#fee2e2;color:#991b1b}
-      .footer{background:#f8fafc;padding:16px 32px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0}
-      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-    </style>
-  `;
+  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>DriveFinance — ${mesNome}</title>${style}</head><body>`;
 
-  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>DriveFinance — ${mesNome}</title>${style}</head><body>`;
+  // ── HEADER ──
+  html += `<div class="header"><div class="header-row">
+    <div>
+      <div class="header-logo">Drive<span>Finance</span></div>
+      <div class="header-sub">Relatório Financeiro · Para uso pessoal e contábil</div>
+    </div>
+    <div class="header-right">
+      <div class="header-month">${mesNome}</div>
+      <div class="header-meta">${userName}</div>
+      <div class="header-meta">Gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>
+    </div>
+  </div></div>`;
 
-  // HEADER
-  html += `
-    <div class="header">
-      <div class="header-row">
-        <div>
-          <div class="header-logo">Drive<span>Finance</span></div>
-          <div class="header-sub">Relatório Financeiro do Motorista</div>
-        </div>
-        <div class="header-right">
-          <div class="header-month">${mesNome}</div>
-          <div class="header-user">${userName}</div>
-          <div class="header-user">Gerado em ${new Date().toLocaleDateString('pt-BR')}</div>
-        </div>
-      </div>
-    </div>`;
+  // ── RESUMO ──
+  html += `<div class="section">
+    <div class="sec-title">Resumo do Mês</div>
+    <div class="cards">
+      <div class="card g"><div class="card-lbl">Faturamento</div><div class="card-val cv-g">${fmtBRL(m.fat)}</div></div>
+      <div class="card r"><div class="card-lbl">Despesas</div><div class="card-val cv-r">${fmtBRL(m.desp)}</div></div>
+      <div class="card y"><div class="card-lbl">Saldo Líquido</div><div class="card-val cv-y">${fmtBRL(saldoFinal)}</div></div>
+    </div>
+    ${fixasMes>0?`<div style="margin-top:10px;font-size:11px;color:#6b7280">* Saldo já deduzido das despesas fixas mensais (${fmtBRL(fixasMes)})</div>`:''}
+  </div>`;
 
-  // RESUMO
-  if(optResumo){
-    const fixasMes = totalFixasMensal();
-    const saldoFinal = m.saldo - fixasMes;
-    html += `
-      <div class="section">
-        <div class="section-title">Resumo do Mês</div>
-        <div class="cards-row">
-          <div class="card green">
-            <div class="card-label">Faturamento</div>
-            <div class="card-val g">${fmtBRL(m.fat)}</div>
-          </div>
-          <div class="card red">
-            <div class="card-label">Despesas</div>
-            <div class="card-val r">${fmtBRL(m.desp)}</div>
-          </div>
-          <div class="card yellow">
-            <div class="card-label">Saldo Líquido</div>
-            <div class="card-val y">${fmtBRL(saldoFinal)}</div>
-          </div>
-        </div>
-        ${fixasMes>0?`<div style="margin-top:10px;font-size:11px;color:#6b7280">* Saldo já deduzido das despesas fixas mensais (${fmtBRL(fixasMes)})</div>`:''}
-      </div>`;
-  }
-
-  // MÉTRICAS
-  if(optMetricas){
-    const defs = [
-      {icon:'🚗',val:m.viagens.toFixed(0),label:'Viagens'},
-      {icon:'⏱️',val:m.horas.toFixed(1)+'h',label:'Horas'},
-      {icon:'🛣️',val:m.km.toFixed(0)+' km',label:'Km rodados'},
-      {icon:'💵',val:fmtBRL(m.fatPorViagem),label:'Fat/viagem'},
-      {icon:'⚡',val:fmtBRL(m.fatMedioPorHora),label:'Fat/hora'},
-      {icon:'🛣️',val:'R$'+m.fatMedioPorKm.toFixed(2),label:'Fat/km'},
-      {icon:'💸',val:fmtBRL(m.custoPorViagem),label:'Custo/viagem'},
-      {icon:'💸',val:fmtBRL(m.custoPorHora),label:'Custo/hora'},
-      {icon:'✅',val:fmtBRL(m.lucroPorViagem),label:'Lucro/viagem'},
-    ];
-    html += `<div class="section"><div class="section-title">Métricas Detalhadas</div>
-      <div class="metrics-grid">${defs.map(d=>`
-        <div class="met">
-          <div class="met-icon">${d.icon}</div>
-          <div class="met-val">${d.val}</div>
-          <div class="met-label">${d.label}</div>
-        </div>`).join('')}
-      </div></div>`;
-  }
-
-  // PLATAFORMAS
-  if(optPlataformas && platEntries.length){
-    const totalPlat = platEntries.reduce((s,[,v])=>s+v,0)||1;
-    const platColors = {'Uber':'#1dbf73','99':'#ff6b35','InDriver':'#3b82f6','iFood':'#ef4444','Rappi':'#7c3aed','Lalamove':'#eab308','Particular':'#94a3b8','Outro':'#6b7280'};
-    html += `<div class="section"><div class="section-title">Faturamento por Plataforma</div>
+  // ── PLATAFORMAS ──
+  if(platEntries.length){
+    html += `<div class="section"><div class="sec-title">Faturamento por Plataforma</div>
       ${platEntries.map(([plat,val])=>{
         const pct = Math.round(val/totalPlat*100);
         const color = platColors[plat]||'#6b7280';
         return `<div class="plat-row">
           <div class="plat-name">${plat}</div>
-          <div class="plat-bar-wrap"><div class="plat-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="plat-bar-bg"><div class="plat-bar" style="width:${pct}%;background:${color}"></div></div>
           <div class="plat-pct">${pct}%</div>
           <div class="plat-val">${fmtBRL(val)}</div>
         </div>`;
@@ -2216,73 +2336,61 @@ function exportPDF(){
     </div>`;
   }
 
-  // FIXAS
-  if(optFixas && fixas.length){
-    html += `<div class="section"><div class="section-title">Despesas Fixas</div>
-      ${fixas.map(f=>{
-        const equiv = fixaMensal(f);
-        const deduz = f.deduzir!==false;
-        return `<div class="fixa-row">
-          <div class="fixa-left">
-            <div class="fixa-nome-pdf">${FIXA_CAT_ICONS[f.cat]||'💼'} ${f.nome}</div>
-            <div class="fixa-meta">${f.cat} · ${FREQ_LABEL[f.freq]}${f.venc?' · vence dia '+f.venc:''} · ${deduz?'deduzindo':'não deduz'}</div>
-          </div>
-          <div>
-            <div class="fixa-val-pdf">${fmtBRL(f.valor)}</div>
-            <div style="font-size:10px;color:#6b7280;text-align:right">≈ ${fmtBRL(equiv)}/mês</div>
-          </div>
-        </div>`;
-      }).join('')}
-      <div style="margin-top:10px;padding-top:10px;border-top:2px solid #e2e8f0;display:flex;justify-content:space-between">
-        <span style="font-weight:700;font-size:13px">Total mensal deduzido</span>
-        <span style="font-weight:800;font-family:monospace;color:#dc2626;font-size:14px">${fmtBRL(totalFixasMensal())}</span>
-      </div>
-    </div>`;
-  }
+  // ── LANÇAMENTOS ──
+  html += `<div class="section"><div class="sec-title">Lançamentos Detalhados — ${txns.length} registros</div>
+    <table>
+      <thead><tr>
+        <th>Data</th><th>Descrição</th><th>Plataforma / Categoria</th>
+        <th>Tipo</th><th style="text-align:right">Valor</th>
+      </tr></thead>
+      <tbody>
+        ${sorted.map(t=>{
+          const dStr = parseLocalDate(t.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+          const info = catInfo(t.cat, t.type);
+          const platTag = t.plataforma || t.cat || '—';
+          const isRec = t.type==='receita';
+          const extras = [];
+          if(+t.viagens>0) extras.push(`${t.viagens}v`);
+          if(+t.horas>0)   extras.push(`${t.horas}h`);
+          if(+t.km>0)      extras.push(`${t.km}km`);
+          return `<tr>
+            <td style="color:#6b7280;white-space:nowrap">${dStr}</td>
+            <td style="font-weight:500">${t.description||'—'}${extras.length?`<br><span style="font-size:10px;color:#94a3b8">${extras.join(' · ')}</span>`:''}  </td>
+            <td>${info.icon} ${platTag}</td>
+            <td><span class="badge ${isRec?'b-rec':'b-gas'}">${isRec?'Receita':'Gasto'}</span></td>
+            <td style="text-align:right" class="${isRec?'amount-rec':'amount-gas'}">${isRec?'+':'-'}${fmtBRL(t.val)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="4" style="text-align:right">Total Receitas:</td>
+          <td style="text-align:right;color:#16a34a;font-family:monospace">+${fmtBRL(m.fat)}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" style="text-align:right">Total Gastos:</td>
+          <td style="text-align:right;color:#dc2626;font-family:monospace">-${fmtBRL(m.desp)}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" style="text-align:right;font-size:14px">Saldo do Mês:</td>
+          <td style="text-align:right;font-size:14px;font-family:monospace;color:${m.saldo>=0?'#16a34a':'#dc2626'}">${m.saldo>=0?'+':''}${fmtBRL(m.saldo)}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>`;
 
-  // LANÇAMENTOS
-  if(optLancamentos && txns.length){
-    const sorted = [...txns].sort((a,b)=>a.date.localeCompare(b.date));
-    html += `<div class="section"><div class="section-title">Lançamentos do Mês (${txns.length})</div>
-      <table>
-        <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th style="text-align:right">Valor</th></tr></thead>
-        <tbody>
-          ${sorted.map(t=>{
-            const dStr = parseLocalDate(t.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-            const info = catInfo(t.cat, t.type);
-            const platTag = t.plataforma ? ` · ${t.plataforma}` : '';
-            return `<tr>
-              <td style="color:#6b7280">${dStr}</td>
-              <td style="font-weight:500">${t.description||''}</td>
-              <td>${info.icon} ${t.cat}${platTag}</td>
-              <td><span class="badge ${t.type==='receita'?'rec':'gas'}">${t.type==='receita'?'Receita':'Gasto'}</span></td>
-              <td style="text-align:right;font-weight:700;font-family:monospace;color:${t.type==='receita'?'#16a34a':'#dc2626'}">
-                ${t.type==='receita'?'+':'-'}${fmtBRL(t.val)}
-              </td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-  }
+  // ── FOOTER ──
+  html += `<div class="footer">
+    DriveFinance · Relatório gerado automaticamente em ${new Date().toLocaleString('pt-BR')} ·
+    Este documento é de uso pessoal e pode ser apresentado ao contador
+  </div></body></html>`;
 
-  // FOOTER
-  html += `
-    <div class="footer">
-      DriveFinance · Relatório gerado em ${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} ·
-      Este documento é de uso pessoal e pode ser apresentado ao contador
-    </div>
-  </body></html>`;
-
-  // Abre em nova aba e dispara impressão/download
   closePdfModal();
   const win = window.open('', '_blank');
-  if(!win){ alert('Permita pop-ups para gerar o PDF.'); return; }
+  if(!win){ alert('Permita pop-ups para gerar o PDF. No Safari: Configurações → Safari → Bloquear Pop-ups → desativar.'); return; }
   win.document.write(html);
   win.document.close();
-  win.onload = () => {
-    setTimeout(()=>{ win.print(); }, 400);
-  };
+  win.onload = ()=>{ setTimeout(()=>win.print(), 400); };
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
