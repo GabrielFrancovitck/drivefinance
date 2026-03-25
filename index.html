@@ -6,10 +6,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>DriveFinance</title>
-<!-- Favicon DriveFinance -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230b0d12'/%3E%3Cpath d='M30 30 C 60 30, 80 40, 80 65 C 80 85, 60 70, 30 70 Z' fill='none' stroke='%23f5c518' stroke-width='8'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%23f5c518'/%3E%3Cpath d='M50 20 L50 35 M50 65 L50 80 M20 50 L35 50 M65 50 L80 50' stroke='%23f5c518' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">   
-<!-- Ícone para iPhone/iPad na tela inicial -->
-<link rel="apple-touch-icon" href="https://api.dicebear.com/7.x/icons/svg?seed=speedometer&backgroundColor=0b0d12&color=f5c518">   
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════
@@ -359,6 +355,16 @@ input[type=date].date-picker{
 .proj-label{font-size:13px;color:var(--muted)}
 .proj-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent)}
 
+/* ── PDF PRINT ── */
+@media print{
+  body{background:#fff!important;color:#000!important;max-width:100%!important}
+  #auth-screen,#app-screen .topbar,#app-screen .nav-tabs,
+  .bottom-nav,.fab,.modal-overlay,#pdf-modal-overlay{display:none!important}
+  #pdf-print-area{display:block!important}
+  .pdf-page{page-break-after:always;padding:32px}
+}
+#pdf-print-area{display:none}
+
 /* HERO-MINI - saldo compacto no topo da análise */
 .hero-mini{background:linear-gradient(135deg,#1a2038,#1e2844);border-radius:var(--radius);
   padding:16px;margin-bottom:12px;border:1px solid var(--border);
@@ -392,11 +398,19 @@ input[type=date].date-picker{
     <div class="auth-form active" id="form-login">
       <div class="auth-field">
         <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"/>
+        <input type="email" id="login-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"
+          oninput="clearFieldError('login-email')" onblur="if(this.value&&!isValidEmail(this.value))showFieldError('login-email','E-mail inválido')"/>
+        <div id="login-email-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
       <div class="auth-field">
         <label>Senha</label>
-        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+        <div style="position:relative">
+          <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
+            oninput="clearFieldError('login-password')" style="padding-right:44px"/>
+          <button type="button" id="login-pw-eye" onclick="togglePwVisibility('login-password','login-pw-eye')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0">👁️</button>
+        </div>
+        <div id="login-password-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
       <button class="auth-btn" id="btn-login" onclick="doLogin()">ENTRAR</button>
       <div class="auth-footer">
@@ -408,15 +422,30 @@ input[type=date].date-picker{
     <div class="auth-form" id="form-register">
       <div class="auth-field">
         <label>Nome completo</label>
-        <input type="text" id="reg-name" placeholder="Seu nome" autocomplete="name"/>
+        <input type="text" id="reg-name" placeholder="Seu nome" autocomplete="name"
+          oninput="clearFieldError('reg-name')"/>
+        <div id="reg-name-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
       <div class="auth-field">
         <label>E-mail</label>
-        <input type="email" id="reg-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"/>
+        <input type="email" id="reg-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"
+          oninput="clearFieldError('reg-email')" onblur="if(this.value&&!isValidEmail(this.value))showFieldError('reg-email','E-mail inválido')"/>
+        <div id="reg-email-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
       <div class="auth-field">
         <label>Senha</label>
-        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+        <div style="position:relative">
+          <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password"
+            oninput="clearFieldError('reg-password');updatePasswordStrength(this.value)" style="padding-right:44px"/>
+          <button type="button" id="reg-pw-eye" onclick="togglePwVisibility('reg-password','reg-pw-eye')"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0">👁️</button>
+        </div>
+        <!-- Barra de força da senha -->
+        <div style="height:4px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden">
+          <div id="pw-strength-bar" style="height:100%;width:0;border-radius:99px;transition:width .3s,background .3s"></div>
+        </div>
+        <div id="pw-strength-lbl" style="font-size:10px;margin-top:3px;height:14px"></div>
+        <div id="reg-password-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
       </div>
       <button class="auth-btn" id="btn-register" onclick="doRegister()">CRIAR CONTA</button>
       <div class="auth-footer">
@@ -625,6 +654,23 @@ input[type=date].date-picker{
   </div>
   <div class="section-title">Gastos por categoria</div>
   <div class="cat-list" id="cat-list"></div>
+
+  <!-- Botão exportar PDF -->
+  <div style="margin-top:18px;margin-bottom:4px">
+    <button onclick="openPdfModal()" style="
+      width:100%;padding:14px;
+      background:linear-gradient(135deg,#1e2540,#252b40);
+      border:1px solid var(--border);border-radius:var(--radius);
+      color:var(--text);font-size:14px;font-weight:600;
+      cursor:pointer;font-family:'DM Sans',sans-serif;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      transition:border-color .2s;
+    " onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <span style="font-size:20px">📄</span>
+      <span>Exportar Relatório PDF</span>
+      <span style="font-size:11px;color:var(--muted);margin-left:4px" id="pdf-month-label"></span>
+    </button>
+  </div>
 </div>
 
 <!-- ══════════════ DESPESAS FIXAS ══════════════ -->
@@ -797,8 +843,66 @@ input[type=date].date-picker{
       <label>Dia do vencimento</label>
       <input type="number" id="fx-venc" placeholder="Ex: 10" min="1" max="31" inputmode="numeric"/>
     </div>
+    <!-- Toggle deduzir do cálculo -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:10px">
+      <div>
+        <div style="font-size:13px;font-weight:600">Deduzir do saldo líquido</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Se ativado, deduz proporcionalmente do saldo diário</div>
+      </div>
+      <label style="position:relative;width:44px;height:24px;flex-shrink:0;cursor:pointer">
+        <input type="checkbox" id="fx-deduzir" checked style="opacity:0;width:0;height:0;position:absolute">
+        <span id="fx-deduzir-track" style="position:absolute;inset:0;border-radius:99px;background:var(--border);transition:.2s;cursor:pointer" onclick="updateDeduzirTrack()"></span>
+        <span id="fx-deduzir-thumb" style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;pointer-events:none"></span>
+      </label>
+    </div>
     <input type="hidden" id="fx-edit-id"/>
     <button class="btn-add" id="fx-btn-save" onclick="saveFixa()">SALVAR</button>
+  </div>
+</div>
+
+<!-- MODAL PDF -->
+<div class="modal-overlay" id="pdf-modal-overlay" onclick="closePdfModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Exportar Relatório PDF</div>
+
+    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Período</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="pdf-period-btns">
+        <button class="period-btn active" onclick="setPdfMonth(0,this)">Mês atual</button>
+        <button class="period-btn" onclick="setPdfMonth(-1,this)">Mês passado</button>
+        <button class="period-btn" onclick="setPdfMonth(-2,this)">2 meses atrás</button>
+        <button class="period-btn" onclick="setPdfMonth(-3,this)">3 meses atrás</button>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Incluir no relatório</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pdf-opt-resumo" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          📊 Resumo do mês (faturamento, despesa, saldo)
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pdf-opt-metricas" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          📈 Métricas (km, horas, viagens, médias)
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pdf-opt-plataformas" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          🚗 Faturamento por plataforma
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pdf-opt-fixas" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          📅 Despesas fixas
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pdf-opt-lancamentos" checked style="width:16px;height:16px;accent-color:var(--accent)">
+          🧾 Todos os lançamentos detalhados
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-add" id="pdf-btn-export" onclick="exportPDF()">📄 GERAR PDF</button>
   </div>
 </div>
 
@@ -811,7 +915,6 @@ input[type=date].date-picker{
 // ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
-
 // ──────────────────────────────────────────────────────────
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
@@ -882,6 +985,61 @@ const sb = {
       method: 'DELETE', headers: this._hdr(),
     });
   },
+
+  // ── Despesas Fixas no banco Supabase ─────────────────────
+  async getFixas() {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/fixed_expenses?user_id=eq.${this._user.id}&order=created_at.asc`,
+      { headers: this._hdr() }
+    );
+    if (!r.ok) return [];
+    return r.json();
+  },
+  async insertFixa(fixa) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses`, {
+      method: 'POST',
+      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      body: JSON.stringify({ ...fixa, user_id: this._user?.id }),
+    });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return rows[0] || null;
+  },
+  async updateFixa(id, fixa) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: { ...this._hdr(), 'Prefer': 'return=representation' },
+      body: JSON.stringify(fixa),
+    });
+    if (!r.ok) return null;
+    const rows = await r.json();
+    return rows[0] || null;
+  },
+  async deleteFixa(id) {
+    await fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
+      method: 'DELETE', headers: this._hdr(),
+    });
+  },
+
+  // ── Refresh token ─────────────────────────────────────────
+  async refreshToken() {
+    try {
+      const s = JSON.parse(localStorage.getItem('df_session') || 'null');
+      if (!s?.user?.refresh_token) return false;
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST', headers: this._hdr(),
+        body: JSON.stringify({ refresh_token: s.user.refresh_token }),
+      });
+      const d = await r.json();
+      if (d.access_token) {
+        this._token = d.access_token;
+        this._user  = d.user;
+        localStorage.setItem('df_session', JSON.stringify({ token: d.access_token, user: d.user }));
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  },
 };
 
 const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY && SUPABASE_URL.startsWith('https://') && SUPABASE_URL.includes('supabase'));
@@ -889,7 +1047,7 @@ const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY && SUPABASE_URL.startsWith(
 // ── AUTH HELPERS ──────────────────────────────────────────
 function showAuthMsg(msg, type='error') {
   const el = document.getElementById('auth-msg');
-  el.textContent = msg;
+  el.innerHTML = msg;
   el.className = `auth-msg ${type} show`;
 }
 function clearAuthMsg() { document.getElementById('auth-msg').className = 'auth-msg'; }
@@ -902,17 +1060,70 @@ function switchAuthTab(tab) {
   document.getElementById('form-register').classList.toggle('active', tab==='register');
 }
 
+// Validações
+function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+function isValidName(n){ return n.trim().length >= 2 && /[a-zA-ZÀ-ÿ]/.test(n); }
+function passwordStrength(p){
+  let score = 0;
+  if(p.length >= 6)  score++;
+  if(p.length >= 10) score++;
+  if(/[A-Z]/.test(p)) score++;
+  if(/[0-9]/.test(p)) score++;
+  if(/[^A-Za-z0-9]/.test(p)) score++;
+  return score; // 0-5
+}
+function updatePasswordStrength(pw){
+  const bar = document.getElementById('pw-strength-bar');
+  const lbl = document.getElementById('pw-strength-lbl');
+  if(!bar||!pw) return;
+  const s = passwordStrength(pw);
+  const colors = ['#ef4444','#ef4444','#f97316','#eab308','#22c55e','#22c55e'];
+  const labels = ['','Muito fraca','Fraca','Razoável','Boa','Forte'];
+  bar.style.width = (s/5*100)+'%';
+  bar.style.background = colors[s];
+  lbl.textContent = labels[s] || '';
+  lbl.style.color = colors[s];
+}
+
+function togglePwVisibility(inputId, btnId){
+  const inp = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  if(inp.type==='password'){ inp.type='text'; btn.textContent='🙈'; }
+  else { inp.type='password'; btn.textContent='👁️'; }
+}
+
+// Limpa erro de um campo específico
+function clearFieldError(id){ const el=document.getElementById(id+'-err'); if(el) el.style.display='none'; }
+function showFieldError(id, msg){
+  const el=document.getElementById(id+'-err');
+  if(el){ el.textContent=msg; el.style.display='block'; }
+}
+
 async function doLogin() {
+  clearAuthMsg();
   const email    = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  clearAuthMsg();
-  if (!email || !password) { showAuthMsg('Preencha e-mail e senha.'); return; }
+
+  // Validações em tempo real
+  let ok = true;
+  clearFieldError('login-email'); clearFieldError('login-password');
+
+  if(!email){
+    showFieldError('login-email','Campo obrigatório'); ok=false;
+  } else if(!isValidEmail(email)){
+    showFieldError('login-email','E-mail inválido'); ok=false;
+  }
+  if(!password){
+    showFieldError('login-password','Campo obrigatório'); ok=false;
+  } else if(password.length < 6){
+    showFieldError('login-password','Mínimo 6 caracteres'); ok=false;
+  }
+  if(!ok) return;
 
   const btn = document.getElementById('btn-login');
   btn.disabled = true; btn.textContent = 'ENTRANDO...';
 
   if (!USE_SUPABASE) {
-    // MODO LOCAL (sem Supabase configurado)
     const stored = JSON.parse(localStorage.getItem('df_local_user') || 'null');
     if (!stored || stored.email !== email || stored.password !== btoa(password)) {
       showAuthMsg('E-mail ou senha incorretos.');
@@ -922,45 +1133,71 @@ async function doLogin() {
     localStorage.setItem('df_local_logged','1');
     enterApp(stored);
   } else {
-    // MODO SUPABASE
-    const data = await sb.signIn(email, password);
-    if (data.error) {
-      // Erro específico de email não confirmado
-      const msg = data.error.message || '';
-      if (msg.toLowerCase().includes('email not confirmed') || msg.toLowerCase().includes('not confirmed')) {
-        showAuthMsg('⚠️ Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada.');
-      } else {
-        showAuthMsg(msg || 'E-mail ou senha incorretos.');
+    try {
+      const data = await sb.signIn(email, password);
+      if (data.error) {
+        const msg = (data.error.message || '').toLowerCase();
+        if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
+          showAuthMsg('⚠️ Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada e clique no link que enviamos.');
+        } else if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('wrong password')) {
+          showAuthMsg('E-mail ou senha incorretos. Verifique e tente novamente.');
+        } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
+          showAuthMsg('⏳ Muitas tentativas. Aguarde alguns minutos e tente novamente.');
+        } else if (msg.includes('user not found')) {
+          showAuthMsg('Nenhuma conta encontrada com este e-mail.');
+        } else {
+          showAuthMsg(data.error.message || 'Erro ao entrar. Tente novamente.');
+        }
+        btn.disabled=false; btn.textContent='ENTRAR'; return;
       }
-      btn.disabled=false; btn.textContent='ENTRAR'; return;
+      if (data.user && !data.user.email_confirmed_at) {
+        showAuthMsg('⚠️ Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada.');
+        btn.disabled=false; btn.textContent='ENTRAR'; return;
+      }
+      enterApp(data.user);
+    } catch(e) {
+      showAuthMsg('Sem conexão. Verifique sua internet e tente novamente.');
     }
-    // Checa se o email foi confirmado (campo email_confirmed_at)
-    if (data.user && !data.user.email_confirmed_at) {
-      showAuthMsg('⚠️ Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada e clique no link de confirmação.');
-      btn.disabled=false; btn.textContent='ENTRAR'; return;
-    }
-    enterApp(data.user);
   }
   btn.disabled=false; btn.textContent='ENTRAR';
 }
 
 async function doRegister() {
+  clearAuthMsg();
   const name     = document.getElementById('reg-name').value.trim();
   const email    = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
-  clearAuthMsg();
-  if (!name)                { showAuthMsg('Informe seu nome.'); return; }
-  if (!email)               { showAuthMsg('Informe seu e-mail.'); return; }
-  if (password.length < 6)  { showAuthMsg('Senha deve ter pelo menos 6 caracteres.'); return; }
+
+  let ok = true;
+  clearFieldError('reg-name'); clearFieldError('reg-email'); clearFieldError('reg-password');
+
+  if(!name){
+    showFieldError('reg-name','Campo obrigatório'); ok=false;
+  } else if(!isValidName(name)){
+    showFieldError('reg-name','Informe um nome válido (mín. 2 letras)'); ok=false;
+  }
+  if(!email){
+    showFieldError('reg-email','Campo obrigatório'); ok=false;
+  } else if(!isValidEmail(email)){
+    showFieldError('reg-email','Informe um e-mail válido'); ok=false;
+  }
+  if(!password){
+    showFieldError('reg-password','Campo obrigatório'); ok=false;
+  } else if(password.length < 6){
+    showFieldError('reg-password','Mínimo 6 caracteres'); ok=false;
+  } else if(passwordStrength(password) < 2){
+    showFieldError('reg-password','Senha muito fraca. Use letras e números'); ok=false;
+  }
+  if(!ok) return;
 
   const btn = document.getElementById('btn-register');
   btn.disabled=true; btn.textContent='CRIANDO...';
 
   if (!USE_SUPABASE) {
-    // MODO LOCAL
     const existing = JSON.parse(localStorage.getItem('df_local_user') || 'null');
     if (existing?.email === email) {
-      showAuthMsg('Este e-mail já está em uso.'); btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+      showFieldError('reg-email','Este e-mail já está em uso.');
+      btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
     }
     const user = { id: Date.now().toString(), name, email, password: btoa(password) };
     localStorage.setItem('df_local_user', JSON.stringify(user));
@@ -969,17 +1206,28 @@ async function doRegister() {
     showAuthMsg('Conta criada com sucesso! 🎉', 'success');
     setTimeout(() => enterApp(user), 800);
   } else {
-    // MODO SUPABASE
-    const data = await sb.signUp(email, password, name);
-    if (data.error) {
-      showAuthMsg(data.error.message || 'Erro ao criar conta.');
-      btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+    try {
+      const data = await sb.signUp(email, password, name);
+      if (data.error) {
+        const msg = (data.error.message || '').toLowerCase();
+        if (msg.includes('already registered') || msg.includes('already exists')) {
+          showFieldError('reg-email','Este e-mail já está cadastrado.');
+        } else if (msg.includes('password')) {
+          showFieldError('reg-password', data.error.message);
+        } else {
+          showAuthMsg(data.error.message || 'Erro ao criar conta.');
+        }
+        btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+      }
+      if (data.user?.identities?.length === 0) {
+        showFieldError('reg-email','Este e-mail já está cadastrado.');
+        btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
+      }
+      showAuthMsg(`✅ Conta criada! Enviamos um link de confirmação para <b>${email}</b>. Confirme para entrar.`, 'success');
+      setTimeout(() => switchAuthTab('login'), 3500);
+    } catch(e) {
+      showAuthMsg('Sem conexão. Verifique sua internet e tente novamente.');
     }
-    if (data.user?.identities?.length === 0) {
-      showAuthMsg('Este e-mail já está cadastrado.'); btn.disabled=false; btn.textContent='CRIAR CONTA'; return;
-    }
-    showAuthMsg('✅ Conta criada! Enviamos um link de confirmação para ' + email + '. Confirme seu e-mail para entrar.', 'success');
-    setTimeout(() => switchAuthTab('login'), 3000);
   }
   btn.disabled=false; btn.textContent='CRIAR CONTA';
 }
@@ -999,23 +1247,17 @@ async function enterApp(user) {
     new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   updateCatOptions();
 
-  // Carrega lançamentos
+  // Carrega lançamentos e fixas
   if (USE_SUPABASE) {
-    // Mostra loading enquanto busca do banco
-    transactions = [];
+    transactions = []; fixas = [];
     renderHome(); renderAnalyse(); renderResumo();
-    const remote = await sb.getTxns();
-    if (Array.isArray(remote)) {
-      // Normaliza campo id (Supabase usa UUID, app usa número — mantemos como string)
-      transactions = remote.map(t => ({ ...t }));
-    }
+    const [remoteTxns, remoteFix] = await Promise.all([sb.getTxns(), sb.getFixas()]);
+    if (Array.isArray(remoteTxns)) transactions = remoteTxns;
+    if (Array.isArray(remoteFix))  fixas = remoteFix;
   } else {
-    // Modo local: localStorage + dados de exemplo se vazio
     try { transactions = JSON.parse(localStorage.getItem('df_txns') || '[]'); } catch(e) { transactions = []; }
-    if (!transactions.length) {
-      transactions = DEMO_TRANSACTIONS();
-      save();
-    }
+    try { fixas = JSON.parse(localStorage.getItem('df_fixas') || '[]'); } catch(e) { fixas = []; }
+    if (!transactions.length) { transactions = DEMO_TRANSACTIONS(); save(); }
   }
 
   renderHome(); renderAnalyse(); renderResumo();
@@ -1469,6 +1711,9 @@ function renderAll(){
 // ─── RESUMO ──────────────────────────────────────────────
 function renderResumo(){
   document.getElementById('month-name-display').textContent=MONTHS[viewMonth]+' '+viewYear;
+  // Sincroniza label do botão PDF com o mês visualizado
+  const pdfLbl = document.getElementById('pdf-month-label');
+  if(pdfLbl) pdfLbl.textContent = `(${MONTHS[viewMonth]} ${viewYear})`;
   const txns=transactions.filter(t=>{const d=parseLocalDate(t.date);return d.getMonth()===viewMonth&&d.getFullYear()===viewYear;});
   const m=calcMetrics(txns);
   document.getElementById('r-fat').textContent=fmtShort(m.fat);
@@ -1509,16 +1754,13 @@ function showPage(p){
 }
 
 // ─── DESPESAS FIXAS ──────────────────────────────────────
-// Frequência → quantas vezes por mês equivale
 const FREQ_LABEL = {
   semanal:'Semanal', quinzenal:'Quinzenal', mensal:'Mensal',
-  bimestral:'Bimestral', trimestral:'Trimestral',
-  semestral:'Semestral', anual:'Anual'
+  bimestral:'Bimestral', trimestral:'Trimestral', semestral:'Semestral', anual:'Anual'
 };
 const FREQ_PER_MONTH = {
-  semanal: 4.33, quinzenal: 2, mensal: 1,
-  bimestral: 0.5, trimestral: 1/3,
-  semestral: 1/6, anual: 1/12
+  semanal:4.33, quinzenal:2, mensal:1,
+  bimestral:0.5, trimestral:1/3, semestral:1/6, anual:1/12
 };
 const FIXA_CAT_ICONS = {
   'Financiamento':'🚗','Aluguel':'🏠','Seguro':'🛡️','IPVA':'📋',
@@ -1527,145 +1769,189 @@ const FIXA_CAT_ICONS = {
 };
 
 let fixas = [];
-try { fixas = JSON.parse(localStorage.getItem('df_fixas') || '[]'); } catch(e) {}
 
-function saveFixas(){ localStorage.setItem('df_fixas', JSON.stringify(fixas)); }
+function saveFixasLocal(){ if(!USE_SUPABASE) localStorage.setItem('df_fixas', JSON.stringify(fixas)); }
 
-// Calcula equivalente mensal de uma despesa fixa
 function fixaMensal(f){ return f.valor * (FREQ_PER_MONTH[f.freq] || 1); }
-
-// Total mensal de todas as fixas
-function totalFixasMensal(){ return fixas.reduce((s,f) => s + fixaMensal(f), 0); }
-
-// Retorna o impacto das fixas num período (em R$)
-function fixasImpactoPeriodo(start, end){
-  const days = Math.max(1, Math.round((end - start) / 86400000) + 1);
-  const totalMes = totalFixasMensal();
-  return totalMes * (days / 30.44);
-}
+// Só considera fixas marcadas para deduzir
+function totalFixasMensal(){ return fixas.filter(f=>f.deduzir!==false).reduce((s,f)=>s+fixaMensal(f),0); }
+function totalFixasMensalBruto(){ return fixas.reduce((s,f)=>s+fixaMensal(f),0); }
 
 function renderFixas(){
-  const totalMes = totalFixasMensal();
-  const totalDia = totalMes / 30.44;
+  const totalMes = totalFixasMensalBruto();
+  const totalDeduzido = totalFixasMensal();
+  const totalDia = totalDeduzido / 30.44;
 
-  // Média de horas trabalhadas por mês baseada nos lançamentos
   const horasTotal = transactions.filter(t=>t.type==='receita').reduce((s,t)=>s+(+t.horas||0),0);
   const mesesComDados = new Set(transactions.filter(t=>t.type==='receita'&&t.horas>0).map(t=>t.date.slice(0,7))).size || 1;
   const mediaHorasMes = horasTotal / mesesComDados;
-  const custoHora = mediaHorasMes > 0 ? totalMes / mediaHorasMes : 0;
+  const custoHora = mediaHorasMes > 0 ? totalDeduzido / mediaHorasMes : 0;
 
-  // Top 3 cards
-  document.getElementById('fx-total-mes').textContent = fmtShort(totalMes);
+  document.getElementById('fx-total-mes').textContent = fmtShort(totalDeduzido);
   document.getElementById('fx-dia').textContent = fmtShort(totalDia);
   document.getElementById('fx-hora').textContent = custoHora > 0 ? fmtShort(custoHora) : '—';
 
-  // Lista
   const list = document.getElementById('fixas-list');
   const empty = document.getElementById('fixas-empty');
   list.innerHTML = '';
 
   if(!fixas.length){ empty.style.display='block'; document.getElementById('fixas-projecao').style.display='none'; return; }
-  empty.style.display = 'none';
+  empty.style.display='none';
 
   fixas.forEach(f => {
     const equiv = fixaMensal(f);
     const icon = FIXA_CAT_ICONS[f.cat] || '💼';
     const vencStr = f.venc ? `dia <span>${f.venc}</span>` : 'sem vencimento';
+    const deduzir = f.deduzir !== false;
     const div = document.createElement('div');
     div.className = 'fixa-card';
+    div.style.opacity = deduzir ? '1' : '0.6';
     div.innerHTML = `
       <div class="fixa-top">
         <div class="fixa-icon">${icon}</div>
         <div class="fixa-info">
           <div class="fixa-nome">${f.nome}</div>
-          <div class="fixa-sub">${f.cat}</div>
+          <div class="fixa-sub">${f.cat} · ${FREQ_LABEL[f.freq]}</div>
           <div class="fixa-mensal-equiv">≈ ${fmtBRL(equiv)}/mês</div>
         </div>
         <div class="fixa-right">
           <div class="fixa-val">${fmtBRL(f.valor)}</div>
-          <div class="fixa-freq-badge">${FREQ_LABEL[f.freq]}</div>
+          <div class="fixa-freq-badge" style="color:${deduzir?'var(--red)':'var(--muted)'}">
+            ${deduzir ? '📉 Deduzindo' : '⏸️ Não deduz'}
+          </div>
         </div>
       </div>
       <div class="fixa-bottom">
         <div class="fixa-venc">Vencimento: ${vencStr}</div>
         <div class="fixa-actions">
-          <button class="fixa-btn edit" onclick="editFixa('${f.id}')">✏️ Editar</button>
-          <button class="fixa-btn del" onclick="deleteFixa('${f.id}')">✕ Excluir</button>
+          <button class="fixa-btn" style="color:${deduzir?'var(--muted)':'var(--green)'}"
+            onclick="toggleDeduzir('${f.id}')">${deduzir?'⏸️ Pausar':'▶️ Deduzir'}</button>
+          <button class="fixa-btn edit" onclick="editFixa('${f.id}')">✏️</button>
+          <button class="fixa-btn del" onclick="deleteFixa('${f.id}')">✕</button>
         </div>
       </div>`;
     list.appendChild(div);
   });
 
   // Projeção
-  const projecaoEl = document.getElementById('fixas-projecao');
-  projecaoEl.style.display = 'block';
-  const semana = totalMes * 12 / 52;
-  const ano = totalMes * 12;
-
-  // Quanto precisa faturar considerando margem de gastos variáveis (estimativa 30% do faturamento)
-  const faturNecessario = totalMes / 0.7;
+  document.getElementById('fixas-projecao').style.display = 'block';
+  const semana = totalDeduzido * 12 / 52;
+  const ano = totalDeduzido * 12;
+  const faturNecessario = totalDeduzido / 0.7;
 
   document.getElementById('fixas-projecao-content').innerHTML = `
     <div class="proj-row"><span class="proj-label">Por semana</span><span class="proj-val">${fmtBRL(semana)}</span></div>
-    <div class="proj-row"><span class="proj-label">Por mês</span><span class="proj-val">${fmtBRL(totalMes)}</span></div>
+    <div class="proj-row"><span class="proj-label">Por mês</span><span class="proj-val">${fmtBRL(totalDeduzido)}</span></div>
     <div class="proj-row"><span class="proj-label">Por ano</span><span class="proj-val">${fmtBRL(ano)}</span></div>
-    <div class="proj-row" style="background:rgba(245,197,24,.04);border-radius:8px;padding:10px;margin-top:4px;border:none">
-      <span class="proj-label" style="color:var(--text);font-weight:600">Faturamento mínimo necessário<br><span style="font-size:10px;color:var(--muted);font-weight:400">para cobrir fixas + gastos variáveis</span></span>
+    <div class="proj-row" style="background:rgba(245,197,24,.05);border-radius:8px;padding:10px;margin-top:4px;border:none">
+      <span class="proj-label" style="color:var(--text);font-weight:600">Faturamento mínimo necessário<br>
+        <span style="font-size:10px;color:var(--muted);font-weight:400">fixas deduzidas + gastos variáveis estimados</span>
+      </span>
       <span class="proj-val" style="font-size:16px;color:var(--green)">${fmtBRL(faturNecessario)}</span>
     </div>`;
+}
+
+async function toggleDeduzir(id){
+  const idx = fixas.findIndex(f=>String(f.id)===String(id));
+  if(idx<0) return;
+  const novo = fixas[idx].deduzir === false ? true : false;
+  fixas[idx].deduzir = novo;
+  if(USE_SUPABASE){
+    await sb.updateFixa(id, { deduzir: novo });
+  } else {
+    saveFixasLocal();
+  }
+  renderFixas();
+  renderHome();
 }
 
 function openFixaModal(editId){
   document.getElementById('fx-edit-id').value = editId || '';
   if(editId){
-    const f = fixas.find(x=>x.id===editId);
+    const f = fixas.find(x=>String(x.id)===String(editId));
     if(!f) return;
     document.getElementById('fixa-modal-title').textContent = 'Editar Despesa Fixa';
-    document.getElementById('fx-nome').value = f.nome;
-    document.getElementById('fx-valor').value = f.valor;
-    document.getElementById('fx-cat').value = f.cat;
-    document.getElementById('fx-freq').value = f.freq;
-    document.getElementById('fx-venc').value = f.venc || '';
+    document.getElementById('fx-nome').value   = f.nome;
+    document.getElementById('fx-valor').value  = f.valor;
+    document.getElementById('fx-cat').value    = f.cat;
+    document.getElementById('fx-freq').value   = f.freq;
+    document.getElementById('fx-venc').value   = f.venc || '';
+    document.getElementById('fx-deduzir').checked = f.deduzir !== false;
   } else {
     document.getElementById('fixa-modal-title').textContent = 'Nova Despesa Fixa';
     ['fx-nome','fx-valor','fx-venc'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('fx-freq').value = 'mensal';
+    document.getElementById('fx-deduzir').checked = true;
   }
   document.getElementById('fixa-modal-overlay').classList.add('open');
 }
 function closeFixaModal(){ document.getElementById('fixa-modal-overlay').classList.remove('open'); }
 function closeFixaModalOutside(e){ if(e.target===document.getElementById('fixa-modal-overlay')) closeFixaModal(); }
 
-function saveFixa(){
-  const nome  = document.getElementById('fx-nome').value.trim();
-  const valor = parseFloat(document.getElementById('fx-valor').value);
-  const cat   = document.getElementById('fx-cat').value;
-  const freq  = document.getElementById('fx-freq').value;
-  const venc  = parseInt(document.getElementById('fx-venc').value) || null;
-  const editId = document.getElementById('fx-edit-id').value;
+async function saveFixa(){
+  const nome    = document.getElementById('fx-nome').value.trim();
+  const valor   = parseFloat(document.getElementById('fx-valor').value);
+  const cat     = document.getElementById('fx-cat').value;
+  const freq    = document.getElementById('fx-freq').value;
+  const venc    = parseInt(document.getElementById('fx-venc').value) || null;
+  const deduzir = document.getElementById('fx-deduzir').checked;
+  const editId  = document.getElementById('fx-edit-id').value;
 
   if(!nome){ document.getElementById('fx-nome').focus(); return; }
   if(!valor||valor<=0){ document.getElementById('fx-valor').focus(); return; }
 
-  if(editId){
-    const idx = fixas.findIndex(f=>f.id===editId);
-    if(idx>=0) fixas[idx] = {...fixas[idx], nome, valor, cat, freq, venc};
+  const btn = document.getElementById('fx-btn-save');
+  btn.disabled=true; btn.textContent='SALVANDO...';
+
+  const payload = { nome, valor, cat, freq, venc, deduzir };
+
+  if(USE_SUPABASE){
+    if(editId){
+      const updated = await sb.updateFixa(editId, payload);
+      const idx = fixas.findIndex(f=>String(f.id)===String(editId));
+      if(idx>=0) fixas[idx] = updated || {...fixas[idx], ...payload};
+    } else {
+      const saved = await sb.insertFixa(payload);
+      if(saved) fixas.push(saved);
+      else fixas.push({...payload, id: Date.now().toString()});
+    }
   } else {
-    fixas.push({ id: Date.now().toString(), nome, valor, cat, freq, venc });
+    if(editId){
+      const idx = fixas.findIndex(f=>f.id===editId);
+      if(idx>=0) fixas[idx] = {...fixas[idx], ...payload};
+    } else {
+      fixas.push({...payload, id: Date.now().toString()});
+    }
+    saveFixasLocal();
   }
-  saveFixas();
+
+  btn.disabled=false; btn.textContent='SALVAR';
   closeFixaModal();
   renderFixas();
+  renderHome();
 }
 
 function editFixa(id){ openFixaModal(id); }
 
-function deleteFixa(id){
+async function deleteFixa(id){
   if(!confirm('Excluir esta despesa fixa?')) return;
-  fixas = fixas.filter(f=>f.id!==id);
-  saveFixas();
+  if(USE_SUPABASE) await sb.deleteFixa(id);
+  fixas = fixas.filter(f=>String(f.id)!==String(id));
+  saveFixasLocal();
   renderFixas();
+  renderHome();
 }
+
+function updateDeduzirTrack(){
+  const cb = document.getElementById('fx-deduzir');
+  const track = document.getElementById('fx-deduzir-track');
+  const thumb = document.getElementById('fx-deduzir-thumb');
+  if(!cb||!track) return;
+  track.style.background = cb.checked ? 'var(--green)' : 'var(--border)';
+  thumb.style.left = cb.checked ? '23px' : '3px';
+}
+// Atualiza visual do toggle ao abrir modal
+document.addEventListener('change', e => { if(e.target.id==='fx-deduzir') updateDeduzirTrack(); });
 
 // ─── MODAL ───────────────────────────────────────────────
 function updateCatOptions(){
@@ -1727,6 +2013,276 @@ async function addTransaction(){
   closeModal();
   ['f-desc','f-val','f-km','f-viagens','f-horas'].forEach(id=>document.getElementById(id).value='');
   renderHome(); renderAll();
+}
+
+// ─── PDF EXPORT ──────────────────────────────────────────
+const MONTHS_PDF = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let pdfMonthOffset = 0; // 0 = atual, -1 = passado, etc.
+
+function openPdfModal(){
+  pdfMonthOffset = 0;
+  // Sincroniza com o mês visualizado no Resumo
+  const hoje = new Date();
+  const m = new Date(hoje.getFullYear(), hoje.getMonth() + pdfMonthOffset, 1);
+  document.getElementById('pdf-month-label').textContent = `(${MONTHS_PDF[m.getMonth()]} ${m.getFullYear()})`;
+  // Reset botões
+  document.querySelectorAll('#pdf-period-btns .period-btn').forEach((b,i)=>{
+    b.classList.toggle('active', i===0);
+  });
+  document.getElementById('pdf-modal-overlay').classList.add('open');
+}
+function closePdfModal(){ document.getElementById('pdf-modal-overlay').classList.remove('open'); }
+function closePdfModalOutside(e){ if(e.target===document.getElementById('pdf-modal-overlay')) closePdfModal(); }
+
+function setPdfMonth(offset, btn){
+  pdfMonthOffset = offset;
+  document.querySelectorAll('#pdf-period-btns .period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getPdfMonthTxns(){
+  const hoje = new Date();
+  const base = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  const target = new Date(base.getFullYear(), base.getMonth() + pdfMonthOffset, 1);
+  const y = target.getFullYear(), mo = target.getMonth();
+  return transactions.filter(t=>{
+    const d = parseLocalDate(t.date);
+    return d.getFullYear()===y && d.getMonth()===mo;
+  });
+}
+
+function exportPDF(){
+  const hoje = new Date();
+  const target = new Date(hoje.getFullYear(), hoje.getMonth() + pdfMonthOffset, 1);
+  const mesNome = MONTHS_PDF[target.getMonth()] + ' ' + target.getFullYear();
+  const txns = getPdfMonthTxns();
+  const m = calcMetrics(txns);
+  const userName = document.getElementById('menu-user-name').textContent || 'Motorista';
+
+  const optResumo      = document.getElementById('pdf-opt-resumo').checked;
+  const optMetricas    = document.getElementById('pdf-opt-metricas').checked;
+  const optPlataformas = document.getElementById('pdf-opt-plataformas').checked;
+  const optFixas       = document.getElementById('pdf-opt-fixas').checked;
+  const optLancamentos = document.getElementById('pdf-opt-lancamentos').checked;
+
+  // Calcula por plataforma
+  const platMap = {};
+  txns.filter(t=>t.type==='receita'&&t.plataforma).forEach(t=>{
+    platMap[t.plataforma] = (platMap[t.plataforma]||0) + t.val;
+  });
+  const platEntries = Object.entries(platMap).sort((a,b)=>b[1]-a[1]);
+
+  // Calcula gastos por categoria
+  const catMap = {};
+  txns.filter(t=>t.type==='gasto').forEach(t=>{
+    catMap[t.cat] = (catMap[t.cat]||0) + t.val;
+  });
+
+  // Monta HTML do PDF
+  const style = `
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:'Segoe UI',Arial,sans-serif;color:#1a1a2e;background:#fff;font-size:13px}
+      .header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:28px 32px;margin-bottom:0}
+      .header-logo{font-size:28px;font-weight:900;letter-spacing:3px;color:#f5c518}
+      .header-logo span{color:#fff}
+      .header-sub{font-size:12px;color:#8892b0;margin-top:4px}
+      .header-right{text-align:right}
+      .header-month{font-size:20px;font-weight:700;color:#f5c518}
+      .header-user{font-size:11px;color:#8892b0;margin-top:2px}
+      .header-row{display:flex;justify-content:space-between;align-items:flex-end}
+      .section{padding:20px 32px;border-bottom:1px solid #eef0f6}
+      .section:last-child{border-bottom:none}
+      .section-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8892b0;margin-bottom:14px}
+      .cards-row{display:flex;gap:12px;margin-bottom:0}
+      .card{flex:1;border-radius:12px;padding:14px 12px;text-align:center}
+      .card.green{background:#f0fdf4;border:1px solid #bbf7d0}
+      .card.red{background:#fef2f2;border:1px solid #fecaca}
+      .card.yellow{background:#fefce8;border:1px solid #fde047}
+      .card-label{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+      .card-val{font-size:20px;font-weight:800;font-family:monospace}
+      .card-val.g{color:#16a34a}.card-val.r{color:#dc2626}.card-val.y{color:#ca8a04}
+      .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+      .met{background:#f8fafc;border-radius:10px;padding:10px;text-align:center;border:1px solid #e2e8f0}
+      .met-icon{font-size:18px;margin-bottom:3px}
+      .met-val{font-size:13px;font-weight:700;color:#1e40af;font-family:monospace}
+      .met-label{font-size:9px;color:#94a3b8;margin-top:2px}
+      .plat-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+      .plat-row:last-child{border-bottom:none}
+      .plat-bar-wrap{flex:1;height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden}
+      .plat-bar-fill{height:100%;border-radius:99px}
+      .plat-name{min-width:80px;font-weight:600;font-size:12px}
+      .plat-pct{min-width:36px;text-align:right;font-size:11px;color:#6b7280}
+      .plat-val{min-width:80px;text-align:right;font-weight:700;font-size:12px;font-family:monospace}
+      .fixa-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9}
+      .fixa-row:last-child{border-bottom:none}
+      .fixa-left{flex:1}
+      .fixa-nome-pdf{font-weight:600;font-size:13px}
+      .fixa-meta{font-size:10px;color:#6b7280;margin-top:2px}
+      .fixa-val-pdf{font-weight:700;font-family:monospace;color:#dc2626}
+      table{width:100%;border-collapse:collapse}
+      th{background:#f8fafc;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e2e8f0}
+      td{padding:7px 10px;font-size:12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+      tr:last-child td{border-bottom:none}
+      .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
+      .badge.rec{background:#dcfce7;color:#166534}
+      .badge.gas{background:#fee2e2;color:#991b1b}
+      .footer{background:#f8fafc;padding:16px 32px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    </style>
+  `;
+
+  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>DriveFinance — ${mesNome}</title>${style}</head><body>`;
+
+  // HEADER
+  html += `
+    <div class="header">
+      <div class="header-row">
+        <div>
+          <div class="header-logo">Drive<span>Finance</span></div>
+          <div class="header-sub">Relatório Financeiro do Motorista</div>
+        </div>
+        <div class="header-right">
+          <div class="header-month">${mesNome}</div>
+          <div class="header-user">${userName}</div>
+          <div class="header-user">Gerado em ${new Date().toLocaleDateString('pt-BR')}</div>
+        </div>
+      </div>
+    </div>`;
+
+  // RESUMO
+  if(optResumo){
+    const fixasMes = totalFixasMensal();
+    const saldoFinal = m.saldo - fixasMes;
+    html += `
+      <div class="section">
+        <div class="section-title">Resumo do Mês</div>
+        <div class="cards-row">
+          <div class="card green">
+            <div class="card-label">Faturamento</div>
+            <div class="card-val g">${fmtBRL(m.fat)}</div>
+          </div>
+          <div class="card red">
+            <div class="card-label">Despesas</div>
+            <div class="card-val r">${fmtBRL(m.desp)}</div>
+          </div>
+          <div class="card yellow">
+            <div class="card-label">Saldo Líquido</div>
+            <div class="card-val y">${fmtBRL(saldoFinal)}</div>
+          </div>
+        </div>
+        ${fixasMes>0?`<div style="margin-top:10px;font-size:11px;color:#6b7280">* Saldo já deduzido das despesas fixas mensais (${fmtBRL(fixasMes)})</div>`:''}
+      </div>`;
+  }
+
+  // MÉTRICAS
+  if(optMetricas){
+    const defs = [
+      {icon:'🚗',val:m.viagens.toFixed(0),label:'Viagens'},
+      {icon:'⏱️',val:m.horas.toFixed(1)+'h',label:'Horas'},
+      {icon:'🛣️',val:m.km.toFixed(0)+' km',label:'Km rodados'},
+      {icon:'💵',val:fmtBRL(m.fatPorViagem),label:'Fat/viagem'},
+      {icon:'⚡',val:fmtBRL(m.fatMedioPorHora),label:'Fat/hora'},
+      {icon:'🛣️',val:'R$'+m.fatMedioPorKm.toFixed(2),label:'Fat/km'},
+      {icon:'💸',val:fmtBRL(m.custoPorViagem),label:'Custo/viagem'},
+      {icon:'💸',val:fmtBRL(m.custoPorHora),label:'Custo/hora'},
+      {icon:'✅',val:fmtBRL(m.lucroPorViagem),label:'Lucro/viagem'},
+    ];
+    html += `<div class="section"><div class="section-title">Métricas Detalhadas</div>
+      <div class="metrics-grid">${defs.map(d=>`
+        <div class="met">
+          <div class="met-icon">${d.icon}</div>
+          <div class="met-val">${d.val}</div>
+          <div class="met-label">${d.label}</div>
+        </div>`).join('')}
+      </div></div>`;
+  }
+
+  // PLATAFORMAS
+  if(optPlataformas && platEntries.length){
+    const totalPlat = platEntries.reduce((s,[,v])=>s+v,0)||1;
+    const platColors = {'Uber':'#1dbf73','99':'#ff6b35','InDriver':'#3b82f6','iFood':'#ef4444','Rappi':'#7c3aed','Lalamove':'#eab308','Particular':'#94a3b8','Outro':'#6b7280'};
+    html += `<div class="section"><div class="section-title">Faturamento por Plataforma</div>
+      ${platEntries.map(([plat,val])=>{
+        const pct = Math.round(val/totalPlat*100);
+        const color = platColors[plat]||'#6b7280';
+        return `<div class="plat-row">
+          <div class="plat-name">${plat}</div>
+          <div class="plat-bar-wrap"><div class="plat-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+          <div class="plat-pct">${pct}%</div>
+          <div class="plat-val">${fmtBRL(val)}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // FIXAS
+  if(optFixas && fixas.length){
+    html += `<div class="section"><div class="section-title">Despesas Fixas</div>
+      ${fixas.map(f=>{
+        const equiv = fixaMensal(f);
+        const deduz = f.deduzir!==false;
+        return `<div class="fixa-row">
+          <div class="fixa-left">
+            <div class="fixa-nome-pdf">${FIXA_CAT_ICONS[f.cat]||'💼'} ${f.nome}</div>
+            <div class="fixa-meta">${f.cat} · ${FREQ_LABEL[f.freq]}${f.venc?' · vence dia '+f.venc:''} · ${deduz?'deduzindo':'não deduz'}</div>
+          </div>
+          <div>
+            <div class="fixa-val-pdf">${fmtBRL(f.valor)}</div>
+            <div style="font-size:10px;color:#6b7280;text-align:right">≈ ${fmtBRL(equiv)}/mês</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="margin-top:10px;padding-top:10px;border-top:2px solid #e2e8f0;display:flex;justify-content:space-between">
+        <span style="font-weight:700;font-size:13px">Total mensal deduzido</span>
+        <span style="font-weight:800;font-family:monospace;color:#dc2626;font-size:14px">${fmtBRL(totalFixasMensal())}</span>
+      </div>
+    </div>`;
+  }
+
+  // LANÇAMENTOS
+  if(optLancamentos && txns.length){
+    const sorted = [...txns].sort((a,b)=>a.date.localeCompare(b.date));
+    html += `<div class="section"><div class="section-title">Lançamentos do Mês (${txns.length})</div>
+      <table>
+        <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th style="text-align:right">Valor</th></tr></thead>
+        <tbody>
+          ${sorted.map(t=>{
+            const dStr = parseLocalDate(t.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+            const info = catInfo(t.cat, t.type);
+            const platTag = t.plataforma ? ` · ${t.plataforma}` : '';
+            return `<tr>
+              <td style="color:#6b7280">${dStr}</td>
+              <td style="font-weight:500">${t.description||''}</td>
+              <td>${info.icon} ${t.cat}${platTag}</td>
+              <td><span class="badge ${t.type==='receita'?'rec':'gas'}">${t.type==='receita'?'Receita':'Gasto'}</span></td>
+              <td style="text-align:right;font-weight:700;font-family:monospace;color:${t.type==='receita'?'#16a34a':'#dc2626'}">
+                ${t.type==='receita'?'+':'-'}${fmtBRL(t.val)}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  // FOOTER
+  html += `
+    <div class="footer">
+      DriveFinance · Relatório gerado em ${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})} ·
+      Este documento é de uso pessoal e pode ser apresentado ao contador
+    </div>
+  </body></html>`;
+
+  // Abre em nova aba e dispara impressão/download
+  closePdfModal();
+  const win = window.open('', '_blank');
+  if(!win){ alert('Permita pop-ups para gerar o PDF.'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => {
+    setTimeout(()=>{ win.print(); }, 400);
+  };
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
