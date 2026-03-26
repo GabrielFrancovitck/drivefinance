@@ -936,10 +936,8 @@ input[type=date].date-picker{
 // ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
 //     Painel Supabase → Settings → API
 // ══════════════════════════════════════════════════════════
-
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
-
 // ──────────────────────────────────────────────────────────
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
@@ -1178,24 +1176,59 @@ function showFieldError(id, msg){
   if(el){ el.textContent=msg; el.style.display='block'; }
 }
 
+// ── Contador de tentativas de login (proteção brute-force) ──
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_MS   = 2 * 60 * 1000; // 2 minutos
+let loginAttempts = 0;
+let loginLockedUntil = 0;
+
+function checkLoginLock() {
+  if (Date.now() < loginLockedUntil) {
+    const secsLeft = Math.ceil((loginLockedUntil - Date.now()) / 1000);
+    showAuthMsg(`Muitas tentativas incorretas. Aguarde ${secsLeft}s para tentar novamente.`);
+    return true; // ainda bloqueado
+  }
+  return false;
+}
+
+function registerFailedAttempt() {
+  loginAttempts++;
+  if (loginAttempts >= LOGIN_MAX_ATTEMPTS) {
+    loginLockedUntil = Date.now() + LOGIN_LOCKOUT_MS;
+    loginAttempts = 0;
+    showAuthMsg(`Conta bloqueada temporariamente após ${LOGIN_MAX_ATTEMPTS} tentativas. Tente novamente em 2 minutos.`);
+    // Countdown no botão
+    const btn = document.getElementById('btn-login');
+    const tick = setInterval(() => {
+      const left = Math.ceil((loginLockedUntil - Date.now()) / 1000);
+      if (left <= 0) { clearInterval(tick); btn.disabled=false; btn.textContent='ENTRAR'; clearAuthMsg(); }
+      else { btn.disabled=true; btn.textContent=`AGUARDE ${left}s`; }
+    }, 1000);
+  }
+}
+
 async function doLogin() {
   clearAuthMsg();
+
+  // Verifica bloqueio por tentativas
+  if (checkLoginLock()) return;
+
   const email    = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
 
-  // Validações em tempo real
+  // Validações de campo
   let ok = true;
   clearFieldError('login-email'); clearFieldError('login-password');
 
   if(!email){
     showFieldError('login-email','Campo obrigatório'); ok=false;
   } else if(!isValidEmail(email)){
-    showFieldError('login-email','E-mail inválido'); ok=false;
+    showFieldError('login-email','Formato de e-mail inválido (ex: nome@email.com)'); ok=false;
   }
   if(!password){
     showFieldError('login-password','Campo obrigatório'); ok=false;
   } else if(password.length < 6){
-    showFieldError('login-password','Mínimo 6 caracteres'); ok=false;
+    showFieldError('login-password','A senha deve ter pelo menos 6 caracteres'); ok=false;
   }
   if(!ok) return;
 
@@ -1205,9 +1238,13 @@ async function doLogin() {
   if (!USE_SUPABASE) {
     const stored = JSON.parse(localStorage.getItem('df_local_user') || 'null');
     if (!stored || stored.email !== email || stored.password !== btoa(password)) {
-      showAuthMsg('E-mail ou senha incorretos.');
+      registerFailedAttempt();
+      if (Date.now() < loginLockedUntil) { return; } // já bloqueado, mensagem já exibida
+      const remaining = LOGIN_MAX_ATTEMPTS - loginAttempts;
+      showAuthMsg(`E-mail ou senha incorretos.${remaining > 0 ? ` Você tem mais ${remaining} tentativa${remaining>1?'s':''}.` : ''}`);
       btn.disabled=false; btn.textContent='ENTRAR'; return;
     }
+    loginAttempts = 0;
     sb._user = stored;
     localStorage.setItem('df_local_logged','1');
     enterApp(stored);
@@ -1218,12 +1255,21 @@ async function doLogin() {
         const msg = (data.error.message || '').toLowerCase();
         if (msg.includes('email not confirmed') || msg.includes('not confirmed')) {
           showAuthMsg('Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada e clique no link que enviamos.');
-        } else if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('wrong password')) {
-          showAuthMsg('E-mail ou senha incorretos. Verifique e tente novamente.');
+          btn.disabled=false; btn.textContent='ENTRAR'; return;
+        } else if (
+          msg.includes('invalid login') || msg.includes('invalid credentials') ||
+          msg.includes('wrong password') || msg.includes('invalid email or password') ||
+          msg.includes('email not found') || msg.includes('user not found')
+        ) {
+          registerFailedAttempt();
+          if (Date.now() < loginLockedUntil) { return; }
+          const remaining = LOGIN_MAX_ATTEMPTS - loginAttempts;
+          showAuthMsg(`E-mail ou senha incorretos.${remaining > 0 ? ` Mais ${remaining} tentativa${remaining>1?'s':''} antes de bloquear.` : ''}`);
         } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
-          showAuthMsg('⏳ Muitas tentativas. Aguarde alguns minutos e tente novamente.');
-        } else if (msg.includes('user not found')) {
-          showAuthMsg('Nenhuma conta encontrada com este e-mail.');
+          loginLockedUntil = Date.now() + LOGIN_LOCKOUT_MS;
+          showAuthMsg('Muitas tentativas. Aguarde alguns minutos e tente novamente.');
+        } else if (msg.includes('network') || msg.includes('fetch')) {
+          showAuthMsg('Sem conexão com o servidor. Verifique sua internet.');
         } else {
           showAuthMsg(data.error.message || 'Erro ao entrar. Tente novamente.');
         }
@@ -1233,6 +1279,7 @@ async function doLogin() {
         showAuthMsg('Você ainda não confirmou seu e-mail. Verifique sua caixa de entrada.');
         btn.disabled=false; btn.textContent='ENTRAR'; return;
       }
+      loginAttempts = 0; // reset em caso de sucesso
       enterApp(data.user);
     } catch(e) {
       showAuthMsg('Sem conexão. Verifique sua internet e tente novamente.');
@@ -1340,6 +1387,7 @@ async function enterApp(user) {
   }
 
   renderHome(); renderAnalyse(); renderResumo();
+  startInactivityWatcher(); // inicia monitoramento de inatividade
 }
 
 function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('open'); }
@@ -1349,21 +1397,79 @@ document.addEventListener('click', e => {
 });
 
 function doLogout() {
+  stopInactivityWatcher();
   sb.signOut();
+  localStorage.removeItem('df_local_logged');
+  transactions = []; fixas = [];
   document.getElementById('user-menu').classList.remove('open');
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.cssText = 'display:flex;flex-direction:column';
   clearAuthMsg(); switchAuthTab('login');
   ['login-email','login-password'].forEach(id=>document.getElementById(id).value='');
+  loginAttempts = 0; loginLockedUntil = 0;
 }
+
+// ── AUTO-LOGOUT: fecha app / inatividade ─────────────────
+const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutos sem interação
+let inactivityTimer = null;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    // Só desloga se o app estiver visível e o usuário logado
+    if (document.getElementById('app-screen').style.display !== 'none') {
+      doLogout();
+      showAuthMsg('Sua sessão expirou por inatividade. Faça login novamente.', 'error');
+    }
+  }, INACTIVITY_TIMEOUT_MS);
+}
+
+function startInactivityWatcher() {
+  // Reset timer em qualquer interação do usuário
+  ['touchstart','touchend','click','keydown','scroll','mousemove'].forEach(evt => {
+    document.addEventListener(evt, resetInactivityTimer, { passive: true });
+  });
+  resetInactivityTimer();
+}
+
+function stopInactivityWatcher() {
+  clearTimeout(inactivityTimer);
+  ['touchstart','touchend','click','keydown','scroll','mousemove'].forEach(evt => {
+    document.removeEventListener(evt, resetInactivityTimer);
+  });
+}
+
+// Desloga ao fechar/recarregar a aba
+window.addEventListener('beforeunload', () => {
+  if (USE_SUPABASE && sb._user) {
+    sb.signOut();
+  } else if (!USE_SUPABASE) {
+    localStorage.removeItem('df_local_logged');
+  }
+});
+
+// Desloga quando o app vai para segundo plano no celular (Page Visibility API)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // App foi para segundo plano — inicia contagem regressiva de 5 min
+    inactivityTimer = setTimeout(() => {
+      if (document.getElementById('app-screen').style.display !== 'none') {
+        doLogout();
+      }
+    }, 5 * 60 * 1000); // 5 minutos em background
+  } else {
+    // App voltou para primeiro plano
+    clearTimeout(inactivityTimer);
+    resetInactivityTimer();
+  }
+});
 
 // Restaura sessão ao abrir
 (function initAuth() {
-  if (USE_SUPABASE && sb.restoreSession()) { enterApp(sb._user); return; }
-  if (!USE_SUPABASE && localStorage.getItem('df_local_logged')) {
-    const s = JSON.parse(localStorage.getItem('df_local_user') || 'null');
-    if (s) { sb._user = s; enterApp(s); return; }
-  }
+  // Nunca restaura sessão salva — sempre exige login ao abrir
+  // (comportamento solicitado: encerrar sessão ao sair do app)
+  if (USE_SUPABASE) sb.signOut(); // limpa token local
+  localStorage.removeItem('df_local_logged');
   document.getElementById('auth-screen').style.cssText = 'display:flex;flex-direction:column';
 })();
 
