@@ -509,6 +509,7 @@ input[type=date].date-picker{
   <div class="tab" onclick="showPage('lancamentos')">Lançamentos</div>
   <div class="tab" onclick="showPage('resumo')">Resumo</div>
   <div class="tab" onclick="showPage('fixas')">Fixas</div>
+  <div class="tab" onclick="showPage('simulador')">Simulador</div>
   <div class="tab" onclick="showPage('dicas')">Dicas</div>
 </div>
 
@@ -749,6 +750,84 @@ input[type=date].date-picker{
 
 </div>
 
+<!-- ══════════════ SIMULADOR ══════════════ -->
+<div class="page" id="page-simulador">
+
+  <!-- Configuração do veículo -->
+  <div class="section-title" style="margin-top:4px">
+    Configuração do Veículo
+    <a onclick="openVeiculoModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Editar
+    </a>
+  </div>
+  <div id="veiculo-config-card" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px">
+    <div style="text-align:center;color:var(--muted);font-size:13px;padding:12px 0">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v1"/><rect x="13" y="11" width="10" height="10" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="20" r="2"/></svg>
+      Nenhum veículo configurado.<br>Toque em <b style="color:var(--accent)">Editar</b> para começar.
+    </div>
+  </div>
+
+  <!-- Resultados do custo real -->
+  <div id="sim-custo-section" style="display:none">
+    <div class="section-title">Custo Real do Veículo</div>
+    <div class="metrics-grid" id="sim-custo-grid" style="margin-bottom:14px"></div>
+
+    <!-- Valor mínimo por corrida -->
+    <div style="background:linear-gradient(135deg,#1a2038,#1e2844);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Corrida mínima para lucrar</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
+        <div id="sim-min-corrida" style="font-family:'Bebas Neue',sans-serif;font-size:46px;color:var(--accent);line-height:1">R$0</div>
+        <div style="font-size:12px;color:var(--muted)">por corrida</div>
+      </div>
+      <div id="sim-min-corrida-desc" style="font-size:12px;color:var(--muted);line-height:1.5"></div>
+    </div>
+
+    <!-- Corridas necessárias por dia -->
+    <div class="section-title">Quantas corridas precisa por dia</div>
+    <div id="sim-corridas-grid" class="metrics-grid" style="margin-bottom:14px"></div>
+
+    <!-- Simulador interativo -->
+    <div class="section-title">Simular uma corrida</div>
+    <div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="field" style="margin-bottom:0">
+          <label>Valor da corrida (R$)</label>
+          <input type="number" id="sim-valor-corrida" placeholder="Ex: 18,00" step="0.50" min="0" inputmode="decimal" oninput="calcSimCorrida()"/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Distância (km)</label>
+          <input type="number" id="sim-km-corrida" placeholder="Ex: 8" step="0.5" min="0" inputmode="decimal" oninput="calcSimCorrida()"/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Plataforma</label>
+          <select id="sim-plataforma-corrida" onchange="calcSimCorrida()">
+            <option value="0.25">Uber (25%)</option>
+            <option value="0.25">99 (25%)</option>
+            <option value="0.20">InDriver (20%)</option>
+            <option value="0.20">iFood (20%)</option>
+            <option value="0.30">Rappi (30%)</option>
+            <option value="0">Particular (0%)</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Tempo estimado (min)</label>
+          <input type="number" id="sim-tempo-corrida" placeholder="Ex: 20" min="0" inputmode="numeric" oninput="calcSimCorrida()"/>
+        </div>
+      </div>
+      <!-- Resultado da simulação -->
+      <div id="sim-resultado" style="display:none;border-top:1px solid var(--border);padding-top:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="sim-resultado-grid"></div>
+        <div id="sim-veredicto" style="margin-top:10px;border-radius:10px;padding:11px 13px;font-size:13px;font-weight:600;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Comparativo por plataforma -->
+    <div class="section-title">Comparativo por Plataforma</div>
+    <div id="sim-comparativo" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px;margin-bottom:14px"></div>
+  </div>
+
+</div>
+
 <!-- ══════════════ DICAS ══════════════ -->
 <div class="page" id="page-dicas">
   <div class="section-title">Dicas para motoristas</div>
@@ -929,6 +1008,77 @@ input[type=date].date-picker{
   </div>
 </div>
 
+<!-- MODAL VEÍCULO -->
+<div class="modal-overlay" id="veiculo-modal-overlay" onclick="closeVeiculoModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Configurar Veículo</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5">
+      Preencha os dados do seu veículo para calcular o custo real por km e o valor mínimo de corrida rentável.
+    </div>
+
+    <!-- Consumo -->
+    <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Combustível</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+      <div class="field" style="margin-bottom:6px">
+        <label>Consumo médio (km/L)</label>
+        <input type="number" id="vc-consumo" placeholder="Ex: 11.5" step="0.5" min="1" inputmode="decimal"/>
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label>Preço do combustível (R$/L)</label>
+        <input type="number" id="vc-preco-comb" placeholder="Ex: 6.20" step="0.01" min="0" inputmode="decimal"/>
+      </div>
+    </div>
+
+    <!-- Manutenção -->
+    <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Manutenção</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+      <div class="field" style="margin-bottom:6px">
+        <label>Custo manutenção (R$/mês)</label>
+        <input type="number" id="vc-manutencao" placeholder="Ex: 300" step="10" min="0" inputmode="decimal"/>
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label>Km rodados por mês</label>
+        <input type="number" id="vc-km-mes" placeholder="Ex: 3000" step="100" min="0" inputmode="numeric"/>
+      </div>
+    </div>
+
+    <!-- Depreciação -->
+    <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Depreciação</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+      <div class="field" style="margin-bottom:6px">
+        <label>Valor atual do carro (R$)</label>
+        <input type="number" id="vc-valor-carro" placeholder="Ex: 45000" step="1000" min="0" inputmode="numeric"/>
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label>Depreciação anual (%)</label>
+        <input type="number" id="vc-depreciacao" placeholder="Ex: 15" step="1" min="0" max="50" inputmode="numeric"/>
+      </div>
+    </div>
+
+    <!-- Tempo -->
+    <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Tempo de trabalho</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+      <div class="field" style="margin-bottom:6px">
+        <label>Horas trabalhadas/dia</label>
+        <input type="number" id="vc-horas-dia" placeholder="Ex: 8" step="0.5" min="1" inputmode="decimal"/>
+      </div>
+      <div class="field" style="margin-bottom:6px">
+        <label>Dias trabalhados/mês</label>
+        <input type="number" id="vc-dias-mes" placeholder="Ex: 22" step="1" min="1" max="31" inputmode="numeric"/>
+      </div>
+    </div>
+
+    <!-- Distância média por corrida -->
+    <div class="field">
+      <label>Distância média por corrida (km)</label>
+      <input type="number" id="vc-km-corrida" placeholder="Ex: 8" step="0.5" min="0.5" inputmode="decimal"/>
+    </div>
+
+    <button class="btn-add" onclick="saveVeiculo()">SALVAR E CALCULAR</button>
+  </div>
+</div>
+
 </div><!-- /app-screen -->
 
 <script>
@@ -938,6 +1088,7 @@ input[type=date].date-picker{
 // ══════════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
+
 // ──────────────────────────────────────────────────────────
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
@@ -1383,6 +1534,7 @@ async function enterApp(user) {
   } else {
     try { transactions = JSON.parse(localStorage.getItem('df_txns') || '[]'); } catch(e) { transactions = []; }
     try { fixas = JSON.parse(localStorage.getItem('df_fixas') || '[]'); } catch(e) { fixas = []; }
+    try { veiculo = JSON.parse(localStorage.getItem('df_veiculo') || '{}'); } catch(e) { veiculo = {}; }
     if (!transactions.length) { transactions = DEMO_TRANSACTIONS(); save(); }
   }
 
@@ -1984,12 +2136,13 @@ function showPage(p){
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p)?.classList.add('active');
-  ['inicio','analise','lancamentos','resumo','fixas','dicas'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
+  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
   if(p==='inicio') renderHome();
   if(p==='analise') renderAnalyse();
   if(p==='lancamentos') renderAll();
   if(p==='resumo') renderResumo();
   if(p==='fixas') renderFixas();
+  if(p==='simulador') renderSimulador();
 }
 
 // ─── DESPESAS FIXAS ──────────────────────────────────────
@@ -2497,6 +2650,223 @@ function exportPDF(){
   win.document.write(html);
   win.document.close();
   win.onload = ()=>{ setTimeout(()=>win.print(), 400); };
+}
+
+// ─── SIMULADOR DE CORRIDAS ───────────────────────────────
+let veiculo = {};
+try { veiculo = JSON.parse(localStorage.getItem('df_veiculo') || '{}'); } catch(e) {}
+
+function saveVeiculoLocal(){ localStorage.setItem('df_veiculo', JSON.stringify(veiculo)); }
+
+// Custo por km calculado a partir dos dados do veículo
+function calcCustoPorKm(v) {
+  if (!v.consumo || !v.precoComb) return null;
+  const kmMes    = v.kmMes || 3000;
+  const custoComb     = v.precoComb / v.consumo;                         // R$/km
+  const custoMan      = v.manutencao ? v.manutencao / kmMes : 0;         // R$/km
+  const custoDeprec   = v.valorCarro && v.depreciacao
+    ? (v.valorCarro * (v.depreciacao / 100)) / 12 / kmMes : 0;           // R$/km
+  const custoFixasKm  = totalFixasMensal() / kmMes;                      // R$/km (fixas cadastradas)
+  return {
+    comb:    custoComb,
+    man:     custoMan,
+    deprec:  custoDeprec,
+    fixas:   custoFixasKm,
+    total:   custoComb + custoMan + custoDeprec + custoFixasKm,
+  };
+}
+
+// Custo por hora
+function calcCustoPorHora(v, custoKm) {
+  if (!custoKm || !v.horasDia || !v.diasMes) return null;
+  const kmMes      = v.kmMes || 3000;
+  const horasMes   = v.horasDia * v.diasMes;
+  const custoTotal = custoKm.total * kmMes + totalFixasMensal();
+  return custoTotal / horasMes;
+}
+
+function renderSimulador() {
+  const v = veiculo;
+  const hasConfig = v.consumo && v.precoComb;
+
+  // Card de configuração
+  if (hasConfig) {
+    document.getElementById('veiculo-config-card').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Consumo</div>
+          <div style="font-weight:700;font-size:15px;color:var(--accent)">${v.consumo} km/L</div></div>
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Combustível</div>
+          <div style="font-weight:700;font-size:15px;color:var(--accent)">R$${(+v.precoComb).toFixed(2)}/L</div></div>
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Manutenção</div>
+          <div style="font-weight:700;font-size:14px">${v.manutencao ? fmtBRL(+v.manutencao)+'/mês' : '—'}</div></div>
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Km/mês</div>
+          <div style="font-weight:700;font-size:14px">${(v.kmMes||3000).toLocaleString('pt-BR')} km</div></div>
+        ${v.valorCarro ? `<div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Depreciação</div>
+          <div style="font-weight:700;font-size:14px">${fmtBRL((v.valorCarro*(v.depreciacao||15)/100)/12)}/mês</div></div>` : ''}
+        <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Trabalho</div>
+          <div style="font-weight:700;font-size:14px">${v.horasDia||8}h/dia · ${v.diasMes||22} dias</div></div>
+      </div>`;
+    document.getElementById('sim-custo-section').style.display = 'block';
+    renderSimCalcs(v);
+  } else {
+    document.getElementById('sim-custo-section').style.display = 'none';
+  }
+}
+
+function renderSimCalcs(v) {
+  const ck = calcCustoPorKm(v);
+  if (!ck) return;
+  const kmCorrida = v.kmCorrida || 8;
+  const custoPorCorrida = ck.total * kmCorrida;
+  const horasMes = (v.horasDia||8) * (v.diasMes||22);
+  const kmMes = v.kmMes || 3000;
+  const custoHora = calcCustoPorHora(v, ck);
+
+  // Grid custo real
+  document.getElementById('sim-custo-grid').innerHTML = [
+    { icon: IC.fuel,     label: 'Comb.\npor km',     val: 'R$'+ck.comb.toFixed(3) },
+    { icon: IC.wrench,   label: 'Manutenção\npor km', val: 'R$'+ck.man.toFixed(3) },
+    { icon: IC.arrowDn,  label: 'Deprec.\npor km',   val: 'R$'+ck.deprec.toFixed(3) },
+    { icon: IC.brief,    label: 'Fixas\npor km',      val: 'R$'+ck.fixas.toFixed(3) },
+    { icon: IC.dollar,   label: 'Custo total\npor km',val: 'R$'+ck.total.toFixed(3) },
+    { icon: IC.clock,    label: 'Custo\npor hora',    val: custoHora ? fmtShort(custoHora) : '—' },
+  ].map(d=>`<div class="mcard"><div class="mcard-icon">${d.icon}</div><div class="mcard-val">${d.val}</div><div class="mcard-label">${d.label}</div></div>`).join('');
+
+  // Corrida mínima para lucrar (custo de uma corrida média)
+  const minLucro = custoPorCorrida * 1.0; // Break-even
+  const recMinUber    = minLucro / (1 - 0.25);
+  document.getElementById('sim-min-corrida').textContent = fmtBRL(recMinUber).replace('R$ ','R$');
+  document.getElementById('sim-min-corrida-desc').textContent =
+    `Para uma corrida de ${kmCorrida}km, você gasta ~${fmtBRL(custoPorCorrida)} só com o veículo. `+
+    `O bruto precisa cobrir a taxa da plataforma (25%) e ainda sobrar lucro. `+
+    `Corridas abaixo desse valor geram prejuízo real.`;
+
+  // Corridas necessárias por dia/mês
+  const custoTotalMes = ck.total * kmMes + totalFixasMensal();
+  const corridasDia   = Math.ceil(custoTotalMes / (v.diasMes||22) / custoPorCorrida);
+  const corridasMes   = Math.ceil(custoTotalMes / custoPorCorrida);
+  const fatMinDia     = custoTotalMes / (v.diasMes||22);
+  document.getElementById('sim-corridas-grid').innerHTML = [
+    { icon: IC.car,      label: 'Corridas\npor dia',   val: corridasDia+' corridas' },
+    { icon: IC.car,      label: 'Corridas\npor mês',   val: corridasMes+' corridas' },
+    { icon: IC.dollar,   label: 'Faturamento\nmínimo/dia', val: fmtShort(fatMinDia/(1-0.25)) },
+    { icon: IC.dollar,   label: 'Faturamento\nmínimo/mês', val: fmtShort(custoTotalMes/(1-0.25)) },
+  ].map(d=>`<div class="mcard"><div class="mcard-icon">${d.icon}</div><div class="mcard-val">${d.val}</div><div class="mcard-label">${d.label}</div></div>`).join('');
+
+  // Comparativo por plataforma
+  const plataformas = [
+    { nome:'Uber',     taxa:0.25, cor:'#1dbf73' },
+    { nome:'99',       taxa:0.25, cor:'#ff6b35' },
+    { nome:'InDriver', taxa:0.20, cor:'#3b82f6' },
+    { nome:'iFood',    taxa:0.20, cor:'#ef4444' },
+    { nome:'Rappi',    taxa:0.30, cor:'#7c3aed' },
+    { nome:'Particular',taxa:0.0, cor:'#94a3b8' },
+  ];
+  const custoBase = custoPorCorrida;
+  document.getElementById('sim-comparativo').innerHTML = plataformas.map(p => {
+    const minBruto = custoBase / (1 - p.taxa);
+    const lucro    = minBruto * (1 - p.taxa) - custoBase;
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <div style="width:9px;height:9px;border-radius:50%;background:${p.cor};flex-shrink:0"></div>
+        <div style="flex:1;font-size:13px;font-weight:600">${p.nome}</div>
+        <div style="font-size:11px;color:var(--muted)">${(p.taxa*100).toFixed(0)}% taxa</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${p.cor};min-width:60px;text-align:right">
+          mín. ${fmtBRL(minBruto)}
+        </div>
+      </div>`;
+  }).join('')+`<div style="font-size:10px;color:var(--muted);margin-top:8px">* Valor bruto mínimo para cobrir o custo de uma corrida de ${kmCorrida}km</div>`;
+
+  calcSimCorrida();
+}
+
+function calcSimCorrida() {
+  const valor   = parseFloat(document.getElementById('sim-valor-corrida')?.value) || 0;
+  const km      = parseFloat(document.getElementById('sim-km-corrida')?.value)    || 0;
+  const taxa    = parseFloat(document.getElementById('sim-plataforma-corrida')?.value) || 0.25;
+  const tempo   = parseFloat(document.getElementById('sim-tempo-corrida')?.value) || 0;
+  const res     = document.getElementById('sim-resultado');
+  if (!valor || !km) { res.style.display='none'; return; }
+
+  const ck = calcCustoPorKm(veiculo);
+  if (!ck) return;
+
+  const liquido  = valor * (1 - taxa);             // após taxa plataforma
+  const custoKm  = ck.total * km;                  // custo do percurso
+  const lucro    = liquido - custoKm;              // lucro real
+  const lPorKm   = km > 0 ? lucro / km : 0;
+  const lPorMin  = tempo > 0 ? lucro / tempo : 0;
+
+  const grid = document.getElementById('sim-resultado-grid');
+  grid.innerHTML = [
+    { label:'Valor bruto',     val: fmtBRL(valor),    color:'var(--text)' },
+    { label:'Taxa plataforma', val:'-'+fmtBRL(valor*taxa), color:'var(--red)' },
+    { label:'Valor líquido',   val: fmtBRL(liquido),  color:'var(--accent)' },
+    { label:'Custo do percurso',val:'-'+fmtBRL(custoKm), color:'var(--red)' },
+    { label:'Lucro real',      val: fmtBRL(lucro),    color: lucro>=0?'var(--green)':'var(--red)' },
+    { label:'Lucro por km',    val: 'R$'+(lPorKm).toFixed(2), color: lPorKm>=0?'var(--green)':'var(--red)' },
+  ].map(d=>`
+    <div style="background:var(--border);border-radius:9px;padding:9px 10px">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:2px">${d.label}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:${d.color}">${d.val}</div>
+    </div>`).join('');
+
+  const veredicto = document.getElementById('sim-veredicto');
+  if (lucro > 5) {
+    veredicto.style.background = 'rgba(34,197,94,.1)';
+    veredicto.style.border = '1px solid rgba(34,197,94,.3)';
+    veredicto.style.color = '#4ade80';
+    veredicto.textContent = `Corrida boa! Lucro de ${fmtBRL(lucro)} (R$${lPorKm.toFixed(2)}/km)`;
+  } else if (lucro >= 0) {
+    veredicto.style.background = 'rgba(245,197,24,.1)';
+    veredicto.style.border = '1px solid rgba(245,197,24,.3)';
+    veredicto.style.color = 'var(--accent)';
+    veredicto.textContent = `Corrida no limite. Lucro baixo: ${fmtBRL(lucro)}. Avalie se vale o desgaste.`;
+  } else {
+    veredicto.style.background = 'rgba(239,68,68,.1)';
+    veredicto.style.border = '1px solid rgba(239,68,68,.3)';
+    veredicto.style.color = '#f87171';
+    veredicto.textContent = `Corrida com prejuízo! Você perde ${fmtBRL(Math.abs(lucro))} aceitando essa corrida.`;
+  }
+  res.style.display = 'block';
+}
+
+// Modal veículo
+function openVeiculoModal() {
+  const v = veiculo;
+  document.getElementById('vc-consumo').value      = v.consumo    || '';
+  document.getElementById('vc-preco-comb').value   = v.precoComb  || '';
+  document.getElementById('vc-manutencao').value   = v.manutencao || '';
+  document.getElementById('vc-km-mes').value       = v.kmMes      || '';
+  document.getElementById('vc-valor-carro').value  = v.valorCarro || '';
+  document.getElementById('vc-depreciacao').value  = v.depreciacao|| '15';
+  document.getElementById('vc-horas-dia').value    = v.horasDia   || '8';
+  document.getElementById('vc-dias-mes').value     = v.diasMes    || '22';
+  document.getElementById('vc-km-corrida').value   = v.kmCorrida  || '8';
+  document.getElementById('veiculo-modal-overlay').classList.add('open');
+}
+function closeVeiculoModal(){ document.getElementById('veiculo-modal-overlay').classList.remove('open'); }
+function closeVeiculoModalOutside(e){ if(e.target===document.getElementById('veiculo-modal-overlay')) closeVeiculoModal(); }
+
+function saveVeiculo() {
+  const consumo   = parseFloat(document.getElementById('vc-consumo').value);
+  const precoComb = parseFloat(document.getElementById('vc-preco-comb').value);
+  if(!consumo||consumo<=0){ document.getElementById('vc-consumo').focus(); return; }
+  if(!precoComb||precoComb<=0){ document.getElementById('vc-preco-comb').focus(); return; }
+  veiculo = {
+    consumo,
+    precoComb,
+    manutencao:  parseFloat(document.getElementById('vc-manutencao').value) || 0,
+    kmMes:       parseFloat(document.getElementById('vc-km-mes').value)      || 3000,
+    valorCarro:  parseFloat(document.getElementById('vc-valor-carro').value) || 0,
+    depreciacao: parseFloat(document.getElementById('vc-depreciacao').value) || 15,
+    horasDia:    parseFloat(document.getElementById('vc-horas-dia').value)   || 8,
+    diasMes:     parseFloat(document.getElementById('vc-dias-mes').value)    || 22,
+    kmCorrida:   parseFloat(document.getElementById('vc-km-corrida').value)  || 8,
+  };
+  saveVeiculoLocal();
+  closeVeiculoModal();
+  renderSimulador();
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
