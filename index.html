@@ -510,6 +510,9 @@ input[type=date].date-picker{
   <div class="tab" onclick="showPage('resumo')">Resumo</div>
   <div class="tab" onclick="showPage('fixas')">Fixas</div>
   <div class="tab" onclick="showPage('simulador')">Simulador</div>
+  <div class="tab" onclick="showPage('planos')">
+    <span id="tab-planos-label">Planos</span>
+  </div>
   <div class="tab" onclick="showPage('dicas')">Dicas</div>
 </div>
 
@@ -569,6 +572,9 @@ input[type=date].date-picker{
   <!-- Últimas -->
   <div class="section-title">Últimas movimentações <a onclick="showPage('lancamentos')">Ver todas →</a></div>
   <div class="txn-list" id="txn-home"></div>
+
+  <!-- Banner plano free -->
+  <div id="free-plan-banner" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px"></div>
 
   <!-- FAB PDF flutuante -->
   <div onclick="openPdfModal()" style="
@@ -828,6 +834,104 @@ input[type=date].date-picker{
 
 </div>
 
+<!-- ══════════════ PLANOS ══════════════ -->
+<div class="page" id="page-planos">
+
+  <!-- Badge plano atual -->
+  <div id="planos-current-badge" style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-top:4px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Seu plano atual</div>
+      <div id="planos-plan-name" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px">Free</div>
+    </div>
+    <div id="planos-manage-btn" style="display:none">
+      <button onclick="openStripePortal()" style="background:var(--border);border:none;color:var(--text);padding:9px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+        Gerenciar assinatura
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards de planos -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+
+    <!-- FREE -->
+    <div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Free</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text);margin-bottom:12px">R$0</div>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0">✓</span>30 lançamentos/mês</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0">✓</span>Mês atual</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--green);flex-shrink:0">✓</span>Análise diária</div>
+        <div style="display:flex;gap:7px;align-items:flex-start;color:var(--muted)"><span style="flex-shrink:0">✗</span>PDF</div>
+        <div style="display:flex;gap:7px;align-items:flex-start;color:var(--muted)"><span style="flex-shrink:0">✗</span>Simulador</div>
+        <div style="display:flex;gap:7px;align-items:flex-start;color:var(--muted)"><span style="flex-shrink:0">✗</span>Despesas fixas</div>
+        <div style="display:flex;gap:7px;align-items:flex-start;color:var(--muted)"><span style="flex-shrink:0">✗</span>Histórico completo</div>
+      </div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div style="background:linear-gradient(135deg,#1e2540,#252b50);border-radius:var(--radius);border:1px solid rgba(245,197,24,.4);padding:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:10px;right:10px;background:var(--accent);color:#000;font-size:9px;font-weight:800;padding:3px 8px;border-radius:99px;letter-spacing:.5px">POPULAR</div>
+      <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Premium</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--accent);margin-bottom:12px">R$19,90<span style="font-size:14px;color:var(--muted)">/mês</span></div>
+      <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Lançamentos ilimitados</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Histórico completo</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Todas as análises</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Exportar PDF</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Simulador completo</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Despesas fixas</div>
+        <div style="display:flex;gap:7px;align-items:flex-start"><span style="color:var(--accent);flex-shrink:0">✓</span>Suporte prioritário</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botões de assinatura -->
+  <div id="planos-cta" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <button onclick="assinar('monthly')" style="
+      width:100%;padding:15px;
+      background:var(--accent);color:#000;
+      font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;
+      border:none;border-radius:12px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    ">
+      ASSINAR MENSAL — R$19,90/mês
+    </button>
+    <button onclick="assinar('yearly')" style="
+      width:100%;padding:15px;
+      background:transparent;color:var(--accent);
+      font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;
+      border:2px solid rgba(245,197,24,.4);border-radius:12px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    ">
+      ASSINAR ANUAL — R$149/ano
+      <span style="background:var(--accent);color:#000;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px">-37%</span>
+    </button>
+  </div>
+
+  <!-- Garantia -->
+  <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:14px;text-align:center;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">Garantia de 7 dias</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.5">Se não gostar, devolvemos 100% do valor. Sem perguntas.</div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-title">Dúvidas frequentes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border)">
+      <div style="font-weight:600;font-size:13px;margin-bottom:5px">Posso cancelar quando quiser?</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">Sim. Cancele a qualquer momento pelo app. Você mantém o acesso Premium até o fim do período pago.</div>
+    </div>
+    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border)">
+      <div style="font-weight:600;font-size:13px;margin-bottom:5px">Meus dados ficam salvos se eu cancelar?</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">Sim. Seus dados nunca são apagados. Ao cancelar, você volta para o Free mas não perde o histórico.</div>
+    </div>
+    <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border)">
+      <div style="font-weight:600;font-size:13px;margin-bottom:5px">O pagamento é seguro?</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5">100%. O pagamento é processado pela Stripe, líder mundial em pagamentos. Não armazenamos nenhum dado do seu cartão.</div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════ DICAS ══════════════ -->
 <div class="page" id="page-dicas">
   <div class="section-title">Dicas para motoristas</div>
@@ -1079,6 +1183,38 @@ input[type=date].date-picker{
   </div>
 </div>
 
+<!-- MODAL PAYWALL -->
+<div class="modal-overlay" id="paywall-overlay" onclick="closePaywall(event)">
+  <div class="modal" style="text-align:center;padding:28px 24px 40px">
+    <div style="font-size:40px;margin-bottom:12px">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:8px" id="paywall-title">Recurso Premium</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px" id="paywall-desc">
+      Este recurso está disponível no plano Premium.
+    </div>
+    <button onclick="showPage('planos');closePaywallDirect()" style="
+      width:100%;padding:14px;background:var(--accent);color:#000;
+      font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;
+      border:none;border-radius:12px;cursor:pointer;margin-bottom:10px;
+    ">VER PLANOS</button>
+    <button onclick="closePaywallDirect()" style="
+      width:100%;padding:11px;background:transparent;color:var(--muted);
+      font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+    ">Agora não</button>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" style="
+  position:fixed;bottom:calc(90px + var(--sb));left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:12px 18px;font-size:13px;color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:500;
+  opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;
+  max-width:340px;text-align:center;white-space:nowrap;
+"></div>
+
 </div><!-- /app-screen -->
 
 <script>
@@ -1086,10 +1222,52 @@ input[type=date].date-picker{
 // ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
 //     Painel Supabase → Settings → API
 // ══════════════════════════════════════════════════════════
+
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
 
+
+// ══════════════════════════════════════════════════════════
+// 💳 STRIPE CONFIG — SUBSTITUA OS VALORES ABAIXO
+//    Dashboard Stripe → Developers → API Keys → Publishable key
+//    Dashboard Stripe → Products → copie os Price IDs
+// ══════════════════════════════════════════════════════════
+const STRIPE_PUBLISHABLE_KEY   = 'pk_test_51TFxSVCNNzCsR1e3ihIT7r1rbSKF4fGFBr6bvcQHDxDhbE9OkVa8pSRkmcZrOpBCC04k3sblOO9BNCJEftaUqXrx009hTnNA5c';
+const STRIPE_PRICE_MONTHLY     = 'prod_UEQZb7j2bkCqAa';   // ex: price_1ABC...
+const STRIPE_PRICE_YEARLY      = 'COLE_SEU_PRICE_ID_ANUAL';    // ex: price_1XYZ...
+// URL para onde o Stripe redireciona após o pagamento
+const STRIPE_SUCCESS_URL       = window.location.href + '?checkout=success';
+const STRIPE_CANCEL_URL        = window.location.href + '?checkout=cancel';
 // ──────────────────────────────────────────────────────────
+
+// ── PLANOS ───────────────────────────────────────────────
+const PLAN_LIMITS = {
+  free: {
+    txnsPerMonth:  30,    // max lançamentos por mês
+    historyMonths: 1,     // só mês atual
+    analysisModes: ['day'], // só diário
+    pdf:           false,
+    simulador:     false,
+    fixas:         false,
+    donut:         false,  // sem gráfico por plataforma
+    metricas:      false,  // métricas básicas só (fat/desp/saldo)
+  },
+  premium: {
+    txnsPerMonth:  Infinity,
+    historyMonths: Infinity,
+    analysisModes: ['day','week','month','year','custom'],
+    pdf:           true,
+    simulador:     true,
+    fixas:         true,
+    donut:         true,
+    metricas:      true,
+  },
+};
+
+let currentPlan = 'free'; // será atualizado após login
+
+function isPremium() { return currentPlan === 'premium'; }
+function planLimit(key) { return PLAN_LIMITS[currentPlan][key]; }
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
 const sb = {
@@ -1180,9 +1358,11 @@ const sb = {
     return rows[0] || null;
   },
   async deleteTxn(id) {
-    await this._fetch(`${SUPABASE_URL}/rest/v1/transactions?id=eq.${id}`, {
-      method: 'DELETE',
-    });
+    // Duplo filtro: id + user_id — RLS já protege no banco, mas adicionamos defesa no frontend
+    await this._fetch(
+      `${SUPABASE_URL}/rest/v1/transactions?id=eq.${id}&user_id=eq.${this._user.id}`,
+      { method: 'DELETE' }
+    );
   },
 
   // ── Despesas Fixas no banco Supabase ─────────────────────
@@ -1204,22 +1384,63 @@ const sb = {
     return rows[0] || null;
   },
   async updateFixa(id, fixa) {
-    const r = await this._fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=representation' },
-      body: JSON.stringify(fixa),
-    });
+    // Remove user_id do payload — não permitimos que o cliente altere a ownership
+    const { user_id: _ignored, ...safePayload } = fixa;
+    const r = await this._fetch(
+      `${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}&user_id=eq.${this._user.id}`,
+      {
+        method: 'PATCH',
+        headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify(safePayload),
+      }
+    );
     if (!r || !r.ok) return null;
     const rows = await r.json();
     return rows[0] || null;
   },
   async deleteFixa(id) {
-    await this._fetch(`${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}`, {
-      method: 'DELETE',
-    });
+    // Duplo filtro: id + user_id — impede deletar registro de outro usuário
+    await this._fetch(
+      `${SUPABASE_URL}/rest/v1/fixed_expenses?id=eq.${id}&user_id=eq.${this._user.id}`,
+      { method: 'DELETE' }
+    );
   },
 
   // ── Refresh token ─────────────────────────────────────────
+  // ── Perfil e Plano do usuário ─────────────────────────────
+  async getProfile() {
+    const r = await this._fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${this._user.id}&select=plan,stripe_customer_id,plan_expires_at`
+    );
+    if (!r || !r.ok) return null;
+    const rows = await r.json();
+    return rows[0] || null;
+  },
+  async createCheckoutSession(priceId) {
+    // Chama a Edge Function do Supabase que cria a sessão de checkout na Stripe
+    const r = await this._fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
+      method: 'POST',
+      body: JSON.stringify({
+        price_id:    priceId,
+        success_url: STRIPE_SUCCESS_URL,
+        cancel_url:  STRIPE_CANCEL_URL,
+        customer_email: this._user.email,
+        user_id: this._user.id,
+      }),
+    });
+    if (!r || !r.ok) return null;
+    return r.json(); // retorna { url: 'https://checkout.stripe.com/...' }
+  },
+  async createPortalSession() {
+    // Abre o portal da Stripe para gerenciar assinatura (cancelar, trocar cartão, etc.)
+    const r = await this._fetch(`${SUPABASE_URL}/functions/v1/stripe-billing`, {
+      method: 'POST',
+      body: JSON.stringify({ return_url: window.location.href }),
+    });
+    if (!r || !r.ok) return null;
+    return r.json(); // retorna { url: 'https://billing.stripe.com/...' }
+  },
+
   async refreshToken() {
     try {
       const s = JSON.parse(localStorage.getItem('df_session') || 'null');
@@ -1269,7 +1490,13 @@ function icon(name, size=18, color='currentColor', extraClass=''){
 // ── AUTH HELPERS ──────────────────────────────────────────
 function showAuthMsg(msg, type='error') {
   const el = document.getElementById('auth-msg');
-  el.innerHTML = msg;
+  // Sanitiza mensagens que vêm de APIs externas (Supabase error messages)
+  // Apenas mensagens de sucesso internas podem conter <b> controlado
+  if (type === 'success') {
+    el.innerHTML = msg; // conteúdo interno controlado pelo app
+  } else {
+    el.textContent = msg; // mensagens de erro podem vir de API — usa textContent
+  }
   el.className = `auth-msg ${type} show`;
 }
 function clearAuthMsg() { document.getElementById('auth-msg').className = 'auth-msg'; }
@@ -1524,22 +1751,44 @@ async function enterApp(user) {
     new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   updateCatOptions();
 
-  // Carrega lançamentos e fixas
+  // Carrega lançamentos, fixas e plano
   if (USE_SUPABASE) {
     transactions = []; fixas = [];
     renderHome(); renderAnalyse(); renderResumo();
-    const [remoteTxns, remoteFix] = await Promise.all([sb.getTxns(), sb.getFixas()]);
+    const [remoteTxns, remoteFix, profile] = await Promise.all([
+      sb.getTxns(), sb.getFixas(), sb.getProfile()
+    ]);
     if (Array.isArray(remoteTxns)) transactions = remoteTxns;
     if (Array.isArray(remoteFix))  fixas = remoteFix;
+    // Atualiza plano baseado no perfil do Supabase
+    if (profile) {
+      const expires = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null;
+      if (profile.plan === 'premium' && (!expires || expires > new Date())) {
+        currentPlan = 'premium';
+      } else {
+        currentPlan = 'free';
+      }
+    }
   } else {
     try { transactions = JSON.parse(localStorage.getItem('df_txns') || '[]'); } catch(e) { transactions = []; }
     try { fixas = JSON.parse(localStorage.getItem('df_fixas') || '[]'); } catch(e) { fixas = []; }
     try { veiculo = JSON.parse(localStorage.getItem('df_veiculo') || '{}'); } catch(e) { veiculo = {}; }
     if (!transactions.length) { transactions = DEMO_TRANSACTIONS(); save(); }
+    currentPlan = 'free'; // modo local sempre free
   }
 
+  updatePlanBadge();
   renderHome(); renderAnalyse(); renderResumo();
-  startInactivityWatcher(); // inicia monitoramento de inatividade
+  startInactivityWatcher();
+
+  // Verifica se voltou de um checkout bem-sucedido
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('checkout') === 'success') {
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(() => {
+      showToast('Assinatura Premium ativada com sucesso! Bem-vindo ao Premium.', 'success');
+    }, 1000);
+  }
 }
 
 function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('open'); }
@@ -1734,6 +1983,19 @@ const DEMO_TRANSACTIONS = () => {
 // ─── UTILS ───────────────────────────────────────────────
 // save() — só usado em modo local (sem Supabase)
 function save(){ if(!USE_SUPABASE) localStorage.setItem('df_txns',JSON.stringify(transactions)); }
+// ── SANITIZAÇÃO XSS ──────────────────────────────────────
+// Escapa HTML para todo conteúdo inserido via innerHTML gerado pelo usuário
+function san(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;');
+}
+
 function fmtBRL(v){return 'R$ '+v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 function fmtShort(v){
   if(v===0) return 'R$0';
@@ -1885,7 +2147,7 @@ function renderDonut(txns, svgId, totalId, legendId){
   leg.innerHTML=entries.slice(0,5).map(([plat,val],i)=>`
     <div class="dleg-item">
       <div class="dleg-dot" style="background:${colors[i]}"></div>
-      <span class="dleg-name">${plat}</span>
+      <span class="dleg-name">${san(plat)}</span>
       <span class="dleg-val" style="color:${colors[i]}">${fmtShort(val)}</span>
       <span class="dleg-pct">${Math.round(val/entries.reduce((s,[,v])=>s+v,0)*100)}%</span>
     </div>`).join('');
@@ -1966,13 +2228,13 @@ function mkTxnEl(t,showDel=false){
   const cls=t.type==='receita'?'pos':'neg';
   const info=catInfo(t.cat,t.type);
   const dStr=parseLocalDate(t.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-  const platTag=t.plataforma?` · ${t.plataforma}`:'';
+  const platTag=t.plataforma?` · ${san(t.plataforma)}`:'';
   const tripTag=t.viagens?` · ${t.viagens}v`:'';
   div.innerHTML=`
     <div class="txn-icon">${info.icon}</div>
     <div class="txn-info">
-      <div class="txn-desc">${t.description}</div>
-      <div class="txn-meta">${t.cat}${platTag}${tripTag} · ${dStr}</div>
+      <div class="txn-desc">${san(t.description)}</div>
+      <div class="txn-meta">${san(t.cat)}${platTag}${tripTag} · ${dStr}</div>
     </div>
     <div class="txn-right">
       <div class="txn-amt ${cls}">${sign}${fmtBRL(t.val)}</div>
@@ -2005,11 +2267,32 @@ function renderHome(){
   sEl.textContent=fmtShort(saldoReal);
   sEl.className='top3-val '+(saldoReal>=0?'pos':'neg');
 
-  // Metrics
-  renderMetricsGrid(txns,'metrics-home');
+  // Metrics — free só vê os 3 cards básicos, premium vê grid completo
+  if (isPremium()) {
+    renderMetricsGrid(txns,'metrics-home');
+    document.getElementById('metrics-home').style.display='grid';
+  } else {
+    document.getElementById('metrics-home').innerHTML =
+      `<div style="grid-column:1/-1;background:rgba(245,197,24,.06);border:1px solid rgba(245,197,24,.2);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--muted);text-align:center;cursor:pointer" onclick="showPaywall('Métricas Detalhadas','Veja km por corrida, lucro por hora, custo por km e muito mais. Disponível no Premium.')">
+        ${IC.zap} <b style="color:var(--accent)">Premium</b> — Desbloqueie 13 métricas detalhadas
+      </div>`;
+  }
 
-  // Donut
-  renderDonut(txns,'donut-svg-home','donut-total-home','donut-legend-home');
+  // Donut — premium only
+  const donutSection = document.querySelector('.donut-wrap');
+  if (isPremium()) {
+    renderDonut(txns,'donut-svg-home','donut-total-home','donut-legend-home');
+    if (donutSection) donutSection.style.display='block';
+  } else {
+    if (donutSection) {
+      donutSection.innerHTML = `<div style="padding:18px;text-align:center;cursor:pointer" onclick="showPaywall('Gráfico por Plataforma','Veja quanto cada aplicativo contribuiu para o seu faturamento. Disponível no Premium.')">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Faturamento por plataforma</div>
+        <div style="background:rgba(245,197,24,.06);border:1px dashed rgba(245,197,24,.3);border-radius:10px;padding:14px">
+          ${IC.zap} <span style="color:var(--accent);font-weight:600">Premium</span> — Desbloqueie o gráfico
+        </div>
+      </div>`;
+    }
+  }
 
   // Chart
   renderChart7Days('chart-bars-home');
@@ -2028,10 +2311,46 @@ function renderHome(){
   // Txns
   const l=document.getElementById('txn-home');l.innerHTML='';
   [...transactions].reverse().slice(0,5).forEach(t=>l.appendChild(mkTxnEl(t)));
+
+  // Banner free plan com contador
+  const freeBanner = document.getElementById('free-plan-banner');
+  if (!isPremium() && freeBanner) {
+    const now = new Date();
+    const thisMonthCount = transactions.filter(t=>{
+      const d=parseLocalDate(t.date);
+      return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    }).length;
+    const limit = planLimit('txnsPerMonth');
+    const remaining = Math.max(0, limit - thisMonthCount);
+    const pct = Math.min(100, (thisMonthCount / limit) * 100);
+    const color = pct >= 90 ? 'var(--red)' : pct >= 70 ? 'var(--accent)' : 'var(--green)';
+    freeBanner.style.display = 'block';
+    freeBanner.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+        <span style="font-size:12px;font-weight:600">Plano Free</span>
+        <span style="font-size:11px;color:var(--muted)">${thisMonthCount}/${limit} lançamentos</span>
+      </div>
+      <div style="height:5px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:99px;transition:width .4s"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:center">
+        ${remaining > 0
+          ? `Restam <b style="color:${color}">${remaining}</b> lançamentos este mês · <span style="color:var(--accent);cursor:pointer" onclick="showPage('planos')">Upgrade</span>`
+          : `<span style="color:var(--red);font-weight:600">Limite atingido</span> · <span style="color:var(--accent);cursor:pointer" onclick="showPage('planos')">Fazer upgrade</span>`
+        }
+      </div>`;
+  } else if (freeBanner) {
+    freeBanner.style.display = 'none';
+  }
 }
 
 // ─── ANALYSE ─────────────────────────────────────────────
 function setAnalysePeriod(p){
+  // Modos além do diário são premium
+  if (p !== 'day' && !isPremium()) {
+    showPaywall('Análise Avançada', 'Análise semanal, mensal, anual e por data específica disponíveis no Premium.');
+    return;
+  }
   analysePeriod=p; analyseOffset=0;
   ['day','week','month','year','custom'].forEach(k=>{
     document.getElementById('ap-'+k).classList.toggle('active',k===p);
@@ -2118,12 +2437,23 @@ function renderResumo(){
   const cl=document.getElementById('cat-list');cl.innerHTML='';
   Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([cat,val])=>{
     const info=catInfo(cat,'gasto'),pct=Math.round(val/total*100);
-    cl.innerHTML+=`<div class="cat-item"><div class="cat-row"><div class="cat-dot" style="background:${info.color}"></div><span class="cat-name">${info.icon} ${cat}</span><span class="cat-val" style="color:${info.color}">${fmtBRL(val)}</span><span class="cat-pct">${pct}%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${info.color}"></div></div></div>`;
+    cl.innerHTML+=`<div class="cat-item"><div class="cat-row"><div class="cat-dot" style="background:${info.color}"></div><span class="cat-name">${info.icon} ${san(cat)}</span><span class="cat-val" style="color:${info.color}">${fmtBRL(val)}</span><span class="cat-pct">${pct}%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${info.color}"></div></div></div>`;
   });
   if(!Object.keys(cats).length) cl.innerHTML='<div class="empty-state">Nenhum gasto neste mês.</div>';
 }
 
 function changeMonth(dir){
+  // Plano free só pode ver o mês atual
+  if (!isPremium()) {
+    const now = new Date();
+    const newMonth = viewMonth + dir;
+    const newYear  = viewYear + (newMonth < 0 ? -1 : newMonth > 11 ? 1 : 0);
+    const adjMonth = ((newMonth % 12) + 12) % 12;
+    if (adjMonth !== now.getMonth() || newYear !== now.getFullYear()) {
+      showPaywall('Histórico Completo', 'Acesse qualquer mês do histórico com o plano Premium.');
+      return;
+    }
+  }
   viewMonth+=dir;
   if(viewMonth<0){viewMonth=11;viewYear--;} if(viewMonth>11){viewMonth=0;viewYear++;}
   renderResumo();
@@ -2131,18 +2461,31 @@ function changeMonth(dir){
 
 // ─── NAVIGATION ──────────────────────────────────────────
 function showPage(p){
+  // Gates de acesso por plano
+  if (p === 'fixas' && !isPremium()) {
+    showPaywall('Despesas Fixas', 'Cadastre aluguel, financiamento, seguro e outras contas fixas. Disponível no Premium.');
+    return;
+  }
+  if (p === 'simulador' && !isPremium()) {
+    showPaywall('Simulador de Corridas', 'Calcule o custo real do seu veículo e descubra quais corridas realmente valem a pena. Disponível no Premium.');
+    return;
+  }
+
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p)?.classList.add('active');
-  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
+  ['inicio','analise','lancamentos','resumo','fixas','simulador','planos','dicas'].forEach((n,i)=>{
+    if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');
+  });
   if(p==='inicio') renderHome();
   if(p==='analise') renderAnalyse();
   if(p==='lancamentos') renderAll();
   if(p==='resumo') renderResumo();
   if(p==='fixas') renderFixas();
   if(p==='simulador') renderSimulador();
+  if(p==='planos') renderPlanos();
 }
 
 // ─── DESPESAS FIXAS ──────────────────────────────────────
@@ -2208,8 +2551,8 @@ function renderFixas(){
       <div class="fixa-top">
         <div class="fixa-icon">${icon}</div>
         <div class="fixa-info">
-          <div class="fixa-nome">${f.nome}</div>
-          <div class="fixa-sub">${f.cat} · ${FREQ_LABEL[f.freq]}</div>
+          <div class="fixa-nome">${san(f.nome)}</div>
+          <div class="fixa-sub">${san(f.cat)} · ${FREQ_LABEL[f.freq]}</div>
           <div class="fixa-mensal-equiv">≈ ${fmtBRL(equiv)}/mês</div>
         </div>
         <div class="fixa-right">
@@ -2292,21 +2635,37 @@ function closeFixaModal(){ document.getElementById('fixa-modal-overlay').classLi
 function closeFixaModalOutside(e){ if(e.target===document.getElementById('fixa-modal-overlay')) closeFixaModal(); }
 
 async function saveFixa(){
-  const nome    = document.getElementById('fx-nome').value.trim();
+  const nome    = document.getElementById('fx-nome').value.trim().slice(0, 100);
   const valor   = parseFloat(document.getElementById('fx-valor').value);
-  const cat     = document.getElementById('fx-cat').value;
-  const freq    = document.getElementById('fx-freq').value;
-  const venc    = parseInt(document.getElementById('fx-venc').value) || null;
+  const catRaw  = document.getElementById('fx-cat').value;
+  const freqRaw = document.getElementById('fx-freq').value;
+  const vencRaw = parseInt(document.getElementById('fx-venc').value) || null;
   const deduzir = document.getElementById('fx-deduzir').checked;
   const editId  = document.getElementById('fx-edit-id').value;
 
+  // Validações de integridade
   if(!nome){ document.getElementById('fx-nome').focus(); return; }
-  if(!valor||valor<=0){ document.getElementById('fx-valor').focus(); return; }
+  if(!valor || valor <= 0 || valor > 999999){ document.getElementById('fx-valor').focus(); return; }
+  // Valida freq contra lista permitida
+  const freqsPermitidas = ['semanal','quinzenal','mensal','bimestral','trimestral','semestral','anual'];
+  const freq = freqsPermitidas.includes(freqRaw) ? freqRaw : 'mensal';
+  // Valida vencimento
+  const venc = vencRaw && vencRaw >= 1 && vencRaw <= 31 ? vencRaw : null;
+  // Valida cat contra lista permitida
+  const catsPermitidas = Object.keys(FIXA_CAT_ICONS);
+  const cat = catsPermitidas.includes(catRaw) ? catRaw : 'Outro fixo';
 
   const btn = document.getElementById('fx-btn-save');
   btn.disabled=true; btn.textContent='SALVANDO...';
 
-  const payload = { nome, valor, cat, freq, venc, deduzir };
+  const payload = {
+    nome,
+    valor: Math.round(valor * 100) / 100,
+    cat,
+    freq,
+    venc,
+    deduzir: Boolean(deduzir),
+  };
 
   if(USE_SUPABASE){
     if(editId){
@@ -2381,30 +2740,62 @@ function openModal(){
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 async function addTransaction(){
-  const description=document.getElementById('f-desc').value.trim();
-  const val=parseFloat(document.getElementById('f-val').value);
-  const plat = currentType==='receita' ? document.getElementById('f-plataforma').value : '';
-  const cat  = currentType==='receita' ? plat : document.getElementById('f-cat').value;
-  const viagens=parseInt(document.getElementById('f-viagens').value)||0;
-  const horas=parseFloat(document.getElementById('f-horas').value)||0;
-  const km=parseFloat(document.getElementById('f-km').value)||0;
-  const date=document.getElementById('f-date').value;
-  if(!description){document.getElementById('f-desc').focus();return;}
-  if(!val||val<=0){document.getElementById('f-val').focus();return;}
+  // Verifica limite de lançamentos do plano Free
+  if (!isPremium()) {
+    const now = new Date();
+    const thisMonth = transactions.filter(t => {
+      const d = parseLocalDate(t.date);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    const limit = planLimit('txnsPerMonth');
+    if (thisMonth.length >= limit) {
+      closeModal();
+      showPaywall(
+        `Limite de ${limit} lançamentos atingido`,
+        `No plano Free você pode registrar até ${limit} lançamentos por mês. Faça upgrade para lançamentos ilimitados.`
+      );
+      return;
+    }
+  }
+
+  const description = document.getElementById('f-desc').value.trim().slice(0, 200);
+  const val         = parseFloat(document.getElementById('f-val').value);
+  const plat        = currentType==='receita' ? document.getElementById('f-plataforma').value : '';
+  const cat         = currentType==='receita' ? plat : document.getElementById('f-cat').value;
+  const viagens     = Math.min(Math.max(parseInt(document.getElementById('f-viagens').value)||0, 0), 9999);
+  const horas       = Math.min(Math.max(parseFloat(document.getElementById('f-horas').value)||0, 0), 24);
+  const km          = Math.min(Math.max(parseFloat(document.getElementById('f-km').value)||0, 0), 99999);
+  const date        = document.getElementById('f-date').value;
+
+  // Validações de integridade
+  if(!description){ document.getElementById('f-desc').focus(); return; }
+  if(!val || val <= 0 || val > 999999){ document.getElementById('f-val').focus(); return; }
   if(!date) return;
+  // Valida formato de data
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+  // type só pode ser receita ou gasto
+  if(!['receita','gasto'].includes(currentType)) return;
 
   const btnAdd = document.querySelector('.btn-add');
   btnAdd.disabled = true; btnAdd.textContent = 'SALVANDO...';
 
-  const newTxn = {type:currentType,description,val,cat,plataforma:plat,viagens,horas,km,date};
+  const newTxn = {
+    type: currentType,
+    description,          // já trimado e limitado
+    val: Math.round(val * 100) / 100, // arredonda para 2 casas
+    cat,
+    plataforma: plat,
+    viagens,
+    horas,
+    km,
+    date,
+  };
 
   if (USE_SUPABASE) {
-    // Salva no banco e usa o registro retornado (com UUID real)
     const saved = await sb.insertTxn(newTxn);
     if (saved) {
       transactions.unshift(saved);
     } else {
-      // Fallback: adiciona localmente com id temporário
       transactions.unshift({ ...newTxn, id: Date.now() });
     }
   } else {
@@ -2422,6 +2813,7 @@ async function addTransaction(){
 const MONTHS_PDF = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 function openPdfModal(){
+  if (!requirePremium('Exportar PDF', 'Gere relatórios profissionais em PDF para enviar ao contador. Disponível no Premium.')) return;
   // Popula anos disponíveis baseado nos lançamentos existentes
   const yearsSet = new Set(transactions.map(t=>t.date?.slice(0,4)).filter(Boolean));
   const currentYear = new Date().getFullYear();
@@ -2473,7 +2865,7 @@ function exportPDF(){
   const mo = parseInt(document.getElementById('pdf-sel-month').value);
   const yr = parseInt(document.getElementById('pdf-sel-year').value);
   const mesNome = MONTHS_PDF[mo] + ' ' + yr;
-  const userName = document.getElementById('menu-user-name').textContent || 'Motorista';
+  const userName = san(document.getElementById('menu-user-name').textContent || 'Motorista');
 
   const txns = transactions.filter(t=>{
     const d = parseLocalDate(t.date);
@@ -2586,7 +2978,7 @@ function exportPDF(){
         const pct = Math.round(val/totalPlat*100);
         const color = platColors[plat]||'#6b7280';
         return `<div class="plat-row">
-          <div class="plat-name">${plat}</div>
+          <div class="plat-name">${san(plat)}</div>
           <div class="plat-bar-bg"><div class="plat-bar" style="width:${pct}%;background:${color}"></div></div>
           <div class="plat-pct">${pct}%</div>
           <div class="plat-val">${fmtBRL(val)}</div>
@@ -2614,7 +3006,7 @@ function exportPDF(){
           if(+t.km>0)      extras.push(`${t.km}km`);
           return `<tr>
             <td style="color:#6b7280;white-space:nowrap">${dStr}</td>
-            <td style="font-weight:500">${t.description||'—'}${extras.length?`<br><span style="font-size:10px;color:#94a3b8">${extras.join(' · ')}</span>`:''}  </td>
+            <td style="font-weight:500">${san(t.description||'—')}${extras.length?`<br><span style="font-size:10px;color:#94a3b8">${extras.join(' · ')}</span>`:''}  </td>
             <td>${info.icon} ${platTag}</td>
             <td><span class="badge ${isRec?'b-rec':'b-gas'}">${isRec?'Receita':'Gasto'}</span></td>
             <td style="text-align:right" class="${isRec?'amount-rec':'amount-gas'}">${isRec?'+':'-'}${fmtBRL(t.val)}</td>
@@ -2769,7 +3161,7 @@ function renderSimCalcs(v) {
     return `
       <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
         <div style="width:9px;height:9px;border-radius:50%;background:${p.cor};flex-shrink:0"></div>
-        <div style="flex:1;font-size:13px;font-weight:600">${p.nome}</div>
+        <div style="flex:1;font-size:13px;font-weight:600">${san(p.nome)}</div>
         <div style="font-size:11px;color:var(--muted)">${(p.taxa*100).toFixed(0)}% taxa</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${p.cor};min-width:60px;text-align:right">
           mín. ${fmtBRL(minBruto)}
@@ -2868,6 +3260,120 @@ function saveVeiculo() {
   closeVeiculoModal();
   renderSimulador();
 }
+
+// ─── PLANOS & PAYWALL ────────────────────────────────────
+
+function updatePlanBadge() {
+  const premium = isPremium();
+  // Atualiza badge no menu do usuário
+  const nameEl = document.getElementById('menu-user-name');
+  const badgeId = 'plan-badge-menu';
+  let badge = document.getElementById(badgeId);
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.id = badgeId;
+    badge.style.cssText = 'font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;margin-left:6px;vertical-align:middle';
+    nameEl?.parentNode?.appendChild(badge);
+  }
+  badge.textContent = premium ? 'PREMIUM' : 'FREE';
+  badge.style.background = premium ? 'var(--accent)' : 'var(--border)';
+  badge.style.color = premium ? '#000' : 'var(--muted)';
+
+  // Atualiza tab Planos
+  const tabLabel = document.getElementById('tab-planos-label');
+  if (tabLabel) tabLabel.textContent = premium ? '⭐ Premium' : 'Planos';
+
+  // Atualiza página de planos
+  const planName = document.getElementById('planos-plan-name');
+  if (planName) {
+    planName.textContent = premium ? 'Premium ⭐' : 'Free';
+    planName.style.color = premium ? 'var(--accent)' : 'var(--text)';
+  }
+  const cta = document.getElementById('planos-cta');
+  const manage = document.getElementById('planos-manage-btn');
+  if (cta) cta.style.display = premium ? 'none' : 'flex';
+  if (manage) manage.style.display = premium ? 'block' : 'none';
+}
+
+// Paywall — exibe modal pedindo upgrade
+function showPaywall(title, desc) {
+  document.getElementById('paywall-title').textContent = title || 'Recurso Premium';
+  document.getElementById('paywall-desc').textContent  = desc  || 'Este recurso está disponível no plano Premium. Faça upgrade para desbloquear.';
+  document.getElementById('paywall-overlay').classList.add('open');
+}
+function closePaywall(e) {
+  if (e.target === document.getElementById('paywall-overlay')) closePaywallDirect();
+}
+function closePaywallDirect() {
+  document.getElementById('paywall-overlay').classList.remove('open');
+}
+
+// Guard genérico — retorna true se pode prosseguir, false se bloqueado
+function requirePremium(title, desc) {
+  if (isPremium()) return true;
+  showPaywall(title, desc);
+  return false;
+}
+
+// Toast notification
+let toastTimer = null;
+function showToast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'success' ? 'rgba(34,197,94,.15)' :
+                         type === 'error'   ? 'rgba(239,68,68,.15)' : 'var(--surface)';
+  el.style.borderColor = type === 'success' ? 'rgba(34,197,94,.3)' :
+                          type === 'error'   ? 'rgba(239,68,68,.3)'  : 'var(--border)';
+  el.style.opacity = '1';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 3500);
+}
+
+// ── Stripe Checkout ───────────────────────────────────────
+async function assinar(tipo) {
+  if (!USE_SUPABASE) {
+    showToast('Configure o Supabase e a Stripe para ativar assinaturas.', 'error');
+    return;
+  }
+  const priceId = tipo === 'yearly' ? STRIPE_PRICE_YEARLY : STRIPE_PRICE_MONTHLY;
+  const btn = tipo === 'yearly'
+    ? document.querySelectorAll('#planos-cta button')[1]
+    : document.querySelectorAll('#planos-cta button')[0];
+  if (btn) { btn.disabled = true; btn.textContent = 'REDIRECIONANDO...'; }
+
+  try {
+    const session = await sb.createCheckoutSession(priceId);
+    if (session?.url) {
+      window.location.href = session.url;
+    } else {
+      showToast('Erro ao iniciar checkout. Tente novamente.', 'error');
+      if (btn) { btn.disabled = false; btn.textContent = tipo === 'yearly' ? 'ASSINAR ANUAL — R$149/ano' : 'ASSINAR MENSAL — R$19,90/mês'; }
+    }
+  } catch(e) {
+    showToast('Sem conexão. Verifique sua internet.', 'error');
+    if (btn) { btn.disabled = false; }
+  }
+}
+
+async function openStripePortal() {
+  showToast('Abrindo portal de assinatura...');
+  try {
+    const portal = await sb.createPortalSession();
+    if (portal?.url) window.location.href = portal.url;
+    else showToast('Erro ao abrir portal. Tente novamente.', 'error');
+  } catch(e) {
+    showToast('Sem conexão. Verifique sua internet.', 'error');
+  }
+}
+
+// ── Gates de features ─────────────────────────────────────
+
+// Gate: renderiza Planos page
+function renderPlanos() { updatePlanBadge(); }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
 // A inicialização do app é feita pela função enterApp()
