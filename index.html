@@ -367,6 +367,46 @@ input[type=date].date-picker{
 .auth-icon-wrap svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .nav-item svg{width:20px;height:20px}
 
+/* ── TURNO ── */
+.turno-btn-start{
+  width:100%;padding:16px;border:none;border-radius:var(--radius);cursor:pointer;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .15s,opacity .15s;
+  background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;
+}
+.turno-btn-start:active{transform:scale(.97)}
+.turno-btn-stop{
+  width:100%;padding:16px;border:none;border-radius:var(--radius);cursor:pointer;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:transform .15s;
+  background:linear-gradient(135deg,var(--red),#b91c1c);color:#fff;
+}
+.turno-btn-stop:active{transform:scale(.97)}
+.turno-live{
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+  padding:14px 16px;
+}
+.turno-live-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.turno-timer{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--accent);letter-spacing:2px}
+.turno-status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.turno-live-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.turno-stat{background:var(--border);border-radius:10px;padding:9px;text-align:center}
+.turno-stat-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent)}
+.turno-stat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+.turno-pause-row{display:flex;gap:8px;margin-top:10px}
+.turno-pause-btn{
+  flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:12px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;
+}
+.turno-pause-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(245,197,24,.08)}
+.turno-resumo-item{background:var(--border);border-radius:9px;padding:9px 10px}
+.turno-resumo-label{font-size:10px;color:var(--muted);margin-bottom:2px}
+.turno-resumo-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+
 /* ── PDF PRINT ── */
 @media print{
   body{background:#fff!important;color:#000!important;max-width:100%!important}
@@ -510,6 +550,7 @@ input[type=date].date-picker{
   <div class="tab" onclick="showPage('resumo')">Resumo</div>
   <div class="tab" onclick="showPage('fixas')">Fixas</div>
   <div class="tab" onclick="showPage('simulador')">Simulador</div>
+
   <div class="tab" onclick="showPage('dicas')">Dicas</div>
 </div>
 
@@ -536,6 +577,9 @@ input[type=date].date-picker{
 
   <!-- Alerta fixas -->
   <div id="fixas-home-alert" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5"></div>
+
+  <!-- TURNO -->
+  <div id="turno-card" style="margin-bottom:14px"></div>
 
   <!-- Métricas em grid -->
   <div class="section-title">Métricas do Dia</div>
@@ -1079,6 +1123,62 @@ input[type=date].date-picker{
   </div>
 </div>
 
+<!-- MODAL ENCERRAR TURNO -->
+<div class="modal-overlay" id="turno-modal-overlay" onclick="closeTurnoModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="display:flex;align-items:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Encerrar Turno
+    </div>
+
+    <!-- Resumo automático -->
+    <div style="background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Resumo do turno</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="turno-resumo-grid"></div>
+    </div>
+
+    <!-- Campos para confirmar/ajustar -->
+    <div style="font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">Confirme os dados</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div class="field" style="margin-bottom:0">
+        <label>Faturamento (R$)</label>
+        <input type="number" id="turno-faturamento" placeholder="0,00" step="0.01" min="0" inputmode="decimal"/>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Km rodados</label>
+        <input type="number" id="turno-km" placeholder="0" min="0" inputmode="numeric"/>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Corridas</label>
+        <input type="number" id="turno-corridas" placeholder="0" min="0" inputmode="numeric"/>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Plataforma</label>
+        <select id="turno-plataforma">
+          <option value="Uber">Uber</option>
+          <option value="99">99</option>
+          <option value="InDriver">InDriver</option>
+          <option value="iFood">iFood</option>
+          <option value="Rappi">Rappi</option>
+          <option value="Lalamove">Lalamove</option>
+          <option value="Particular">Particular</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Observação <span style="color:var(--muted)">(opcional)</span></label>
+      <input type="text" id="turno-obs" placeholder="Ex: Turno da manhã, muita demanda..." maxlength="200"/>
+    </div>
+
+    <button class="btn-add" onclick="lancarTurno()">LANÇAR TURNO</button>
+    <button onclick="closeTurnoModal()" style="width:100%;padding:11px;background:transparent;color:var(--muted);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px">Descartar turno</button>
+  </div>
+</div>
+
 </div><!-- /app-screen -->
 
 <script>
@@ -1086,11 +1186,11 @@ input[type=date].date-picker{
 // ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
 //     Painel Supabase → Settings → API
 // ══════════════════════════════════════════════════════════
+
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
 
 
-// ──────────────────────────────────────────────────────────
 
 // ── Supabase Client leve (sem SDK externo) ────────────────
 const sb = {
@@ -1540,13 +1640,16 @@ async function enterApp(user) {
     new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
   updateCatOptions();
 
-  // Carrega lançamentos e fixas
+  // Carrega lançamentos, fixas e plano
   if (USE_SUPABASE) {
     transactions = []; fixas = [];
     renderHome(); renderAnalyse(); renderResumo();
-    const [remoteTxns, remoteFix] = await Promise.all([sb.getTxns(), sb.getFixas()]);
+    const [remoteTxns, remoteFix, profile] = await Promise.all([
+      sb.getTxns(), sb.getFixas(), sb.getProfile()
+    ]);
     if (Array.isArray(remoteTxns)) transactions = remoteTxns;
     if (Array.isArray(remoteFix))  fixas = remoteFix;
+  }
   } else {
     try { transactions = JSON.parse(localStorage.getItem('df_txns') || '[]'); } catch(e) { transactions = []; }
     try { fixas = JSON.parse(localStorage.getItem('df_fixas') || '[]'); } catch(e) { fixas = []; }
@@ -1555,7 +1658,9 @@ async function enterApp(user) {
   }
 
   renderHome(); renderAnalyse(); renderResumo();
-  startInactivityWatcher(); // inicia monitoramento de inatividade
+  renderTurnoCard();
+  restoreTurnoIfActive();
+  startInactivityWatcher();
 }
 
 function toggleUserMenu() { document.getElementById('user-menu').classList.toggle('open'); }
@@ -1566,6 +1671,7 @@ document.addEventListener('click', e => {
 
 function doLogout() {
   stopInactivityWatcher();
+  clearInterval(turnoTimerInterval);
   sb.signOut();
   localStorage.removeItem('df_local_logged');
   transactions = []; fixas = [];
@@ -2034,11 +2140,10 @@ function renderHome(){
   sEl.textContent=fmtShort(saldoReal);
   sEl.className='top3-val '+(saldoReal>=0?'pos':'neg');
 
-  // Metrics
   renderMetricsGrid(txns,'metrics-home');
 
-  // Donut
   renderDonut(txns,'donut-svg-home','donut-total-home','donut-legend-home');
+  }
 
   // Chart
   renderChart7Days('chart-bars-home');
@@ -2165,7 +2270,9 @@ function showPage(p){
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p)?.classList.add('active');
-  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
+  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas'].forEach((n,i)=>{
+    if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');
+  });
   if(p==='inicio') renderHome();
   if(p==='analise') renderAnalyse();
   if(p==='lancamentos') renderAll();
@@ -2426,7 +2533,7 @@ function openModal(){
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 async function addTransaction(){
-  const description = document.getElementById('f-desc').value.trim().slice(0, 200); // max 200 chars
+  const description = document.getElementById('f-desc').value.trim().slice(0, 200);
   const val         = parseFloat(document.getElementById('f-val').value);
   const plat        = currentType==='receita' ? document.getElementById('f-plataforma').value : '';
   const cat         = currentType==='receita' ? plat : document.getElementById('f-cat').value;
@@ -2926,6 +3033,274 @@ function saveVeiculo() {
   saveVeiculoLocal();
   closeVeiculoModal();
   renderSimulador();
+}
+
+
+// ─── REGISTRO DE TURNO ───────────────────────────────────
+let turno = null; // { startTime, pauseMs, pauseStart, pauseCount }
+let turnoTimerInterval = null;
+
+try {
+  const saved = localStorage.getItem('df_turno_ativo');
+  if (saved) turno = JSON.parse(saved);
+} catch(e) {}
+
+function saveTurno() {
+  if (turno) localStorage.setItem('df_turno_ativo', JSON.stringify(turno));
+  else localStorage.removeItem('df_turno_ativo');
+}
+
+function turnoElapsedMs() {
+  if (!turno) return 0;
+  const now = Date.now();
+  const pauseExtra = turno.pauseStart ? (now - turno.pauseStart) : 0;
+  return (now - turno.startTime) - turno.pauseMs - pauseExtra;
+}
+
+function turnoHoras() { return turnoElapsedMs() / 3600000; }
+
+function fmtTimer(ms) {
+  const total = Math.floor(ms / 1000);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function renderTurnoCard() {
+  const card = document.getElementById('turno-card');
+  if (!card) return;
+
+  if (!turno) {
+    // Botão INICIAR TURNO
+    card.innerHTML = `
+      <button class="turno-btn-start" onclick="iniciarTurno()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        INICIAR TURNO
+      </button>`;
+  } else {
+    const emPausa = !!turno.pauseStart;
+    const elapsedMs = turnoElapsedMs();
+    const pausaLabel = emPausa ? 'Retomar' : 'Pausar';
+
+    // Estimativa de km baseada em km médio/hora do histórico
+    const mediaKmH = calcMediaKmHora();
+    const kmEstimado = Math.round(turnoHoras() * mediaKmH);
+
+    card.innerHTML = `
+      <div class="turno-live">
+        <div class="turno-live-top">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <div class="turno-status-dot"></div>
+              <span style="font-size:11px;color:var(--green);font-weight:600;text-transform:uppercase;letter-spacing:.5px">
+                ${emPausa ? 'Em pausa' : 'Turno ativo'}
+              </span>
+            </div>
+            <div class="turno-timer" id="turno-timer-display">${fmtTimer(elapsedMs)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:var(--muted);margin-bottom:3px">Início</div>
+            <div style="font-size:13px;font-weight:600">${new Date(turno.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+            ${turno.pauseCount > 0 ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${turno.pauseCount} pausa${turno.pauseCount>1?'s':''}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="turno-live-stats">
+          <div class="turno-stat">
+            <div class="turno-stat-val">${turnoHoras().toFixed(1)}h</div>
+            <div class="turno-stat-lbl">Trabalhadas</div>
+          </div>
+          <div class="turno-stat">
+            <div class="turno-stat-val">~${kmEstimado} km</div>
+            <div class="turno-stat-lbl">Estimado</div>
+          </div>
+          <div class="turno-stat">
+            <div class="turno-stat-val">${fmtShort(calcFatEstimado())}</div>
+            <div class="turno-stat-lbl">Fat. estimado</div>
+          </div>
+        </div>
+
+        <div class="turno-pause-row">
+          <button class="turno-pause-btn ${emPausa?'active':''}" onclick="togglePausaTurno()">
+            ${emPausa
+              ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg>Retomar`
+              : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pausar`
+            }
+          </button>
+          <button class="turno-btn-stop" onclick="encerrarTurno()" style="flex:2;font-size:15px;padding:9px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+            ENCERRAR TURNO
+          </button>
+        </div>
+      </div>`;
+
+    // Inicia timer em tempo real
+    clearInterval(turnoTimerInterval);
+    if (!emPausa) {
+      turnoTimerInterval = setInterval(() => {
+        const el = document.getElementById('turno-timer-display');
+        if (el) el.textContent = fmtTimer(turnoElapsedMs());
+      }, 1000);
+    }
+  }
+}
+
+function calcMediaKmHora() {
+  // Média de km/hora dos últimos 30 lançamentos de receita com km e horas
+  const recentes = transactions
+    .filter(t => t.type==='receita' && t.km > 0 && t.horas > 0)
+    .slice(-30);
+  if (!recentes.length) return 30; // default 30 km/h
+  const total = recentes.reduce((s,t) => s + (t.km / t.horas), 0);
+  return total / recentes.length;
+}
+
+function calcFatEstimado() {
+  // Faturamento estimado baseado na média por hora do histórico recente
+  const recentes = transactions
+    .filter(t => t.type==='receita' && t.horas > 0)
+    .slice(-30);
+  if (!recentes.length) return 0;
+  const mediaHora = recentes.reduce((s,t) => s + (t.val / t.horas), 0) / recentes.length;
+  return mediaHora * turnoHoras();
+}
+
+function iniciarTurno() {
+  turno = {
+    startTime: Date.now(),
+    pauseMs: 0,
+    pauseStart: null,
+    pauseCount: 0,
+  };
+  saveTurno();
+  renderTurnoCard();
+}
+
+function togglePausaTurno() {
+  if (!turno) return;
+  if (turno.pauseStart) {
+    // Retomar
+    turno.pauseMs += Date.now() - turno.pauseStart;
+    turno.pauseStart = null;
+  } else {
+    // Pausar
+    turno.pauseStart = Date.now();
+    turno.pauseCount++;
+    clearInterval(turnoTimerInterval);
+  }
+  saveTurno();
+  renderTurnoCard();
+}
+
+function encerrarTurno() {
+  if (!turno) return;
+  // Se estava em pausa, encerra a pausa primeiro
+  if (turno.pauseStart) {
+    turno.pauseMs += Date.now() - turno.pauseStart;
+    turno.pauseStart = null;
+  }
+  clearInterval(turnoTimerInterval);
+  abrirModalEncerrarTurno();
+}
+
+function abrirModalEncerrarTurno() {
+  const horas = turnoHoras();
+  const kmEstimado = Math.round(horas * calcMediaKmHora());
+  const fatEstimado = calcFatEstimado();
+  const inicio = new Date(turno.startTime);
+  const fim = new Date();
+  const duracaoMin = Math.round(turnoElapsedMs() / 60000);
+
+  // Preenche resumo
+  document.getElementById('turno-resumo-grid').innerHTML = [
+    { label:'Início',     val: inicio.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) },
+    { label:'Fim',        val: fim.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) },
+    { label:'Duração',    val: `${Math.floor(duracaoMin/60)}h ${duracaoMin%60}min` },
+    { label:'Pausas',     val: turno.pauseCount > 0 ? `${turno.pauseCount} pausa${turno.pauseCount>1?'s':''}` : 'Nenhuma' },
+  ].map(i=>`<div class="turno-resumo-item"><div class="turno-resumo-label">${i.label}</div><div class="turno-resumo-val">${i.val}</div></div>`).join('');
+
+  // Pré-preenche campos
+  document.getElementById('turno-faturamento').value = fatEstimado > 0 ? fatEstimado.toFixed(2) : '';
+  document.getElementById('turno-km').value = kmEstimado > 0 ? kmEstimado : '';
+  document.getElementById('turno-corridas').value = '';
+  document.getElementById('turno-obs').value = '';
+
+  document.getElementById('turno-modal-overlay').classList.add('open');
+}
+
+function closeTurnoModal() {
+  document.getElementById('turno-modal-overlay').classList.remove('open');
+  // Descarta o turno
+  turno = null;
+  saveTurno();
+  renderTurnoCard();
+}
+function closeTurnoModalOutside(e) {
+  if (e.target === document.getElementById('turno-modal-overlay')) {
+    document.getElementById('turno-modal-overlay').classList.remove('open');
+  }
+}
+
+async function lancarTurno() {
+  const fat      = parseFloat(document.getElementById('turno-faturamento').value) || 0;
+  const km       = parseFloat(document.getElementById('turno-km').value) || 0;
+  const corridas = parseInt(document.getElementById('turno-corridas').value) || 0;
+  const plat     = document.getElementById('turno-plataforma').value;
+  const obs      = document.getElementById('turno-obs').value.trim().slice(0,200);
+  const horas    = Math.round(turnoHoras() * 10) / 10;
+  const date     = todayStr();
+
+  if (!fat || fat <= 0) {
+    document.getElementById('turno-faturamento').focus();
+    return;
+  }
+
+  const desc = obs || `Turno ${new Date(turno.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}–${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+
+  const newTxn = {
+    type: 'receita',
+    description: desc,
+    val: Math.round(fat * 100) / 100,
+    cat: plat,
+    plataforma: plat,
+    viagens: corridas,
+    horas,
+    km,
+    date,
+  };
+
+  const btn = document.getElementById('turno-modal-overlay').querySelector('.btn-add');
+  btn.disabled = true; btn.textContent = 'SALVANDO...';
+
+  if (USE_SUPABASE) {
+    const saved = await sb.insertTxn(newTxn);
+    transactions.unshift(saved || { ...newTxn, id: Date.now() });
+  } else {
+    transactions.push({ ...newTxn, id: Date.now() });
+    save();
+  }
+
+  btn.disabled = false; btn.textContent = 'LANÇAR TURNO';
+  document.getElementById('turno-modal-overlay').classList.remove('open');
+
+  // Limpa turno
+  turno = null;
+  saveTurno();
+  renderTurnoCard();
+  renderHome();
+  renderAll();
+}
+
+// Restaura turno ativo ao abrir o app (persistência entre sessões)
+function restoreTurnoIfActive() {
+  if (turno && !turno.pauseStart) {
+    // Estava rodando — retoma o timer
+    turnoTimerInterval = setInterval(() => {
+      const el = document.getElementById('turno-timer-display');
+      if (el) el.textContent = fmtTimer(turnoElapsedMs());
+    }, 1000);
+  }
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
