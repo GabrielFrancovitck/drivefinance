@@ -1191,6 +1191,7 @@ const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
 
 
+
 // ── Supabase Client leve (sem SDK externo) ────────────────
 const sb = {
   _token: null,
@@ -2141,7 +2142,6 @@ function renderHome(){
   renderMetricsGrid(txns,'metrics-home');
 
   renderDonut(txns,'donut-svg-home','donut-total-home','donut-legend-home');
-  }
 
   // Chart
   renderChart7Days('chart-bars-home');
