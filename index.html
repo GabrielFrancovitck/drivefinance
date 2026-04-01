@@ -170,47 +170,36 @@ input[type=date].date-picker{
 .tip-title{font-weight:700;font-size:13px;color:var(--accent);margin-bottom:3px}
 .tip-text{font-size:12px;color:var(--muted);line-height:1.55}
 
-/* CALENDÁRIO FINANCEIRO */
-.cal-header{display:flex;align-items:center;justify-content:space-between;
-  background:var(--card);border-radius:var(--radius);padding:11px 16px;
-  margin-bottom:12px;border:1px solid var(--border)}
-.cal-header button{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:0 4px}
-.cal-month-name{font-weight:600;font-size:14px}
-.cal-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
-.cal-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.cal-grid-wrap{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
-.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
-.cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--muted);padding:8px 0;letter-spacing:.3px}
-.cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;position:relative;border:1px solid transparent;transition:border-color .15s}
-.cal-day:hover{border-color:var(--accent);border-radius:8px}
-.cal-day.today .cal-day-num{background:var(--accent);color:#000;border-radius:50%;
-  width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:700}
-.cal-day.other-month .cal-day-num{opacity:.25}
-.cal-day-num{font-size:12px;font-weight:500;line-height:1;margin-bottom:3px}
-.cal-day-dot{width:28px;height:28px;border-radius:6px;position:absolute;inset:6px;z-index:0;opacity:.85}
-.cal-day-num{position:relative;z-index:1}
-.cal-day.has-data .cal-day-num{text-shadow:0 1px 2px rgba(0,0,0,.5)}
-/* Cores por faixa de lucro */
-.cal-c-great{background:#166534}
-.cal-c-good{background:#15803d}
-.cal-c-ok{background:#4d7c0f}
-.cal-c-weak{background:#854d0e}
-.cal-c-loss{background:#991b1b}
-.cal-c-none{background:transparent}
-/* Resumo do mês */
-.cal-month-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-/* Day detail panel */
-.cal-detail{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
-  padding:16px;margin-bottom:12px;animation:fadeIn .2s ease}
-.cal-detail-date{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:12px;color:var(--accent)}
-.cal-detail-row{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
-.cal-detail-row:last-child{border-bottom:none}
-.cal-detail-label{color:var(--muted);font-size:12px}
-.cal-detail-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px}
+/* META SALARIAL */
+.meta-sal-hero{background:linear-gradient(135deg,rgba(245,197,24,.08),rgba(34,197,94,.05));
+  border:1px solid rgba(245,197,24,.2);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.meta-sal-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;
+  color:var(--accent);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.meta-sal-sub{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.meta-sal-input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.meta-sal-result{margin-top:4px}
+.meta-sal-destaque{background:var(--bg);border-radius:12px;padding:16px;text-align:center;
+  border:1px solid var(--border);margin-bottom:10px}
+.meta-sal-destaque-label{font-size:11px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:5px}
+.meta-sal-destaque-val{font-family:'Bebas Neue',sans-serif;font-size:42px;
+  color:var(--green);letter-spacing:.5px;line-height:1}
+.meta-sal-destaque-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.meta-sal-breakdown{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.meta-sal-row{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
+.meta-sal-row-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.meta-sal-row-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px}
+.meta-sal-row.total-row{border-color:var(--accent);background:rgba(245,197,24,.04)}
+.meta-sal-row.total-row .meta-sal-row-label{color:var(--text);font-weight:600}
+.meta-sal-row.total-row .meta-sal-row-val{color:var(--accent);font-size:15px}
+.meta-sal-progress-wrap{background:var(--card);border-radius:12px;padding:14px;
+  border:1px solid var(--border);margin-bottom:10px}
+.meta-sal-progress-label{display:flex;justify-content:space-between;
+  font-size:11px;color:var(--muted);margin-bottom:6px}
+.meta-sal-bar-bg{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.meta-sal-bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
+.meta-sal-dias-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;
@@ -553,7 +542,6 @@ input[type=date].date-picker{
   <div class="tab" onclick="showPage('fixas')">Fixas</div>
   <div class="tab" onclick="showPage('simulador')">Simulador</div>
   <div class="tab" onclick="showPage('dicas')">Dicas</div>
-  <div class="tab" onclick="showPage('calendario')">Calendário</div>
 </div>
 
 <div class="content">
@@ -791,6 +779,139 @@ input[type=date].date-picker{
     </div>
   </div>
 
+  <!-- META SALARIAL -->
+  <div class="section-title" style="margin-top:8px">Meta Salarial</div>
+  <div class="meta-sal-hero">
+    <div class="meta-sal-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Quanto preciso faturar?
+    </div>
+    <div class="meta-sal-sub">Defina quanto quer de salário líquido no bolso — o app calcula quanto precisa faturar por dia para pagar tudo e ainda sobrar esse valor pra você.</div>
+
+    <div class="meta-sal-input-row">
+      <div class="field" style="margin-bottom:0">
+        <label>Salário desejado (R$)</label>
+        <input type="number" id="ms-salario" placeholder="Ex: 3000" step="100" min="0" inputmode="decimal"
+          oninput="calcMetaSalarial()"/>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Dias trabalhados/mês</label>
+        <input type="number" id="ms-dias" placeholder="Ex: 22" step="1" min="1" max="31" inputmode="numeric"
+          value="22" oninput="calcMetaSalarial()"/>
+      </div>
+    </div>
+    <div class="meta-sal-input-row">
+      <div class="field" style="margin-bottom:0">
+        <label>Taxa média plataforma (%)</label>
+        <select id="ms-taxa" onchange="calcMetaSalarial()">
+          <option value="0.25">Uber / 99 — 25%</option>
+          <option value="0.20">InDriver / iFood — 20%</option>
+          <option value="0.30">Rappi — 30%</option>
+          <option value="0.00">Particular — 0%</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Horas trabalhadas/dia</label>
+        <input type="number" id="ms-horas" placeholder="Ex: 8" step="0.5" min="1" max="24" inputmode="decimal"
+          value="8" oninput="calcMetaSalarial()"/>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="meta-sal-result" id="ms-result" style="display:none">
+
+      <!-- Número principal -->
+      <div class="meta-sal-destaque">
+        <div class="meta-sal-destaque-label">Faturamento bruto necessário por dia</div>
+        <div class="meta-sal-destaque-val" id="ms-fat-dia">R$0</div>
+        <div class="meta-sal-destaque-sub" id="ms-fat-dia-sub"></div>
+      </div>
+
+      <!-- Breakdown do mês -->
+      <div class="section-title" style="margin-top:2px;margin-bottom:8px">Como chegar lá — composição mensal</div>
+      <div class="meta-sal-breakdown">
+        <div class="meta-sal-row">
+          <span class="meta-sal-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Despesas fixas
+          </span>
+          <span class="meta-sal-row-val" id="ms-r-fixas" style="color:var(--red)"></span>
+        </div>
+        <div class="meta-sal-row">
+          <span class="meta-sal-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="15" y2="22"/><line x1="4" y1="9" x2="14" y2="9"/><path d="M14 22V4a2 2 0 00-2-2H6a2 2 0 00-2 2v18"/><path d="M14 13h2a2 2 0 012 2v2a2 2 0 002 2h0a2 2 0 002-2V9.83a2 2 0 00-.59-1.42L17 4"/></svg>
+            Combustível + veículo
+          </span>
+          <span class="meta-sal-row-val" id="ms-r-veiculo" style="color:var(--accent2)"></span>
+        </div>
+        <div class="meta-sal-row">
+          <span class="meta-sal-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Taxa da plataforma
+          </span>
+          <span class="meta-sal-row-val" id="ms-r-taxa" style="color:var(--purple)"></span>
+        </div>
+        <div class="meta-sal-row">
+          <span class="meta-sal-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Salário líquido (seu)
+          </span>
+          <span class="meta-sal-row-val" id="ms-r-salario" style="color:var(--green)"></span>
+        </div>
+        <div class="meta-sal-row total-row">
+          <span class="meta-sal-row-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            Total a faturar no mês
+          </span>
+          <span class="meta-sal-row-val" id="ms-r-total"></span>
+        </div>
+      </div>
+
+      <!-- Progresso do mês atual -->
+      <div class="meta-sal-progress-wrap" id="ms-progress-wrap">
+        <div class="meta-sal-progress-label">
+          <span>Progresso do mês atual</span>
+          <span id="ms-progress-pct">0%</span>
+        </div>
+        <div class="meta-sal-bar-bg">
+          <div class="meta-sal-bar-fill" id="ms-progress-bar" style="width:0%"></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted)" id="ms-progress-text"></div>
+      </div>
+
+      <!-- Métricas por dia / hora / corrida -->
+      <div class="section-title" style="margin-bottom:8px">Metas operacionais</div>
+      <div class="meta-sal-dias-grid">
+        <div class="mcard">
+          <div class="mcard-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="mcard-val" id="ms-m-dia"></div>
+          <div class="mcard-label">Faturar\npor dia</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="mcard-val" id="ms-m-hora"></div>
+          <div class="mcard-label">Por hora\ntrabalhada</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h14a2 2 0 012 2v1"/><rect x="13" y="11" width="10" height="10" rx="2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="20" r="2"/></svg>
+          </div>
+          <div class="mcard-val" id="ms-m-corridas"></div>
+          <div class="mcard-label">Corridas\npor dia</div>
+        </div>
+      </div>
+
+      <!-- Alerta de viabilidade -->
+      <div id="ms-alerta" style="display:none;border-radius:10px;padding:11px 13px;font-size:12px;
+        line-height:1.5;margin-top:10px;font-weight:500"></div>
+
+    </div><!-- /ms-result -->
+  </div><!-- /meta-sal-hero -->
+
 </div>
 
 <!-- ══════════════ SIMULADOR ══════════════ -->
@@ -879,61 +1000,6 @@ input[type=date].date-picker{
   <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M4.93 4.93l1.41 1.41"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M20 12h2"/><path d="M2 12h2"/><path d="M19.07 19.07l-1.41-1.41"/><path d="M4.93 19.07l1.41-1.41"/></svg></div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem mantido tem menos quebra e maior valorização.</div></div>
   <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tip-title">Meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis. Use a aba Análise → Diário para ver se está no ritmo certo cada dia.</div></div>
   <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores.</div></div>
-</div>
-
-<!-- ══════════════ CALENDÁRIO ══════════════ -->
-<div class="page" id="page-calendario">
-
-  <!-- Navegação de mês -->
-  <div class="cal-header">
-    <button onclick="calShiftMonth(-1)">&#8249;</button>
-    <span class="cal-month-name" id="cal-month-name">—</span>
-    <button onclick="calShiftMonth(1)">&#8250;</button>
-  </div>
-
-  <!-- Resumo do mês -->
-  <div class="cal-month-summary">
-    <div class="top3-card" style="--c:#22c55e">
-      <div class="top3-label">Faturamento<br>Mês</div>
-      <div class="top3-val acc" id="cal-fat">R$0</div>
-    </div>
-    <div class="top3-card" style="--c:#ef4444">
-      <div class="top3-label">Despesa<br>Mês</div>
-      <div class="top3-val neg" id="cal-desp">R$0</div>
-    </div>
-    <div class="top3-card" style="--c:#f5c518">
-      <div class="top3-label">Saldo<br>Mês</div>
-      <div class="top3-val" id="cal-saldo">R$0</div>
-    </div>
-  </div>
-
-  <!-- Legenda de cores -->
-  <div class="cal-legend">
-    <div class="cal-legend-item"><div class="cal-legend-dot cal-c-great"></div>Ótimo (&gt;R$200)</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cal-c-good"></div>Bom (R$50–200)</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cal-c-ok"></div>Fraco (R$1–50)</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cal-c-weak"></div>Zerado (R$0)</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot cal-c-loss"></div>Prejuízo</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--border)"></div>Não trabalhou</div>
-  </div>
-
-  <!-- Grid do calendário -->
-  <div class="cal-grid-wrap">
-    <div class="cal-dow-row">
-      <div class="cal-dow">DOM</div>
-      <div class="cal-dow">SEG</div>
-      <div class="cal-dow">TER</div>
-      <div class="cal-dow">QUA</div>
-      <div class="cal-dow">QUI</div>
-      <div class="cal-dow">SEX</div>
-      <div class="cal-dow">SÁB</div>
-    </div>
-    <div class="cal-days" id="cal-days-grid"></div>
-  </div>
-
-  <!-- Painel de detalhe do dia selecionado -->
-  <div class="cal-detail" id="cal-detail" style="display:none"></div>
-
 </div>
 
 </div><!-- /content -->
@@ -1184,7 +1250,6 @@ input[type=date].date-picker{
 // ⚙️  SUPABASE CONFIG — SUBSTITUA OS VALORES ABAIXO
 //     Painel Supabase → Settings → API
 // ══════════════════════════════════════════════════════════
-
 const SUPABASE_URL = 'https://mzjvdyuircoylkawaqgx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16anZkeXVpcmNveWxrYXdhcWd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzA0ODIsImV4cCI6MjA4OTk0NjQ4Mn0.Y058rcu5WM0gJa6yBW6JhifiJFzBB4R4cgJKM8cQrJo';
 
@@ -2249,6 +2314,9 @@ function renderResumo(){
     cl.innerHTML+=`<div class="cat-item"><div class="cat-row"><div class="cat-dot" style="background:${info.color}"></div><span class="cat-name">${info.icon} ${san(cat)}</span><span class="cat-val" style="color:${info.color}">${fmtBRL(val)}</span><span class="cat-pct">${pct}%</span></div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${info.color}"></div></div></div>`;
   });
   if(!Object.keys(cats).length) cl.innerHTML='<div class="empty-state">Nenhum gasto neste mês.</div>';
+
+  // Atualiza meta salarial com fixas do mês atual
+  calcMetaSalarial();
 }
 
 function changeMonth(dir){
@@ -2264,14 +2332,13 @@ function showPage(p){
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.getElementById('nav-'+p)?.classList.add('active');
-  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas','calendario'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
+  ['inicio','analise','lancamentos','resumo','fixas','simulador','dicas'].forEach((n,i)=>{if(n===p) document.querySelectorAll('.tab')[i]?.classList.add('active');});
   if(p==='inicio') renderHome();
   if(p==='analise') renderAnalyse();
   if(p==='lancamentos') renderAll();
   if(p==='resumo') renderResumo();
   if(p==='fixas') renderFixas();
   if(p==='simulador') renderSimulador();
-  if(p==='calendario') renderCalendario();
 }
 
 // ─── DESPESAS FIXAS ──────────────────────────────────────
@@ -2381,6 +2448,8 @@ function renderFixas(){
       </span>
       <span class="proj-val" style="font-size:16px;color:var(--green)">${fmtBRL(faturNecessario)}</span>
     </div>`;
+
+  calcMetaSalarial();
 }
 
 async function toggleDeduzir(id){
@@ -3028,199 +3097,110 @@ function saveVeiculo() {
   renderSimulador();
 }
 
-// ─── CALENDÁRIO FINANCEIRO ───────────────────────────────
-let calYear  = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-let calSelectedDay = null;
+// ─── META SALARIAL ───────────────────────────────────────
+function calcMetaSalarial() {
+  const salario  = parseFloat(document.getElementById('ms-salario')?.value) || 0;
+  const dias     = parseFloat(document.getElementById('ms-dias')?.value)    || 22;
+  const taxa     = parseFloat(document.getElementById('ms-taxa')?.value)    || 0.25;
+  const horas    = parseFloat(document.getElementById('ms-horas')?.value)   || 8;
+  const result   = document.getElementById('ms-result');
 
-function calShiftMonth(dir) {
-  calMonth += dir;
-  if (calMonth < 0)  { calMonth = 11; calYear--; }
-  if (calMonth > 11) { calMonth = 0;  calYear++; }
-  calSelectedDay = null;
-  renderCalendario();
-}
+  if (!salario || salario <= 0) { result.style.display = 'none'; return; }
+  result.style.display = 'block';
 
-function calDayColor(lucro, hasData) {
-  if (!hasData) return 'cal-c-none';
-  if (lucro >= 200)  return 'cal-c-great';
-  if (lucro >= 50)   return 'cal-c-good';
-  if (lucro > 0)     return 'cal-c-ok';
-  if (lucro === 0)   return 'cal-c-weak';
-  return 'cal-c-loss';
-}
+  // ── Componentes mensais ──
+  const fixasMes   = totalFixasMensalBruto();                  // despesas fixas cadastradas
+  const ck         = calcCustoPorKm(veiculo);
+  const kmMes      = veiculo.kmMes || 3000;
+  const veiculoMes = ck ? (ck.comb + ck.man + ck.deprec) * kmMes : 0; // sem fixas (já estão em fixasMes)
 
-function renderCalendario() {
-  document.getElementById('cal-month-name').textContent = MONTHS[calMonth] + ' ' + calYear;
+  // Receita líquida que o motorista precisa ter depois da taxa da plataforma:
+  // liquido = fixasMes + veiculoMes + salario
+  const liquidoNecessario = fixasMes + veiculoMes + salario;
 
-  // Calcula resumo do mês
-  const monthTxns = transactions.filter(t => {
+  // Faturamento bruto = liquido / (1 - taxa)
+  const brutMes  = liquidoNecessario / (1 - taxa);
+  const taxaMes  = brutMes * taxa;
+
+  // Por dia
+  const brutDia   = brutMes / dias;
+  const horasMes  = dias * horas;
+  const brutHora  = brutMes / horasMes;
+
+  // Corridas estimadas (usa km médio do veiculo ou padrão 8km)
+  const kmCorrida = veiculo.kmCorrida || 8;
+  const corridasDia = ck
+    ? Math.ceil(brutDia / (brutHora * (kmCorrida / (veiculo.kmMes||3000) * horasMes / dias || 1)))
+    : Math.ceil(brutDia / 18); // fallback: corrida média R$18
+
+  // Estimativa mais simples de corridas: faturamento dia / ticket médio histórico
+  const recReceitas = transactions.filter(t => t.type === 'receita' && t.viagens > 0);
+  let ticketMedio = 18;
+  if (recReceitas.length) {
+    const totalFat = recReceitas.reduce((s,t) => s + t.val, 0);
+    const totalViagens = recReceitas.reduce((s,t) => s + (+t.viagens||0), 0);
+    if (totalViagens > 0) ticketMedio = totalFat / totalViagens;
+  }
+  const corridasDiaReal = Math.ceil(brutDia / ticketMedio);
+
+  // ── Progresso mês atual ──
+  const now = new Date();
+  const mesAtualTxns = transactions.filter(t => {
     const d = parseLocalDate(t.date);
-    return d.getMonth() === calMonth && d.getFullYear() === calYear;
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
-  const mm = calcMetrics(monthTxns);
-  document.getElementById('cal-fat').textContent   = fmtShort(mm.fat);
-  document.getElementById('cal-desp').textContent  = fmtShort(mm.desp);
-  const sEl = document.getElementById('cal-saldo');
-  sEl.textContent  = fmtShort(mm.saldo);
-  sEl.className    = 'top3-val ' + (mm.saldo >= 0 ? 'pos' : 'neg');
+  const fatAtual = mesAtualTxns.filter(t => t.type === 'receita').reduce((s,t) => s + t.val, 0);
+  const pct = Math.min(Math.round(fatAtual / brutMes * 100), 100);
+  const falta = Math.max(brutMes - fatAtual, 0);
+  const diasRestantes = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate() - now.getDate();
 
-  // Monta grid
-  const grid    = document.getElementById('cal-days-grid');
-  grid.innerHTML = '';
+  // ── Preenche UI ──
+  document.getElementById('ms-fat-dia').textContent = fmtBRL(brutDia);
+  document.getElementById('ms-fat-dia-sub').textContent =
+    `Para sobrar ${fmtBRL(salario)} no bolso todo mês`;
 
-  const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=dom
-  const daysInMonth  = new Date(calYear, calMonth + 1, 0).getDate();
-  const daysInPrevMonth = new Date(calYear, calMonth, 0).getDate();
-  const todayStr_ = todayStr();
+  document.getElementById('ms-r-fixas').textContent   = fmtBRL(fixasMes);
+  document.getElementById('ms-r-veiculo').textContent = veiculoMes > 0 ? fmtBRL(veiculoMes) : '—  (configure o veículo)';
+  document.getElementById('ms-r-taxa').textContent    = fmtBRL(taxaMes);
+  document.getElementById('ms-r-salario').textContent = fmtBRL(salario);
+  document.getElementById('ms-r-total').textContent   = fmtBRL(brutMes);
 
-  // Pré-calcula lucro por dia do mês corrente
-  const lucroByDate = {};
-  const hasByDate   = {};
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayTxns = transactions.filter(t => t.date === dateStr);
-    if (dayTxns.length) {
-      const fat  = dayTxns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
-      const desp = dayTxns.filter(t=>t.type==='gasto').reduce((s,t)=>s+t.val,0);
-      lucroByDate[dateStr] = fat - desp;
-      hasByDate[dateStr]   = fat > 0; // só colore se teve receita
+  document.getElementById('ms-m-dia').textContent      = fmtBRL(brutDia);
+  document.getElementById('ms-m-hora').textContent     = fmtBRL(brutHora);
+  document.getElementById('ms-m-corridas').textContent = corridasDiaReal + ' corridas';
+
+  // Barra de progresso
+  const barEl = document.getElementById('ms-progress-bar');
+  barEl.style.width = pct + '%';
+  barEl.style.background = pct >= 100 ? 'var(--green)' : pct >= 60 ? 'var(--accent)' : 'var(--accent2)';
+  document.getElementById('ms-progress-pct').textContent = pct + '%';
+  document.getElementById('ms-progress-text').textContent =
+    pct >= 100
+      ? `Meta atingida! Você já faturou ${fmtBRL(fatAtual)} este mês.`
+      : `Faturado: ${fmtBRL(fatAtual)} · Falta: ${fmtBRL(falta)} em ${diasRestantes} dia${diasRestantes !== 1 ? 's' : ''}`;
+
+  // Alerta de viabilidade
+  const alerta = document.getElementById('ms-alerta');
+  const fatDiaNecessario = falta / Math.max(diasRestantes, 1);
+  if (pct < 100 && diasRestantes > 0) {
+    if (fatDiaNecessario > brutDia * 1.5) {
+      alerta.style.display = 'block';
+      alerta.style.background = 'rgba(239,68,68,.08)';
+      alerta.style.border = '1px solid rgba(239,68,68,.25)';
+      alerta.style.color = 'var(--red)';
+      alerta.textContent = `⚠️ Para bater a meta até o fim do mês, você precisaria faturar ${fmtBRL(fatDiaNecessario)}/dia nos próximos ${diasRestantes} dias — acima do seu ritmo planejado (${fmtBRL(brutDia)}/dia). Considere revisar a meta ou trabalhar mais dias.`;
+    } else if (fatDiaNecessario <= brutDia) {
+      alerta.style.display = 'block';
+      alerta.style.background = 'rgba(34,197,94,.08)';
+      alerta.style.border = '1px solid rgba(34,197,94,.25)';
+      alerta.style.color = 'var(--green)';
+      alerta.textContent = `✓ Você está no ritmo certo! Mantendo ${fmtBRL(brutDia)}/dia você fecha o mês com seu salário de ${fmtBRL(salario)}.`;
+    } else {
+      alerta.style.display = 'none';
     }
+  } else {
+    alerta.style.display = 'none';
   }
-
-  // Dias do mês anterior (preenchimento)
-  for (let i = 0; i < firstDay; i++) {
-    const d = daysInPrevMonth - firstDay + 1 + i;
-    const cell = document.createElement('div');
-    cell.className = 'cal-day other-month';
-    cell.innerHTML = `<span class="cal-day-num">${d}</span>`;
-    grid.appendChild(cell);
-  }
-
-  // Dias do mês
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const hasData = hasByDate[dateStr];
-    const lucro   = lucroByDate[dateStr] ?? null;
-    const colorClass = lucro !== null ? calDayColor(lucro, hasData) : 'cal-c-none';
-    const isToday = dateStr === todayStr_;
-    const isSelected = dateStr === calSelectedDay;
-
-    const cell = document.createElement('div');
-    cell.className = 'cal-day' + (isToday ? ' today' : '') + (hasData ? ' has-data' : '');
-    cell.style.outline = isSelected ? '2px solid var(--accent)' : '';
-    cell.style.borderRadius = isSelected ? '8px' : '';
-
-    cell.innerHTML = `
-      ${colorClass !== 'cal-c-none' ? `<div class="cal-day-dot ${colorClass}"></div>` : ''}
-      <span class="cal-day-num">${d}</span>
-    `;
-    cell.addEventListener('click', () => selectCalDay(dateStr));
-    grid.appendChild(cell);
-  }
-
-  // Completar última linha com dias do próximo mês
-  const totalCells = firstDay + daysInMonth;
-  const remaining  = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-  for (let i = 1; i <= remaining; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-day other-month';
-    cell.innerHTML = `<span class="cal-day-num">${i}</span>`;
-    grid.appendChild(cell);
-  }
-
-  // Atualiza detalhe se dia ainda está selecionado
-  if (calSelectedDay) renderCalDetail(calSelectedDay);
-}
-
-function selectCalDay(dateStr) {
-  calSelectedDay = dateStr;
-  // Atualiza outline nos dias
-  document.querySelectorAll('.cal-day').forEach(el => {
-    el.style.outline = '';
-    el.style.borderRadius = '';
-  });
-  const idx = parseInt(dateStr.split('-')[2], 10);
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const cellIdx  = firstDay + idx - 1;
-  const cells = document.querySelectorAll('.cal-day:not(.other-month)');
-  if (cells[idx-1]) {
-    cells[idx-1].style.outline = '2px solid var(--accent)';
-    cells[idx-1].style.borderRadius = '8px';
-  }
-  renderCalDetail(dateStr);
-}
-
-function renderCalDetail(dateStr) {
-  const detail = document.getElementById('cal-detail');
-  const dayTxns = transactions.filter(t => t.date === dateStr);
-
-  const d = parseLocalDate(dateStr);
-  const labelDate = d.toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-
-  if (!dayTxns.length) {
-    detail.style.display = 'block';
-    detail.innerHTML = `
-      <div class="cal-detail-date">${labelDate}</div>
-      <div style="color:var(--muted);font-size:13px;text-align:center;padding:12px 0">Nenhum lançamento neste dia.</div>
-    `;
-    return;
-  }
-
-  const fat   = dayTxns.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
-  const desp  = dayTxns.filter(t=>t.type==='gasto').reduce((s,t)=>s+t.val,0);
-  const saldo = fat - desp;
-  const horas = dayTxns.filter(t=>t.type==='receita').reduce((s,t)=>s+(+t.horas||0),0);
-  const km    = dayTxns.reduce((s,t)=>s+(+t.km||0),0);
-  const viagens = dayTxns.filter(t=>t.type==='receita').reduce((s,t)=>s+(+t.viagens||0),0);
-
-  const saldoColor = saldo >= 0 ? 'var(--green)' : 'var(--red)';
-
-  const txnList = [...dayTxns].reverse().map(t => {
-    const sign = t.type === 'receita' ? '+' : '-';
-    const cls  = t.type === 'receita' ? 'pos' : 'neg';
-    const info = catInfo(t.cat, t.type);
-    return `
-      <div class="txn" style="margin-bottom:0;border-radius:10px;animation:none">
-        <div class="txn-icon" style="background:${info.color}22;width:32px;height:32px;border-radius:8px;font-size:14px">${info.icon}</div>
-        <div class="txn-info">
-          <div class="txn-desc" style="font-size:12px">${san(t.description)}</div>
-          <div class="txn-meta">${san(t.cat)}${t.plataforma ? ' · '+san(t.plataforma) : ''}</div>
-        </div>
-        <div class="txn-amt ${cls}">${sign}${fmtBRL(t.val)}</div>
-      </div>`;
-  }).join('');
-
-  detail.style.display = 'block';
-  detail.innerHTML = `
-    <div class="cal-detail-date">${labelDate}</div>
-    <div class="cal-detail-row">
-      <span class="cal-detail-label">Faturamento</span>
-      <span class="cal-detail-val" style="color:var(--green)">${fmtBRL(fat)}</span>
-    </div>
-    <div class="cal-detail-row">
-      <span class="cal-detail-label">Despesas</span>
-      <span class="cal-detail-val" style="color:var(--red)">${fmtBRL(desp)}</span>
-    </div>
-    <div class="cal-detail-row">
-      <span class="cal-detail-label">Saldo líquido</span>
-      <span class="cal-detail-val" style="color:${saldoColor}">${fmtBRL(saldo)}</span>
-    </div>
-    ${horas > 0 ? `<div class="cal-detail-row">
-      <span class="cal-detail-label">Horas trabalhadas</span>
-      <span class="cal-detail-val">${horas.toFixed(1)}h</span>
-    </div>` : ''}
-    ${km > 0 ? `<div class="cal-detail-row">
-      <span class="cal-detail-label">Km rodados</span>
-      <span class="cal-detail-val">${km} km</span>
-    </div>` : ''}
-    ${viagens > 0 ? `<div class="cal-detail-row">
-      <span class="cal-detail-label">Viagens</span>
-      <span class="cal-detail-val">${viagens}</span>
-    </div>` : ''}
-    <div style="font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin:12px 0 8px">Lançamentos</div>
-    <div style="display:flex;flex-direction:column;gap:6px">${txnList}</div>
-  `;
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
