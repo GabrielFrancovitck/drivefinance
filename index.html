@@ -438,6 +438,72 @@ input[type=date].date-picker{
 .auth-icon-wrap svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .nav-item svg{width:20px;height:20px}
 
+/* ── TURNO ── */
+.turno-fab{
+  position:fixed;bottom:calc(144px + var(--sb));right:20px;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,#166534,#22c55e);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:98;
+  box-shadow:0 4px 18px rgba(34,197,94,.4);
+  transition:transform .2s,box-shadow .2s;
+  border:none;
+}
+.turno-fab.active{
+  background:linear-gradient(135deg,#991b1b,#ef4444);
+  box-shadow:0 4px 18px rgba(239,68,68,.4);
+  animation:turno-pulse 2s infinite;
+}
+@keyframes turno-pulse{0%,100%{box-shadow:0 4px 18px rgba(239,68,68,.4)}50%{box-shadow:0 4px 28px rgba(239,68,68,.7)}}
+.turno-fab:active{transform:scale(.88)!important}
+
+/* Turno status bar na home */
+.turno-bar{
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+  padding:12px 14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.turno-bar.active{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.05)}
+.turno-bar.paused{border-color:rgba(245,197,24,.3);background:rgba(245,197,24,.04)}
+.turno-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.turno-dot.active{background:var(--green);animation:turno-pulse-dot 1.5s infinite}
+.turno-dot.paused{background:var(--accent)}
+@keyframes turno-pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+.turno-bar-info{flex:1;min-width:0}
+.turno-bar-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.turno-bar-timer{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:2px;line-height:1}
+.turno-bar-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.turno-bar-actions{display:flex;gap:6px;flex-shrink:0}
+.turno-act-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+  background:var(--border);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;
+}
+.turno-act-btn:active{transform:scale(.9)}
+
+/* Modal turno */
+.turno-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.turno-sum-item{background:var(--card);border-radius:10px;padding:10px 12px;border:1px solid var(--border)}
+.turno-sum-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.turno-sum-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--accent)}
+
+/* Histórico de turnos na aba Lançamentos */
+.turno-hist-card{
+  background:var(--card);border-radius:var(--radius);padding:13px 14px;
+  border:1px solid var(--border);margin-bottom:7px;
+  animation:fadeIn .25s ease;
+}
+.turno-hist-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.turno-hist-icon{width:38px;height:38px;border-radius:10px;background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.turno-hist-info{flex:1;min-width:0}
+.turno-hist-title{font-weight:600;font-size:13px}
+.turno-hist-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.turno-hist-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.turno-hist-stat{background:var(--border);border-radius:8px;padding:7px 6px;text-align:center}
+.turno-hist-stat-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent)}
+.turno-hist-stat-lbl{font-size:9px;color:var(--muted);margin-top:1px}
+
 /* ── PDF PRINT ── */
 @media print{
   body{background:#fff!important;color:#000!important;max-width:100%!important}
@@ -1088,6 +1154,14 @@ input[type=date].date-picker{
   <!-- Painel de detalhe do dia selecionado -->
   <div class="cal-detail" id="cal-detail" style="display:none"></div>
 
+
+  <!-- FAB Turno flutuante -->
+  <div id="turno-fab" class="turno-fab" onclick="toggleTurnoFab()" title="Turno">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="turno-fab-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+  </div>
+
+  <!-- Turno status bar (aparece quando turno ativo) -->
+  <div id="turno-bar-home" style="display:none"></div>
 </div>
 
 </div><!-- /content -->
@@ -1328,6 +1402,40 @@ input[type=date].date-picker{
     </div>
 
     <button class="btn-add" onclick="saveVeiculo()">SALVAR E CALCULAR</button>
+  </div>
+</div>
+
+
+<!-- MODAL TURNO ENCERRAR -->
+<div class="modal-overlay" id="turno-enc-overlay" onclick="closeTurnoEncOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="display:flex;align-items:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Resumo do Turno
+    </div>
+
+    <!-- Resumo automático -->
+    <div class="turno-summary-grid" id="turno-enc-summary"></div>
+
+    <!-- Km opcional -->
+    <div class="field">
+      <label>Km rodados <span style="color:var(--muted)">(opcional)</span></label>
+      <input type="number" id="turno-enc-km" placeholder="Ex: 120" min="0" inputmode="numeric"/>
+    </div>
+
+    <div class="field">
+      <label>Observação <span style="color:var(--muted)">(opcional)</span></label>
+      <input type="text" id="turno-enc-obs" placeholder="Ex: Turno da manhã, trânsito pesado..." maxlength="200"/>
+    </div>
+
+    <button class="btn-add" onclick="salvarTurno()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      SALVAR TURNO
+    </button>
+    <button onclick="descartarTurno()" style="width:100%;padding:11px;background:transparent;color:var(--muted);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px">
+      Descartar sem salvar
+    </button>
   </div>
 </div>
 
@@ -1808,6 +1916,7 @@ async function enterApp(user) {
   }
 
   renderHome(); renderAnalyse(); renderResumo();
+  renderTurno();
   startInactivityWatcher(); // inicia monitoramento de inatividade
 }
 
@@ -2379,9 +2488,10 @@ function renderAnalyse(){
 function renderAll(){
   const l=document.getElementById('txn-all'),e=document.getElementById('txn-empty');
   l.innerHTML='';
-  if(!transactions.length){e.style.display='block';return;}
+  if(!transactions.length && !turnosHist.length){e.style.display='block';return;}
   e.style.display='none';
   [...transactions].reverse().forEach(t=>l.appendChild(mkTxnEl(t,true)));
+  renderTurnosHist(l);
 }
 
 // ─── RESUMO ──────────────────────────────────────────────
@@ -3472,6 +3582,279 @@ function calcMetaSalarial() {
   } else {
     alerta.style.display = 'none';
   }
+}
+
+
+// ─── REGISTRO DE TURNO ───────────────────────────────────
+let turno = null;          // turno ativo em memória
+let turnoInterval = null;  // setInterval do timer
+let turnosHist = [];       // histórico de turnos salvos
+
+// Carrega do localStorage
+try { turno = JSON.parse(localStorage.getItem('df_turno_ativo') || 'null'); } catch(e) {}
+try { turnosHist = JSON.parse(localStorage.getItem('df_turnos_hist') || '[]'); } catch(e) {}
+
+function saveTurnoAtivo(){ localStorage.setItem('df_turno_ativo', JSON.stringify(turno)); }
+function saveTurnosHist(){ localStorage.setItem('df_turnos_hist', JSON.stringify(turnosHist)); }
+function deleteTurnoAtivo(){ turno=null; localStorage.removeItem('df_turno_ativo'); }
+
+// ── Tempo efetivo em ms (descontando pausas) ──────────────
+function turnoElapsedMs(){
+  if(!turno) return 0;
+  const pausaExtra = turno.pauseStart ? (Date.now()-turno.pauseStart) : 0;
+  return (Date.now()-turno.startTime) - turno.pauseMs - pausaExtra;
+}
+function turnoHoras(){ return turnoElapsedMs()/3600000; }
+function fmtTimer(ms){
+  const t=Math.max(0,Math.floor(ms/1000));
+  const h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=t%60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ── FAB toggle ────────────────────────────────────────────
+function toggleTurnoFab(){
+  if(!turno){
+    iniciarTurno();
+  } else {
+    // Se está pausado ou rodando, mostra mini-menu inline
+    const bar = document.getElementById('turno-bar-home');
+    bar.style.display = bar.style.display==='none'?'block':'none';
+  }
+}
+
+// ── Iniciar ───────────────────────────────────────────────
+function iniciarTurno(){
+  turno = {
+    startTime: Date.now(),
+    pauseMs: 0,
+    pauseStart: null,
+    pauseCount: 0,
+    pauseHistory: [], // [{start,end}]
+  };
+  saveTurnoAtivo();
+  renderTurno();
+  // Notificação no título da página
+  updatePageTitle();
+}
+
+// ── Pausar / Retomar ──────────────────────────────────────
+function pausarTurno(){
+  if(!turno) return;
+  if(turno.pauseStart){
+    // Retomar
+    const dur = Date.now()-turno.pauseStart;
+    turno.pauseMs += dur;
+    turno.pauseHistory.push({start:turno.pauseStart, end:Date.now(), dur});
+    turno.pauseStart = null;
+  } else {
+    // Pausar
+    turno.pauseStart = Date.now();
+    turno.pauseCount++;
+  }
+  saveTurnoAtivo();
+  renderTurno();
+}
+
+// ── Encerrar — abre modal ────────────────────────────────
+function encerrarTurno(){
+  if(!turno) return;
+  // Garante que pausa foi encerrada
+  if(turno.pauseStart){
+    turno.pauseMs += Date.now()-turno.pauseStart;
+    turno.pauseStart = null;
+  }
+  clearInterval(turnoInterval);
+  abrirModalEncerrar();
+}
+
+function abrirModalEncerrar(){
+  const horas = turnoHoras();
+  const durMin = Math.round(turnoElapsedMs()/60000);
+  const inicio = new Date(turno.startTime);
+  const fim    = new Date();
+  const pausaTotalMin = Math.round(turno.pauseMs/60000);
+
+  document.getElementById('turno-enc-summary').innerHTML = [
+    {label:'Início',    val: inicio.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})},
+    {label:'Fim',       val: fim.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})},
+    {label:'Trabalhado',val: `${Math.floor(durMin/60)}h ${durMin%60}min`},
+    {label:'Pausas',    val: turno.pauseCount>0 ? `${turno.pauseCount}x (${pausaTotalMin}min)` : 'Nenhuma'},
+  ].map(i=>`
+    <div class="turno-sum-item">
+      <div class="turno-sum-label">${i.label}</div>
+      <div class="turno-sum-val">${i.val}</div>
+    </div>`).join('');
+
+  document.getElementById('turno-enc-km').value  = '';
+  document.getElementById('turno-enc-obs').value = '';
+  document.getElementById('turno-enc-overlay').classList.add('open');
+}
+
+function closeTurnoEncOutside(e){
+  if(e.target===document.getElementById('turno-enc-overlay'))
+    document.getElementById('turno-enc-overlay').classList.remove('open');
+}
+
+function salvarTurno(){
+  const km  = parseFloat(document.getElementById('turno-enc-km').value)||0;
+  const obs = document.getElementById('turno-enc-obs').value.trim().slice(0,200);
+
+  const registro = {
+    id: Date.now(),
+    date: todayStr(),
+    startTime: turno.startTime,
+    endTime: Date.now(),
+    horas: Math.round(turnoHoras()*100)/100,
+    pauseCount: turno.pauseCount,
+    pauseMs: turno.pauseMs,
+    km,
+    obs,
+  };
+
+  turnosHist.unshift(registro);
+  if(turnosHist.length > 200) turnosHist = turnosHist.slice(0,200); // max 200 registros
+  saveTurnosHist();
+
+  document.getElementById('turno-enc-overlay').classList.remove('open');
+  deleteTurnoAtivo();
+  renderTurno();
+  renderAll(); // atualiza lista de lançamentos que também mostra turnos
+}
+
+function descartarTurno(){
+  document.getElementById('turno-enc-overlay').classList.remove('open');
+  deleteTurnoAtivo();
+  renderTurno();
+}
+
+// ── Render — FAB + status bar ────────────────────────────
+function renderTurno(){
+  const fab  = document.getElementById('turno-fab');
+  const icon = document.getElementById('turno-fab-icon');
+  const bar  = document.getElementById('turno-bar-home');
+  if(!fab||!bar) return;
+
+  clearInterval(turnoInterval);
+
+  if(!turno){
+    // Estado: sem turno
+    fab.classList.remove('active');
+    fab.title = 'Iniciar Turno';
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    bar.style.display = 'none';
+    document.title = 'DriveFinance';
+    return;
+  }
+
+  const emPausa = !!turno.pauseStart;
+
+  // FAB vira vermelho (stop)
+  fab.classList.add('active');
+  fab.title = 'Ver turno';
+  icon.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>';
+
+  // Renderiza a status bar
+  bar.style.display = 'block';
+  bar.className = `turno-bar ${emPausa?'paused':'active'}`;
+
+  const renderBar = () => {
+    const elapsed = turnoElapsedMs();
+    bar.innerHTML = `
+      <div class="turno-dot ${emPausa?'paused':'active'}"></div>
+      <div class="turno-bar-info">
+        <div class="turno-bar-label">${emPausa?'Turno pausado':'Turno em andamento'}</div>
+        <div class="turno-bar-timer" id="turno-live-timer">${fmtTimer(elapsed)}</div>
+        <div class="turno-bar-sub">
+          Início ${new Date(turno.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+          ${turno.pauseCount>0?' · '+turno.pauseCount+' pausa'+(turno.pauseCount>1?'s':''):''}
+        </div>
+      </div>
+      <div class="turno-bar-actions">
+        <div class="turno-act-btn" onclick="pausarTurno()" title="${emPausa?'Retomar':'Pausar'}">
+          ${emPausa
+            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+          }
+        </div>
+        <div class="turno-act-btn" onclick="encerrarTurno()" title="Encerrar" style="border-color:rgba(239,68,68,.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+        </div>
+      </div>`;
+  };
+
+  renderBar();
+
+  // Timer em tempo real
+  if(!emPausa){
+    turnoInterval = setInterval(()=>{
+      const el = document.getElementById('turno-live-timer');
+      if(el) el.textContent = fmtTimer(turnoElapsedMs());
+      updatePageTitle();
+    }, 1000);
+  }
+}
+
+function updatePageTitle(){
+  if(turno && !turno.pauseStart){
+    document.title = `⏱ ${fmtTimer(turnoElapsedMs())} · DriveFinance`;
+  } else {
+    document.title = 'DriveFinance';
+  }
+}
+
+// ── Histórico de turnos (exibido na aba Lançamentos) ─────
+function renderTurnosHist(container){
+  if(!turnosHist.length) return;
+  const section = document.createElement('div');
+  section.innerHTML = '<div class="section-title" style="margin-top:16px">Histórico de Turnos</div>';
+  turnosHist.slice(0,20).forEach(t=>{
+    const d   = parseLocalDate(t.date);
+    const dStr = d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+    const ini  = new Date(t.startTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const fim  = new Date(t.endTime).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const durMin = Math.round((t.endTime-t.startTime-t.pauseMs)/60000);
+    const card = document.createElement('div');
+    card.className = 'turno-hist-card';
+    card.innerHTML = `
+      <div class="turno-hist-top">
+        <div class="turno-hist-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="turno-hist-info">
+          <div class="turno-hist-title">${san(t.obs||'Turno de trabalho')}</div>
+          <div class="turno-hist-sub">${dStr} · ${ini}–${fim}</div>
+        </div>
+        <button onclick="deletarTurnoHist(${t.id})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;padding:4px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        </button>
+      </div>
+      <div class="turno-hist-stats">
+        <div class="turno-hist-stat">
+          <div class="turno-hist-stat-val">${Math.floor(durMin/60)}h${durMin%60}m</div>
+          <div class="turno-hist-stat-lbl">Trabalhado</div>
+        </div>
+        <div class="turno-hist-stat">
+          <div class="turno-hist-stat-val">${t.horas.toFixed(1)}h</div>
+          <div class="turno-hist-stat-lbl">Efetivo</div>
+        </div>
+        <div class="turno-hist-stat">
+          <div class="turno-hist-stat-val">${t.km>0?t.km+' km':'—'}</div>
+          <div class="turno-hist-stat-lbl">Km</div>
+        </div>
+        <div class="turno-hist-stat">
+          <div class="turno-hist-stat-val">${t.pauseCount>0?t.pauseCount+'x':'—'}</div>
+          <div class="turno-hist-stat-lbl">Pausas</div>
+        </div>
+      </div>`;
+    section.appendChild(card);
+  });
+  container.appendChild(section);
+}
+
+function deletarTurnoHist(id){
+  turnosHist = turnosHist.filter(t=>t.id!==id);
+  saveTurnosHist();
+  renderAll();
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
