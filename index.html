@@ -438,6 +438,44 @@ input[type=date].date-picker{
 .auth-icon-wrap svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .nav-item svg{width:20px;height:20px}
 
+/* ── LANÇAMENTOS RECORRENTES ── */
+.rec-card{
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+  padding:13px 14px;margin-bottom:8px;transition:border-color .2s;
+}
+.rec-card:hover{border-color:rgba(245,197,24,.25)}
+.rec-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rec-icon{width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2)}
+.rec-info{flex:1;min-width:0}
+.rec-nome{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.rec-val{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--red);flex-shrink:0}
+.rec-bottom{display:flex;align-items:center;justify-content:space-between}
+.rec-next-badge{
+  font-size:10px;padding:3px 8px;border-radius:99px;font-weight:600;
+}
+.rec-next-badge.vencido{background:rgba(239,68,68,.15);color:#f87171}
+.rec-next-badge.hoje{background:rgba(245,197,24,.15);color:var(--accent)}
+.rec-next-badge.prox{background:rgba(34,197,94,.1);color:var(--green)}
+.rec-actions{display:flex;gap:6px}
+.rec-btn{background:var(--border);border:none;border-radius:8px;
+  padding:5px 8px;cursor:pointer;font-size:11px;font-weight:600;
+  font-family:'DM Sans',sans-serif;color:var(--muted);transition:all .15s;
+  display:flex;align-items:center;gap:4px}
+.rec-btn:active{transform:scale(.93)}
+.rec-btn.del{color:#f87171}
+
+/* Badge pendente ao abrir app */
+.rec-pending-banner{
+  background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);
+  border-radius:12px;padding:11px 14px;margin-bottom:12px;
+  font-size:12px;line-height:1.5;cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+}
+.rec-pending-banner:active{opacity:.8}
+
 /* ── TURNO ── */
 .turno-fab{
   position:fixed;bottom:calc(144px + var(--sb));right:20px;
@@ -673,6 +711,10 @@ input[type=date].date-picker{
     </div>
   </div>
 
+
+  <!-- Banner recorrentes pendentes -->
+  <div id="rec-pending-banner" style="display:none"></div>
+
   <!-- Alerta fixas -->
   <div id="fixas-home-alert" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5"></div>
 
@@ -885,6 +927,18 @@ input[type=date].date-picker{
       </div>
       <div id="fixas-projecao-content"></div>
     </div>
+  </div>
+
+
+  <!-- LANÇAMENTOS RECORRENTES -->
+  <div class="section-title" style="margin-top:16px">
+    Lançamentos Recorrentes
+    <a onclick="openRecModal()" style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:600">+ Novo</a>
+  </div>
+  <div id="rec-list"></div>
+  <div class="empty-state" id="rec-empty" style="display:none;margin-top:0">
+    Nenhum lançamento recorrente.<br>
+    <span style="color:var(--accent);cursor:pointer" onclick="openRecModal()">Criar o primeiro →</span>
   </div>
 
   <!-- META SALARIAL -->
@@ -1406,6 +1460,72 @@ input[type=date].date-picker{
 </div>
 
 
+
+<!-- MODAL RECORRENTE -->
+<div class="modal-overlay" id="rec-modal-overlay" onclick="closeRecModalOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Lançamento Recorrente</div>
+    <input type="hidden" id="rec-edit-id"/>
+
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="rec-desc" placeholder="Ex: Gasolina semanal, Almoço diário..." maxlength="200"/>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field" style="margin-bottom:8px">
+        <label>Valor (R$)</label>
+        <input type="number" id="rec-val" placeholder="0,00" step="0.01" min="0" inputmode="decimal"/>
+      </div>
+      <div class="field" style="margin-bottom:8px">
+        <label>Tipo</label>
+        <select id="rec-type">
+          <option value="gasto">Gasto</option>
+          <option value="receita">Receita</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Categoria</label>
+      <select id="rec-cat">
+        <option value="Combustível">Combustível</option>
+        <option value="Manutenção">Manutenção</option>
+        <option value="Alimentação">Alimentação</option>
+        <option value="Lavagem">Lavagem</option>
+        <option value="Seguro">Seguro</option>
+        <option value="IPVA / Multa">IPVA / Multa</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="field" style="margin-bottom:8px">
+        <label>Frequência</label>
+        <select id="rec-freq" onchange="toggleRecCustom()">
+          <option value="diario">Diário</option>
+          <option value="semanal" selected>Semanal</option>
+          <option value="quinzenal">Quinzenal</option>
+          <option value="mensal">Mensal</option>
+          <option value="custom">Personalizado</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:8px" id="rec-custom-field" style="display:none">
+        <label>A cada X dias</label>
+        <input type="number" id="rec-custom-days" placeholder="Ex: 10" min="2" max="365" inputmode="numeric"/>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Próximo lançamento</label>
+      <input type="date" id="rec-next-date" style="background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:11px 14px;font-size:14px;font-family:'DM Sans',sans-serif;width:100%;outline:none"/>
+    </div>
+
+    <button class="btn-add" id="rec-btn-save" onclick="saveRec()">SALVAR</button>
+  </div>
+</div>
+
 <!-- MODAL TURNO ENCERRAR -->
 <div class="modal-overlay" id="turno-enc-overlay" onclick="closeTurnoEncOutside(event)">
   <div class="modal">
@@ -1915,7 +2035,9 @@ async function enterApp(user) {
     if (!transactions.length) { transactions = DEMO_TRANSACTIONS(); save(); }
   }
 
+  processarRecorrentes();
   renderHome(); renderAnalyse(); renderResumo();
+  renderRecBanner();
   renderTurno();
   startInactivityWatcher(); // inicia monitoramento de inatividade
 }
@@ -2533,7 +2655,7 @@ function showPage(p){
   if(p==='analise') renderAnalyse();
   if(p==='lancamentos') renderAll();
   if(p==='resumo') renderResumo();
-  if(p==='fixas') renderFixas();
+  if(p==='fixas'){ renderFixas(); renderRec(); }
   if(p==='simulador') renderSimulador();
   if(p==='calendario') renderCalendario();
 }
@@ -3584,6 +3706,222 @@ function calcMetaSalarial() {
   }
 }
 
+
+
+// ─── LANÇAMENTOS RECORRENTES ─────────────────────────────
+let recorrentes = [];
+try { recorrentes = JSON.parse(localStorage.getItem('df_recorrentes') || '[]'); } catch(e) {}
+
+function saveRecLocal(){ localStorage.setItem('df_recorrentes', JSON.stringify(recorrentes)); }
+
+const REC_FREQ_LABEL = {
+  diario: 'Diário', semanal: 'Semanal', quinzenal: 'Quinzenal',
+  mensal: 'Mensal', custom: 'Personalizado',
+};
+const REC_FREQ_DAYS = { diario:1, semanal:7, quinzenal:15, mensal:30 };
+
+function recIntervalDays(r){
+  if(r.freq==='custom') return r.customDays||7;
+  return REC_FREQ_DAYS[r.freq]||7;
+}
+
+// Calcula próxima data após um lançamento
+function nextDateAfter(dateStr, r){
+  const d = new Date(dateStr+'T00:00:00');
+  d.setDate(d.getDate() + recIntervalDays(r));
+  return fmtDate(d);
+}
+
+// Verifica e processa recorrentes vencidos automaticamente ao abrir o app
+function processarRecorrentes(){
+  const hoje = todayStr();
+  let lançados = 0;
+  recorrentes.forEach(r => {
+    if(!r.ativo) return;
+    // Lança todos os vencidos (pode ter pulado dias)
+    while(r.nextDate <= hoje){
+      const newTxn = {
+        id: Date.now() + Math.random(),
+        type: r.type,
+        description: san(r.desc) + ' (recorrente)',
+        val: r.val,
+        cat: r.cat,
+        plataforma: r.type==='receita' ? r.cat : '',
+        viagens: 0, horas: 0, km: 0,
+        date: r.nextDate,
+      };
+      if(USE_SUPABASE){
+        sb.insertTxn(newTxn); // fire-and-forget — não bloqueia
+      } else {
+        transactions.push(newTxn);
+      }
+      r.lastDate = r.nextDate;
+      r.nextDate = nextDateAfter(r.nextDate, r);
+      lançados++;
+    }
+  });
+  if(lançados > 0){
+    saveRecLocal();
+    if(!USE_SUPABASE) save();
+    renderHome(); renderAll(); renderAnalyse();
+  }
+  return lançados;
+}
+
+// Verifica recorrentes que vencem hoje ou estão vencidos (para banner)
+function recorrentesPendentesHoje(){
+  const hoje = todayStr();
+  return recorrentes.filter(r => r.ativo && r.nextDate <= hoje);
+}
+
+function renderRecBanner(){
+  const banner = document.getElementById('rec-pending-banner');
+  if(!banner) return;
+  // Após processarRecorrentes(), não deve haver pendentes — mas pode haver os de hoje
+  const hoje = todayStr();
+  const hojeLançados = recorrentes.filter(r => r.ativo && r.lastDate === hoje);
+  if(hojeLançados.length > 0){
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span><b style="color:var(--accent)">${hojeLançados.length}</b> lançamento${hojeLançados.length>1?'s':''} recorrente${hojeLançados.length>1?'s':''} processado${hojeLançados.length>1?'s':''} hoje automaticamente. <span style="color:var(--accent)" onclick="showPage('lancamentos')">Ver →</span></span>`;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function renderRec(){
+  const list  = document.getElementById('rec-list');
+  const empty = document.getElementById('rec-empty');
+  if(!list) return;
+  list.innerHTML = '';
+  const ativos = recorrentes.filter(r=>r.ativo!==false);
+  if(!ativos.length){ empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  const hoje = todayStr();
+  ativos.forEach(r=>{
+    const diasAte = Math.ceil((new Date(r.nextDate+'T00:00:00')-new Date(hoje+'T00:00:00'))/(1000*60*60*24));
+    let badgeClass='prox', badgeLabel='';
+    if(diasAte < 0){ badgeClass='vencido'; badgeLabel=`Venceu há ${Math.abs(diasAte)}d`; }
+    else if(diasAte===0){ badgeClass='hoje'; badgeLabel='Hoje'; }
+    else if(diasAte===1){ badgeClass='hoje'; badgeLabel='Amanhã'; }
+    else { badgeLabel=`Em ${diasAte} dias`; }
+
+    const freqLabel = r.freq==='custom'?`A cada ${r.customDays}d`:REC_FREQ_LABEL[r.freq];
+
+    const card = document.createElement('div');
+    card.className = 'rec-card';
+    card.innerHTML = `
+      <div class="rec-top">
+        <div class="rec-icon">${IC.zap}</div>
+        <div class="rec-info">
+          <div class="rec-nome">${san(r.desc)}</div>
+          <div class="rec-sub">${san(r.cat)} · ${freqLabel} · próx: ${new Date(r.nextDate+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</div>
+        </div>
+        <div class="rec-val">${r.type==='receita'?'+':'−'}${fmtShort(r.val)}</div>
+      </div>
+      <div class="rec-bottom">
+        <span class="rec-next-badge ${badgeClass}">${badgeLabel}</span>
+        <div class="rec-actions">
+          <button class="rec-btn" onclick="editRec('${r.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+          <button class="rec-btn del" onclick="deleteRec('${r.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+            Excluir
+          </button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+// Modal
+function openRecModal(editId){
+  document.getElementById('rec-edit-id').value = editId||'';
+  const today = todayStr();
+  if(editId){
+    const r = recorrentes.find(x=>x.id===editId);
+    if(!r) return;
+    document.getElementById('rec-desc').value        = r.desc;
+    document.getElementById('rec-val').value         = r.val;
+    document.getElementById('rec-type').value        = r.type;
+    document.getElementById('rec-cat').value         = r.cat;
+    document.getElementById('rec-freq').value        = r.freq;
+    document.getElementById('rec-custom-days').value = r.customDays||'';
+    document.getElementById('rec-next-date').value   = r.nextDate;
+    document.getElementById('rec-btn-save').textContent = 'SALVAR ALTERAÇÕES';
+  } else {
+    document.getElementById('rec-desc').value        = '';
+    document.getElementById('rec-val').value         = '';
+    document.getElementById('rec-type').value        = 'gasto';
+    document.getElementById('rec-cat').value         = 'Combustível';
+    document.getElementById('rec-freq').value        = 'semanal';
+    document.getElementById('rec-custom-days').value = '';
+    document.getElementById('rec-next-date').value   = today;
+    document.getElementById('rec-btn-save').textContent = 'SALVAR';
+  }
+  toggleRecCustom();
+  document.getElementById('rec-modal-overlay').classList.add('open');
+}
+
+function closeRecModalOutside(e){
+  if(e.target===document.getElementById('rec-modal-overlay'))
+    document.getElementById('rec-modal-overlay').classList.remove('open');
+}
+
+function toggleRecCustom(){
+  const freq = document.getElementById('rec-freq').value;
+  const f = document.getElementById('rec-custom-field');
+  if(f) f.style.display = freq==='custom'?'block':'none';
+}
+
+function saveRec(){
+  const desc       = document.getElementById('rec-desc').value.trim().slice(0,200);
+  const val        = parseFloat(document.getElementById('rec-val').value);
+  const type       = document.getElementById('rec-type').value;
+  const cat        = document.getElementById('rec-cat').value;
+  const freq       = document.getElementById('rec-freq').value;
+  const customDays = parseInt(document.getElementById('rec-custom-days').value)||7;
+  const nextDate   = document.getElementById('rec-next-date').value;
+  const editId     = document.getElementById('rec-edit-id').value;
+
+  if(!desc){ document.getElementById('rec-desc').focus(); return; }
+  if(!val||val<=0||val>999999){ document.getElementById('rec-val').focus(); return; }
+  if(!nextDate) return;
+
+  const payload = {
+    id: editId || Date.now().toString(),
+    desc, val: Math.round(val*100)/100,
+    type, cat, freq,
+    customDays: freq==='custom'?customDays:undefined,
+    nextDate,
+    lastDate: null,
+    ativo: true,
+    criadoEm: editId ? recorrentes.find(x=>x.id===editId)?.criadoEm : Date.now(),
+  };
+
+  if(editId){
+    const idx = recorrentes.findIndex(x=>x.id===editId);
+    if(idx>=0) recorrentes[idx] = payload;
+  } else {
+    recorrentes.push(payload);
+  }
+  saveRecLocal();
+  document.getElementById('rec-modal-overlay').classList.remove('open');
+  renderRec();
+}
+
+function editRec(id){ openRecModal(id); }
+
+function deleteRec(id){
+  if(!confirm('Excluir este lançamento recorrente?')) return;
+  recorrentes = recorrentes.filter(r=>r.id!==id);
+  saveRecLocal();
+  renderRec();
+}
 
 // ─── REGISTRO DE TURNO ───────────────────────────────────
 let turno = null;          // turno ativo em memória
