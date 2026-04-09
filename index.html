@@ -438,6 +438,106 @@ input[type=date].date-picker{
 .auth-icon-wrap svg{width:52px;height:52px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .nav-item svg{width:20px;height:20px}
 
+/* ── META DIÁRIA ── */
+.meta-card{
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+  padding:14px 16px;margin-bottom:14px;
+}
+.meta-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.meta-card-title{font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px}
+.meta-edit-btn{background:none;border:none;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;padding:3px 8px;border-radius:8px;border:1px solid rgba(245,197,24,.3)}
+.meta-progress-wrap{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.meta-progress-bar{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.meta-stats-row{display:flex;justify-content:space-between;align-items:center}
+.meta-stat{text-align:center}
+.meta-stat-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.meta-stat-lbl{font-size:9px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.meta-inline-form{display:flex;gap:8px;align-items:center;margin-top:8px;padding-top:10px;border-top:1px solid var(--border)}
+.meta-inline-input{flex:1;background:var(--border);border:none;color:var(--text);border-radius:10px;padding:9px 12px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:600;outline:none;min-width:0}
+.meta-inline-btn{background:var(--accent);border:none;color:#000;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* ── IA ── */
+.ai-page{display:flex;flex-direction:column;height:calc(100vh - 160px)}
+.ai-chat-area{flex:1;overflow-y:auto;padding-bottom:8px;scroll-behavior:smooth}
+.ai-msg{margin-bottom:10px;animation:fadeIn .25s ease}
+.ai-msg-user{display:flex;justify-content:flex-end}
+.ai-msg-ai{display:flex;justify-content:flex-start;gap:8px;align-items:flex-start}
+.ai-bubble-user{
+  background:var(--accent);color:#000;
+  padding:10px 14px;border-radius:18px 18px 4px 18px;
+  font-size:13px;max-width:82%;line-height:1.5;font-weight:500;
+}
+.ai-bubble-ai{
+  background:var(--card);border:1px solid var(--border);
+  padding:11px 14px;border-radius:18px 18px 18px 4px;
+  font-size:13px;max-width:88%;line-height:1.6;color:var(--text);
+}
+.ai-bubble-ai b{color:var(--accent)}
+.ai-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#000}
+.ai-input-row{display:flex;gap:8px;padding:10px 0 4px;border-top:1px solid var(--border);margin-top:8px}
+.ai-input{
+  flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);
+  border-radius:12px;padding:11px 14px;font-size:13px;font-family:'DM Sans',sans-serif;
+  outline:none;resize:none;height:44px;transition:border-color .2s;
+}
+.ai-input:focus{border-color:var(--accent)}
+.ai-send-btn{
+  width:44px;height:44px;border-radius:12px;border:none;
+  background:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,opacity .15s;flex-shrink:0;
+}
+.ai-send-btn:active{transform:scale(.9)}
+.ai-send-btn:disabled{opacity:.4;cursor:not-allowed}
+.ai-typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.ai-typing span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:aiDot 1.2s infinite}
+.ai-typing span:nth-child(2){animation-delay:.2s}
+.ai-typing span:nth-child(3){animation-delay:.4s}
+@keyframes aiDot{0%,80%,100%{transform:scale(0);opacity:.3}40%{transform:scale(1);opacity:1}}
+
+/* Insights card */
+.ai-insights-card{
+  background:linear-gradient(135deg,#1a2038,#1e2844);
+  border:1px solid rgba(245,197,24,.25);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:12px;
+}
+.ai-insights-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ai-insights-title{font-weight:700;font-size:13px;color:var(--accent)}
+.ai-insight-item{font-size:12px;color:var(--muted);line-height:1.6;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:8px;align-items:flex-start}
+.ai-insight-item:last-child{border-bottom:none}
+.ai-insight-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px}
+.ai-insight-text b{color:var(--text)}
+
+/* Previsão */
+.ai-forecast-row{display:flex;gap:8px;margin-bottom:12px}
+.ai-forecast-card{
+  flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center
+}
+.ai-forecast-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--green)}
+.ai-forecast-lbl{font-size:10px;color:var(--muted);margin-top:3px}
+.ai-forecast-conf{font-size:10px;color:var(--accent);margin-top:2px}
+
+/* Sugestão preenchimento */
+.ai-suggest-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);
+  border-radius:99px;padding:4px 10px;font-size:11px;color:var(--accent);
+  cursor:pointer;margin:3px 3px 0 0;transition:all .15s;font-weight:600;
+}
+.ai-suggest-pill:active{transform:scale(.95)}
+/* Sugestão preenchimento — desativado com IA */
+/* #ai-suggestions{min-height:24px;margin-top:6px} */
+
+/* Quick prompts */
+.ai-quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ai-quick-btn{
+  padding:7px 12px;border-radius:99px;border:1px solid var(--border);
+  background:var(--card);color:var(--muted);font-size:11px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;
+}
+.ai-quick-btn:active{border-color:var(--accent);color:var(--accent)}
+
 /* ── LANÇAMENTOS RECORRENTES ── */
 .rec-card{
   background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
@@ -717,6 +817,46 @@ input[type=date].date-picker{
 
   <!-- Alerta fixas -->
   <div id="fixas-home-alert" style="display:none;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5"></div>
+
+  <!-- META DIÁRIA -->
+  <div class="meta-card" id="meta-diaria-card">
+    <div class="meta-card-header">
+      <div class="meta-card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Meta do Dia
+      </div>
+      <button class="meta-edit-btn" onclick="toggleMetaForm()">Editar meta</button>
+    </div>
+    <!-- Barra de progresso -->
+    <div class="meta-progress-wrap">
+      <div class="meta-progress-bar" id="meta-progress-bar" style="width:0%;background:var(--green)"></div>
+    </div>
+    <!-- Stats -->
+    <div class="meta-stats-row" id="meta-stats-row">
+      <div class="meta-stat">
+        <div class="meta-stat-val acc" id="meta-feito">R$0</div>
+        <div class="meta-stat-lbl">Feito hoje</div>
+      </div>
+      <div class="meta-stat">
+        <div class="meta-stat-val" id="meta-pct" style="color:var(--accent)">0%</div>
+        <div class="meta-stat-lbl">Da meta</div>
+      </div>
+      <div class="meta-stat">
+        <div class="meta-stat-val" id="meta-falta" style="color:var(--muted)">—</div>
+        <div class="meta-stat-lbl">Faltam</div>
+      </div>
+      <div class="meta-stat">
+        <div class="meta-stat-val" id="meta-valor-display" style="color:var(--muted)">—</div>
+        <div class="meta-stat-lbl">Meta</div>
+      </div>
+    </div>
+    <!-- Form inline (oculto por padrão) -->
+    <div class="meta-inline-form" id="meta-inline-form" style="display:none">
+      <input class="meta-inline-input" type="number" id="meta-input-val" placeholder="Ex: 300" min="1" max="9999" inputmode="decimal"
+        onkeydown="if(event.key==='Enter') salvarMeta()"/>
+      <button class="meta-inline-btn" onclick="salvarMeta()">SALVAR</button>
+    </div>
+  </div>
 
   <!-- Métricas em grid -->
   <div class="section-title">Métricas do Dia</div>
@@ -1153,18 +1293,6 @@ input[type=date].date-picker{
     <button onclick="calShiftMonth(1)">&#8250;</button>
   </div>
 
-<!-- ══════════════ DICAS ══════════════ -->
-<div class="page" id="page-dicas">
-  <div class="section-title">Dicas para motoristas</div>
-  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V12M12 22V2M21 22V12"/></svg></div><div class="tip-title">Controle o combustível</div><div class="tip-text">Registre cada abastecimento com os km. Divida km pelos litros para saber seu consumo real. Pneu calibrado economiza até 8%.</div></div>
-  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><div class="tip-title">Lucro real por plataforma</div><div class="tip-text">Uber e 99 cobram ~25% por corrida. Use a aba Análise para comparar lucro por hora entre plataformas e focar onde você ganha mais.</div></div>
-  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M4.93 4.93l1.41 1.41"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M20 12h2"/><path d="M2 12h2"/><path d="M19.07 19.07l-1.41-1.41"/><path d="M4.93 19.07l1.41-1.41"/></svg></div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem mantido tem menos quebra e maior valorização.</div></div>
-  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tip-title">Meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis. Use a aba Análise → Diário para ver se está no ritmo certo cada dia.</div></div>
-  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores.</div></div>
-</div>
-
-
-
   <!-- Resumo do mês -->
   <div class="cal-month-summary">
     <div class="top3-card" style="--c:#22c55e">
@@ -1207,6 +1335,18 @@ input[type=date].date-picker{
 
   <!-- Painel de detalhe do dia selecionado -->
   <div class="cal-detail" id="cal-detail" style="display:none"></div>
+
+</div>
+
+<!-- ══════════════ DICAS ══════════════ -->
+<div class="page" id="page-dicas">
+  <div class="section-title">Dicas para motoristas</div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22V12M12 22V2M21 22V12"/></svg></div><div class="tip-title">Controle o combustível</div><div class="tip-text">Registre cada abastecimento com os km. Divida km pelos litros para saber seu consumo real. Pneu calibrado economiza até 8%.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg></div><div class="tip-title">Lucro real por plataforma</div><div class="tip-text">Uber e 99 cobram ~25% por corrida. Use a aba Análise para comparar lucro por hora entre plataformas e focar onde você ganha mais.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41"/><path d="M4.93 4.93l1.41 1.41"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M20 12h2"/><path d="M2 12h2"/><path d="M19.07 19.07l-1.41-1.41"/><path d="M4.93 19.07l1.41-1.41"/></svg></div><div class="tip-title">Reserve para manutenção</div><div class="tip-text">Separe 10% das receitas mensais para revisões, pneus e imprevistos. Carro bem mantido tem menos quebra e maior valorização.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="tip-title">Meta diária</div><div class="tip-text">Divida a meta mensal por 22 dias úteis. Use a aba Análise → Diário para ver se está no ritmo certo cada dia.</div></div>
+  <div class="tip-card"><div class="tip-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="tip-title">Horários de pico</div><div class="tip-text">Sextas e sábados à noite, manhãs úteis (6h–9h) e almoço (11h–13h) têm mais demanda e tarifas maiores.</div></div>
+</div>
 
 
   <!-- FAB Turno flutuante -->
@@ -2522,6 +2662,7 @@ function renderHome(){
   renderMetricsGrid(txns,'metrics-home');
 
   // Donut
+  renderMetaDiaria();
   renderDonut(txns,'donut-svg-home','donut-total-home','donut-legend-home');
 
   // Chart
@@ -3707,6 +3848,417 @@ function calcMetaSalarial() {
 }
 
 
+
+
+// ── IA (desativada — descomentar para reativar) ──────────
+// // ═══════════════════════════════════════════════════════
+// // 🤖 INTELIGÊNCIA ARTIFICIAL — DriveFinance
+// // ═══════════════════════════════════════════════════════
+// // SUBSTITUA com sua chave da Anthropic:
+// // https://console.anthropic.com → API Keys
+// const ANTHROPIC_KEY = 'COLE_SUA_CHAVE_ANTHROPIC_AQUI';
+// const AI_MODEL      = 'claude-sonnet-4-20250514';
+
+// // Chama a API da Anthropic
+// async function callAI(systemPrompt, userMsg, maxTokens=600) {
+//   if (!ANTHROPIC_KEY || ANTHROPIC_KEY.includes('COLE')) return null;
+//   try {
+//     const resp = await fetch('https://api.anthropic.com/v1/messages', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'x-api-key': ANTHROPIC_KEY,
+//         'anthropic-version': '2023-06-01',
+//         'anthropic-dangerous-direct-browser-access': 'true',
+//       },
+//       body: JSON.stringify({
+//         model: AI_MODEL,
+//         max_tokens: maxTokens,
+//         system: systemPrompt,
+//         messages: [{ role: 'user', content: userMsg }],
+//       }),
+//     });
+//     const data = await resp.json();
+//     return data?.content?.[0]?.text || null;
+//   } catch(e) { return null; }
+// }
+
+// // Monta contexto financeiro compacto para enviar à IA
+// function buildFinancialContext() {
+//   const now = new Date();
+//   const mes = now.getMonth(), ano = now.getFullYear();
+
+//   // Últimos 60 dias de transações
+//   const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-60);
+//   const recentes = transactions.filter(t => parseLocalDate(t.date) >= cutoff);
+
+//   // Métricas do mês atual
+//   const txMes = transactions.filter(t => {
+//     const d = parseLocalDate(t.date);
+//     return d.getMonth()===mes && d.getFullYear()===ano;
+//   });
+//   const fatMes  = txMes.filter(t=>t.type==='receita').reduce((s,t)=>s+t.val,0);
+//   const despMes = txMes.filter(t=>t.type==='gasto').reduce((s,t)=>s+t.val,0);
+
+//   // Por dia da semana (últimas 4 semanas)
+//   const porDow = {};
+//   const quatro = new Date(); quatro.setDate(quatro.getDate()-28);
+//   transactions.filter(t=>t.type==='receita'&&parseLocalDate(t.date)>=quatro).forEach(t=>{
+//     const dow = parseLocalDate(t.date).getDay();
+//     if(!porDow[dow]) porDow[dow]={fat:0,dias:new Set()};
+//     porDow[dow].fat += t.val;
+//     porDow[dow].dias.add(t.date);
+//   });
+//   const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+//   const dowStr = Object.entries(porDow).map(([d,v])=>
+//     `${diasSemana[d]}: R$${(v.fat/v.dias.size).toFixed(0)}/dia`
+//   ).join(', ');
+
+//   // Por plataforma
+//   const porPlat = {};
+//   txMes.filter(t=>t.type==='receita'&&t.plataforma).forEach(t=>{
+//     porPlat[t.plataforma]=(porPlat[t.plataforma]||0)+t.val;
+//   });
+//   const platStr = Object.entries(porPlat).sort((a,b)=>b[1]-a[1])
+//     .map(([p,v])=>`${p}: R$${v.toFixed(0)}`).join(', ');
+
+//   // Últimas 20 transações resumidas
+//   const ultimas = recentes.slice(-20).map(t=>
+//     `${t.date} ${t.type==='receita'?'+':'-'}R$${t.val} ${t.cat||t.plataforma||''} "${t.description||''}"`
+//   ).join('
+// ');
+
+//   const hoje = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+
+//   return `Hoje: ${hoje}
+// Mês atual — Faturamento: R$${fatMes.toFixed(2)}, Despesas: R$${despMes.toFixed(2)}, Saldo: R$${(fatMes-despMes).toFixed(2)}
+// Por dia da semana (média últimas 4 sem): ${dowStr||'Sem dados'}
+// Por plataforma este mês: ${platStr||'Sem dados'}
+// Despesas fixas mensais: R$${totalFixasMensal().toFixed(2)}
+// Lançamentos recentes:
+// ${ultimas||'Nenhum'}`;
+// }
+
+// // ── PREVISÃO DE FATURAMENTO (local, sem IA) ──────────────
+// function calcForecast() {
+//   const now = new Date();
+//   const dow  = now.getDay();
+//   const mes  = now.getMonth(), ano = now.getFullYear();
+
+//   // Média por dia da semana (últimas 4 ocorrências)
+//   const mediaDow = (targetDow) => {
+//     const vals = [];
+//     for(let w=1;w<=4;w++){
+//       const d = new Date(now);
+//       d.setDate(d.getDate() - (((dow - targetDow + 7)%7) || 7) - (w-1)*7);
+//       const ds = fmtDate(d);
+//       const fat = transactions.filter(t=>t.type==='receita'&&t.date===ds).reduce((s,t)=>s+t.val,0);
+//       if(fat>0) vals.push(fat);
+//     }
+//     return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+//   };
+
+//   // Hoje
+//   const prevHoje = mediaDow(dow);
+
+//   // Esta semana (dom-sáb)
+//   let prevSemana = 0;
+//   for(let d=0;d<7;d++) prevSemana += mediaDow(d);
+
+//   // Este mês — faturamento até hoje + projeção restante
+//   const diasMes  = new Date(ano,mes+1,0).getDate();
+//   const diaAtual = now.getDate();
+//   const fatAteHoje = transactions.filter(t=>{
+//     const d=parseLocalDate(t.date);
+//     return t.type==='receita'&&d.getMonth()===mes&&d.getFullYear()===ano;
+//   }).reduce((s,t)=>s+t.val,0);
+//   const mediaDiaria = fatAteHoje / Math.max(1,diaAtual);
+//   const prevMes = fatAteHoje + mediaDiaria*(diasMes-diaAtual);
+
+//   // Confiança baseada em quantidade de dados
+//   const total = transactions.filter(t=>t.type==='receita').length;
+//   const conf = total>=20?'Alta':total>=10?'Média':'Baixa';
+
+//   document.getElementById('ia-fc-hoje').textContent  = prevHoje>0?fmtShort(prevHoje):'—';
+//   document.getElementById('ia-fc-semana').textContent = prevSemana>0?fmtShort(prevSemana):'—';
+//   document.getElementById('ia-fc-mes').textContent   = prevMes>0?fmtShort(prevMes):'—';
+//   document.getElementById('ia-fc-hoje-conf').textContent  = prevHoje>0?`Conf. ${conf}`:'Poucos dados';
+//   document.getElementById('ia-fc-semana-conf').textContent = prevSemana>0?`Conf. ${conf}`:'Poucos dados';
+//   document.getElementById('ia-fc-mes-conf').textContent   = prevMes>0?`Conf. ${conf}`:'Poucos dados';
+// }
+
+// // ── INSIGHTS AUTOMÁTICOS ─────────────────────────────────
+// async function gerarInsights() {
+//   const area = document.getElementById('ia-insights-area');
+//   const btn  = document.getElementById('ia-insights-refresh');
+//   if(!ANTHROPIC_KEY||ANTHROPIC_KEY.includes('COLE')){
+//     area.innerHTML=`<div style="color:var(--muted);font-size:12px;padding:8px 0">Configure a chave da Anthropic para ativar insights.</div>`;
+//     return;
+//   }
+//   btn.textContent='...';
+//   area.innerHTML=`<div class="ai-insights-card"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+
+//   const ctx = buildFinancialContext();
+//   const resp = await callAI(
+//     `Você é um assistente financeiro especializado em motoristas de aplicativo brasileiros.
+// Analise os dados e gere EXATAMENTE 4 insights práticos e curtos em português.
+// Formato: retorne apenas os 4 insights, um por linha, começando com um emoji relevante.
+// Seja direto, use números reais dos dados, máximo 2 linhas por insight.`,
+//     `Dados financeiros do motorista:
+// ${ctx}
+
+// Gere 4 insights práticos sobre estes dados.`,
+//     400
+//   );
+
+//   if(!resp){
+//     area.innerHTML=`<div style="color:var(--muted);font-size:12px;padding:8px 0">Não foi possível gerar insights. Verifique sua chave de API.</div>`;
+//     btn.textContent='Atualizar'; return;
+//   }
+
+//   const lines = resp.split('
+// ').filter(l=>l.trim());
+//   area.innerHTML=`<div class="ai-insights-card">
+//     <div class="ai-insights-header">
+//       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+//       <div class="ai-insights-title">Insights gerados por IA</div>
+//     </div>
+//     ${lines.map(l=>`<div class="ai-insight-item"><div class="ai-insight-dot"></div><div class="ai-insight-text">${san(l)}</div></div>`).join('')}
+//   </div>`;
+//   btn.textContent='Atualizar';
+// }
+
+// // ── ASSISTENTE FINANCEIRO (CHAT) ──────────────────────────
+// let aiChatHistory = [];
+
+// const AI_SYSTEM = `Você é o assistente financeiro do DriveFinance, um app para motoristas de aplicativo brasileiros.
+// Responda sempre em português brasileiro, de forma direta e prática.
+// Use os dados financeiros fornecidos para responder com precisão.
+// Formate valores em R$ com vírgula. Use negrito com ** para destacar números importantes.
+// Mantenha respostas concisas (máximo 150 palavras). Nunca invente dados que não estão no contexto.`;
+
+// function addAIMessage(text, role='ai') {
+//   const chat = document.getElementById('ia-chat');
+//   const div  = document.createElement('div');
+//   div.className = `ai-msg ai-msg-${role}`;
+
+//   if(role==='user'){
+//     div.innerHTML=`<div class="ai-bubble-user">${san(text)}</div>`;
+//   } else {
+//     // Formata **negrito** → <b>
+//     const formatted = san(text).replace(/\*\*(.*?)\*\*/g,'<b>$1</b>');
+//     div.innerHTML=`
+//       <div class="ai-avatar">AI</div>
+//       <div class="ai-bubble-ai">${formatted}</div>`;
+//   }
+//   chat.appendChild(div);
+//   chat.scrollTop = chat.scrollHeight;
+// }
+
+// function addTypingIndicator() {
+//   const chat = document.getElementById('ia-chat');
+//   const div  = document.createElement('div');
+//   div.className = 'ai-msg ai-msg-ai';
+//   div.id = 'ai-typing-indicator';
+//   div.innerHTML=`<div class="ai-avatar">AI</div><div class="ai-bubble-ai"><div class="ai-typing"><span></span><span></span><span></span></div></div>`;
+//   chat.appendChild(div);
+//   chat.scrollTop = chat.scrollHeight;
+// }
+
+// function removeTypingIndicator(){
+//   document.getElementById('ai-typing-indicator')?.remove();
+// }
+
+// async function sendAI() {
+//   const input = document.getElementById('ia-input');
+//   const btn   = document.getElementById('ia-send-btn');
+//   const msg   = input.value.trim();
+//   if(!msg) return;
+
+//   if(!ANTHROPIC_KEY||ANTHROPIC_KEY.includes('COLE')){
+//     addAIMessage('Configure a chave da API Anthropic no topo do código JS para usar o assistente.','ai');
+//     return;
+//   }
+
+//   input.value='';
+//   btn.disabled=true;
+//   addAIMessage(msg,'user');
+//   addTypingIndicator();
+
+//   // Monta histórico + contexto
+//   const ctx = buildFinancialContext();
+//   aiChatHistory.push({ role:'user', content: msg });
+//   if(aiChatHistory.length > 10) aiChatHistory = aiChatHistory.slice(-10);
+
+//   try {
+//     const resp = await fetch('https://api.anthropic.com/v1/messages',{
+//       method:'POST',
+//       headers:{
+//         'Content-Type':'application/json',
+//         'x-api-key': ANTHROPIC_KEY,
+//         'anthropic-version':'2023-06-01',
+//         'anthropic-dangerous-direct-browser-access':'true',
+//       },
+//       body: JSON.stringify({
+//         model: AI_MODEL,
+//         max_tokens: 400,
+//         system: AI_SYSTEM + `
+
+// Dados financeiros atuais do motorista:
+// ${ctx}`,
+//         messages: aiChatHistory,
+//       }),
+//     });
+//     const data = await resp.json();
+//     const reply = data?.content?.[0]?.text || 'Não consegui processar. Tente novamente.';
+//     aiChatHistory.push({ role:'assistant', content: reply });
+//     removeTypingIndicator();
+//     addAIMessage(reply,'ai');
+//   } catch(e) {
+//     removeTypingIndicator();
+//     addAIMessage('Erro de conexão. Verifique sua internet e tente novamente.','ai');
+//   }
+//   btn.disabled=false;
+//   input.focus();
+// }
+
+// function sendQuick(msg){
+//   document.getElementById('ia-input').value = msg;
+//   sendAI();
+// }
+
+// // ── PREENCHIMENTO INTELIGENTE (local, sem IA) ─────────────
+// // Mapa de palavras-chave → categoria/plataforma
+// const AI_CAT_MAP = [
+//   { keys:['gasolina','etanol','diesel','combustível','posto','shell','ipiranga','br','petrobras','abastec'], cat:'Combustível', type:'gasto' },
+//   { keys:['óleo','troca','filtro','pneu','freio','revisão','mecânico','oficina','borracharia','manutenção','repair'], cat:'Manutenção', type:'gasto' },
+//   { keys:['almoço','janta','lanche','comida','marmita','restaurante','ifood','hamburguer','pizza','mc','bk'], cat:'Alimentação', type:'gasto' },
+//   { keys:['lavagem','lava','car wash','polimento','higienização'], cat:'Lavagem', type:'gasto' },
+//   { keys:['seguro','porto','sulamérica','bradesco seguros'], cat:'Seguro', type:'gasto' },
+//   { keys:['ipva','multa','detran','crlv','dpvat','licenciamento'], cat:'IPVA / Multa', type:'gasto' },
+//   { keys:['uber'], plat:'Uber', type:'receita' },
+//   { keys:['99','noventa e nove'], plat:'99', type:'receita' },
+//   { keys:['indriver','in driver'], plat:'InDriver', type:'receita' },
+//   { keys:['ifood','i food'], plat:'iFood', type:'receita' },
+//   { keys:['rappi'], plat:'Rappi', type:'receita' },
+//   { keys:['lalamove','lala'], plat:'Lalamove', type:'receita' },
+//   { keys:['corrida','passageiro','viagem','trip'], plat:'Uber', type:'receita' },
+//   { keys:['entrega','delivery','pedido'], plat:'iFood', type:'receita' },
+//   { keys:['frete','mudança','carga','transporte'], plat:'Lalamove', type:'receita' },
+// ];
+
+// let aiSuggestTimer = null;
+// function aiSuggestCategory(val) {
+//   clearTimeout(aiSuggestTimer);
+//   aiSuggestTimer = setTimeout(() => {
+//     const area = document.getElementById('ai-suggestions');
+//     if(!area) return;
+//     if(!val || val.length < 3){ area.innerHTML=''; return; }
+
+//     const lower = val.toLowerCase();
+//     const matches = AI_CAT_MAP.filter(m => m.keys.some(k => lower.includes(k)));
+//     if(!matches.length){ area.innerHTML=''; return; }
+
+//     const pills = matches.slice(0,3).map(m => {
+//       const label = m.cat || m.plat;
+//       const type  = m.type;
+//       return `<span class="ai-suggest-pill" onclick="applyAISuggest('${label}','${type}')">
+//         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+//         ${san(label)}
+//       </span>`;
+//     }).join('');
+//     area.innerHTML = `<div style="font-size:10px;color:var(--muted);margin-bottom:3px">Sugestão IA:</div>${pills}`;
+//   }, 300);
+// }
+
+// function applyAISuggest(label, type) {
+//   // Define o tipo
+//   if(type==='gasto'){
+//     setType('gasto');
+//     // Tenta selecionar a categoria
+//     const catSel = document.getElementById('f-cat');
+//     if(catSel){
+//       Array.from(catSel.options).forEach(o=>{ if(o.value===label) catSel.value=label; });
+//     }
+//   } else {
+//     setType('receita');
+//     const platSel = document.getElementById('f-plataforma');
+//     if(platSel){
+//       Array.from(platSel.options).forEach(o=>{ if(o.value===label) platSel.value=label; });
+//     }
+//   }
+//   document.getElementById('ai-suggestions').innerHTML='';
+// }
+
+// // ── Render da página IA ───────────────────────────────────
+// function renderIA() {
+//   // Verifica chave
+//   const haKey = ANTHROPIC_KEY && !ANTHROPIC_KEY.includes('COLE');
+//   const banner = document.getElementById('ia-config-banner');
+//   if(banner) banner.style.display = haKey ? 'none' : 'block';
+
+//   // Calcula previsão (local, sempre disponível)
+//   calcForecast();
+
+//   // Mensagem de boas-vindas se chat vazio
+//   const chat = document.getElementById('ia-chat');
+//   if(chat && !chat.children.length){
+//     addAIMessage('Olá! Sou seu assistente financeiro. Posso analisar seus dados e responder perguntas sobre seu faturamento, gastos, plataformas e muito mais. Como posso ajudar?','ai');
+//   }
+// }
+
+
+
+// ─── META DIÁRIA ─────────────────────────────────────────
+let metaDiaria = parseFloat(localStorage.getItem('df_meta_diaria') || '0');
+
+function salvarMeta() {
+  const v = parseFloat(document.getElementById('meta-input-val').value);
+  if (!v || v <= 0) return;
+  metaDiaria = v;
+  localStorage.setItem('df_meta_diaria', String(v));
+  document.getElementById('meta-inline-form').style.display = 'none';
+  renderMetaDiaria();
+}
+
+function toggleMetaForm() {
+  const form = document.getElementById('meta-inline-form');
+  const isOpen = form.style.display !== 'none';
+  form.style.display = isOpen ? 'none' : 'flex';
+  if (!isOpen) {
+    const inp = document.getElementById('meta-input-val');
+    inp.value = metaDiaria > 0 ? metaDiaria : '';
+    inp.focus();
+  }
+}
+
+function renderMetaDiaria() {
+  const card = document.getElementById('meta-diaria-card');
+  if (!card) return;
+
+  const fatHoje = transactions
+    .filter(t => t.type === 'receita' && t.date === todayStr())
+    .reduce((s, t) => s + t.val, 0);
+
+  const meta = metaDiaria;
+  const pct  = meta > 0 ? Math.min(100, (fatHoje / meta) * 100) : 0;
+  const falta = meta > 0 ? Math.max(0, meta - fatHoje) : 0;
+
+  // Cor da barra
+  const barColor = pct >= 100 ? '#22c55e' : pct >= 70 ? '#f5c518' : pct >= 40 ? '#f97316' : '#ef4444';
+
+  document.getElementById('meta-progress-bar').style.width  = pct + '%';
+  document.getElementById('meta-progress-bar').style.background = barColor;
+  document.getElementById('meta-feito').textContent  = fmtShort(fatHoje);
+  document.getElementById('meta-pct').textContent    = pct.toFixed(0) + '%';
+  document.getElementById('meta-pct').style.color    = barColor;
+  document.getElementById('meta-falta').textContent  = falta > 0 ? fmtShort(falta) : '✓ Bateu!';
+  document.getElementById('meta-falta').style.color  = falta === 0 ? 'var(--green)' : 'var(--muted)';
+  document.getElementById('meta-valor-display').textContent = meta > 0 ? fmtShort(meta) : 'Sem meta';
+
+  // Se bateu a meta, borda verde
+  card.style.borderColor = pct >= 100 ? 'rgba(34,197,94,.4)' : 'var(--border)';
+}
 
 // ─── LANÇAMENTOS RECORRENTES ─────────────────────────────
 let recorrentes = [];
