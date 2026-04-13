@@ -597,6 +597,37 @@ input[type=date].date-picker{
 }
 .rec-pending-banner:active{opacity:.8}
 
+/* ── OFFLINE / SYNC ── */
+.offline-card{
+  background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);
+  border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;
+  display:none;
+}
+.offline-card.syncing{
+  background:rgba(245,197,24,.08);border-color:rgba(245,197,24,.25);
+}
+.offline-card.synced{
+  background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.25);
+}
+.offline-card-row{display:flex;align-items:center;gap:10px}
+.offline-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#ef4444}
+.offline-card.syncing .offline-dot{background:var(--accent);animation:syncPulse 1s infinite}
+.offline-card.synced .offline-dot{background:var(--green)}
+@keyframes syncPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.offline-card-text{flex:1;font-size:12px;line-height:1.5}
+.offline-card-title{font-weight:700;font-size:13px;margin-bottom:2px}
+.offline-sync-btn{
+  background:var(--accent);color:#000;border:none;border-radius:9px;
+  padding:7px 12px;font-size:11px;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;
+}
+.offline-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:16px;height:16px;border-radius:99px;background:#ef4444;
+  color:#fff;font-size:9px;font-weight:800;padding:0 4px;
+  margin-left:4px;vertical-align:middle;
+}
+
 /* ── BANNER INSTALAR PWA ── */
 .pwa-banner{
   position:fixed;bottom:calc(76px + var(--sb) + 8px);left:12px;right:12px;
@@ -918,6 +949,17 @@ input[type=date].date-picker{
     </div>
   </div>
 
+
+  <!-- OFFLINE SYNC CARD -->
+  <div id="offline-card" class="offline-card">
+    <div class="offline-card-row">
+      <div class="offline-dot"></div>
+      <div class="offline-card-text">
+        <div class="offline-card-title" id="offline-card-title">Sem conexão</div>
+        <div id="offline-card-sub">As operações serão sincronizadas quando a internet voltar.</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Banner recorrentes pendentes -->
   <div id="rec-pending-banner" style="display:none"></div>
@@ -2361,6 +2403,7 @@ async function enterApp(user) {
   renderTurno();
   // Garante que Análise é a aba ativa ao entrar no app
   showPage('analise');
+  initOffline();
   initPWA();
   startInactivityWatcher(); // inicia monitoramento de inatividade
 }
@@ -2817,12 +2860,18 @@ function mkTxnEl(t,showDel=false){
   return div;
 }
 async function deleteTxn(id){
-  if (USE_SUPABASE) {
-    await sb.deleteTxn(id);
-  }
+  // Remove localmente imediatamente
   transactions = transactions.filter(t => String(t.id) !== String(id));
   save();
   renderAll(); renderHome(); renderAnalyse();
+
+  if (USE_SUPABASE) {
+    if (isOnline) {
+      await sb.deleteTxn(id);
+    } else {
+      enqueue({ type:'delete', entity:'txn', entityId: id });
+    }
+  }
 }
 
 // ─── HOME ────────────────────────────────────────────────
@@ -3169,24 +3218,38 @@ async function saveFixa(){
     deduzir: Boolean(deduzir),
   };
 
+  // Aplica localmente primeiro
+  if(editId){
+    const idx = fixas.findIndex(f=>String(f.id)===String(editId));
+    if(idx>=0) fixas[idx] = {...fixas[idx], ...payload};
+  } else {
+    const localId = 'local-' + Date.now();
+    fixas.push({...payload, id: localId});
+  }
+  saveFixasLocal();
+
   if(USE_SUPABASE){
     if(editId){
-      const updated = await sb.updateFixa(editId, payload);
-      const idx = fixas.findIndex(f=>String(f.id)===String(editId));
-      if(idx>=0) fixas[idx] = updated || {...fixas[idx], ...payload};
+      if(isOnline){
+        await sb.updateFixa(editId, payload);
+      } else {
+        enqueue({ type:'update', entity:'fixa', entityId: editId, payload });
+      }
     } else {
-      const saved = await sb.insertFixa(payload);
-      if(saved) fixas.push(saved);
-      else fixas.push({...payload, id: Date.now().toString()});
+      const localId = fixas[fixas.length-1].id;
+      if(isOnline){
+        const saved = await sb.insertFixa(payload);
+        if(saved){
+          const idx = fixas.findIndex(f=>f.id===localId);
+          if(idx>=0) fixas[idx] = saved;
+          saveFixasLocal();
+        } else {
+          enqueue({ type:'insert', entity:'fixa', payload:{...payload, localId} });
+        }
+      } else {
+        enqueue({ type:'insert', entity:'fixa', payload:{...payload, localId} });
+      }
     }
-  } else {
-    if(editId){
-      const idx = fixas.findIndex(f=>f.id===editId);
-      if(idx>=0) fixas[idx] = {...fixas[idx], ...payload};
-    } else {
-      fixas.push({...payload, id: Date.now().toString()});
-    }
-    saveFixasLocal();
   }
 
   btn.disabled=false; btn.textContent='SALVAR';
@@ -3199,11 +3262,19 @@ function editFixa(id){ openFixaModal(id); }
 
 async function deleteFixa(id){
   if(!confirm('Excluir esta despesa fixa?')) return;
-  if(USE_SUPABASE) await sb.deleteFixa(id);
+  // Remove localmente imediatamente
   fixas = fixas.filter(f=>String(f.id)!==String(id));
   saveFixasLocal();
   renderFixas();
   renderHome();
+
+  if(USE_SUPABASE){
+    if(isOnline){
+      await sb.deleteFixa(id);
+    } else {
+      enqueue({ type:'delete', entity:'fixa', entityId: id });
+    }
+  }
 }
 
 function updateDeduzirTrack(){
@@ -3275,16 +3346,26 @@ async function addTransaction(){
     date,
   };
 
+  const localId = 'local-' + Date.now();
+  const localTxn = { ...newTxn, id: localId };
+  transactions.unshift(localTxn);
+  save();
+
   if (USE_SUPABASE) {
-    const saved = await sb.insertTxn(newTxn);
-    if (saved) {
-      transactions.unshift(saved);
+    if (isOnline) {
+      const saved = await sb.insertTxn(newTxn);
+      if (saved) {
+        // Substitui id local pelo real
+        const idx = transactions.findIndex(t => t.id === localId);
+        if (idx >= 0) transactions[idx] = saved;
+      } else {
+        // Falha na inserção — enfileira
+        enqueue({ type:'insert', entity:'txn', payload:{ ...newTxn, localId } });
+      }
     } else {
-      transactions.unshift({ ...newTxn, id: Date.now() });
+      // Offline — enfileira para sync posterior
+      enqueue({ type:'insert', entity:'txn', payload:{ ...newTxn, localId } });
     }
-  } else {
-    transactions.push({ ...newTxn, id: Date.now() });
-    save();
   }
 
   btnAdd.disabled = false; btnAdd.textContent = 'ADICIONAR';
@@ -3742,6 +3823,7 @@ function saveVeiculo() {
   saveVeiculoLocal();
   closeVeiculoModal();
   renderSimulador();
+  // Veículo salvo localmente — não precisa de fila (não vai pro Supabase)
 }
 
 // ─── CALENDÁRIO FINANCEIRO ───────────────────────────────
@@ -5236,6 +5318,145 @@ function showIOSGuide() {
 function initPWA() {
   if (isPWAInstalled()) return; // já está instalado, não mostra nada
   detectiOS();
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 📡 MODO OFFLINE — FILA DE OPERAÇÕES
+// ═══════════════════════════════════════════════════════
+let offlineQueue = [];
+let isOnline     = navigator.onLine;
+
+try { offlineQueue = JSON.parse(localStorage.getItem('df_offline_queue') || '[]'); } catch(e) {}
+
+function saveQueue() { localStorage.setItem('df_offline_queue', JSON.stringify(offlineQueue)); }
+
+// Enfileira uma operação para sync posterior
+function enqueue(op) {
+  // op = { id, type, entity, payload, timestamp }
+  op.id        = op.id || Date.now() + '-' + Math.random().toString(36).slice(2,7);
+  op.timestamp = Date.now();
+  // Remove operação anterior conflitante (ex: insert + delete do mesmo id)
+  if (op.type === 'delete') {
+    const insertIdx = offlineQueue.findIndex(o => o.type === 'insert' && String(o.payload?.localId) === String(op.entityId));
+    if (insertIdx >= 0) {
+      // Se ainda não foi sync, cancela os dois
+      offlineQueue.splice(insertIdx, 1);
+      saveQueue();
+      updateOfflineCard();
+      return; // não enfileira o delete
+    }
+  }
+  offlineQueue.push(op);
+  saveQueue();
+  updateOfflineCard();
+}
+
+// Atualiza o card de offline na tela inicial
+function updateOfflineCard() {
+  const card    = document.getElementById('offline-card');
+  const title   = document.getElementById('offline-card-title');
+  const sub     = document.getElementById('offline-card-sub');
+  if (!card) return;
+
+  const pending = offlineQueue.length;
+
+  if (!isOnline) {
+    card.style.display = 'block';
+    card.className     = 'offline-card';
+    title.textContent  = 'Sem conexão com a internet';
+    sub.textContent    = pending > 0
+      ? `${pending} operaç${pending>1?'ões':'ão'} pendente${pending>1?'s':''} — serão sincronizadas quando a internet voltar.`
+      : 'Você está offline. Seus dados estão sendo salvos localmente.';
+  } else if (pending > 0) {
+    card.style.display = 'block';
+    card.className     = 'offline-card syncing';
+    title.textContent  = 'Sincronizando...';
+    sub.textContent    = `${pending} operaç${pending>1?'ões':'ão'} sendo sincronizada${pending>1?'s':''} com o servidor.`;
+  } else {
+    card.style.display = 'none';
+    card.className     = 'offline-card';
+  }
+}
+
+// Processa a fila e sincroniza com o Supabase
+async function syncQueue() {
+  if (!USE_SUPABASE || !isOnline || offlineQueue.length === 0) return;
+
+  updateOfflineCard();
+  const toSync = [...offlineQueue];
+
+  for (const op of toSync) {
+    try {
+      if (op.entity === 'txn') {
+        if (op.type === 'insert') {
+          const { localId, ...payload } = op.payload;
+          const saved = await sb.insertTxn(payload);
+          if (saved) {
+            // Substitui id local pelo id real do banco
+            const idx = transactions.findIndex(t => String(t.id) === String(localId));
+            if (idx >= 0) transactions[idx] = saved;
+          }
+        } else if (op.type === 'delete') {
+          await sb.deleteTxn(op.entityId);
+        }
+      } else if (op.entity === 'fixa') {
+        if (op.type === 'insert') {
+          const { localId, ...payload } = op.payload;
+          const saved = await sb.insertFixa(payload);
+          if (saved) {
+            const idx = fixas.findIndex(f => String(f.id) === String(localId));
+            if (idx >= 0) fixas[idx] = saved;
+          }
+        } else if (op.type === 'update') {
+          await sb.updateFixa(op.entityId, op.payload);
+        } else if (op.type === 'delete') {
+          await sb.deleteFixa(op.entityId);
+        }
+      }
+      // Remove da fila após sucesso
+      offlineQueue = offlineQueue.filter(o => o.id !== op.id);
+      saveQueue();
+    } catch(e) {
+      // Mantém na fila para tentar depois
+      console.warn('[Offline] Falha ao sincronizar op:', op.id, e);
+    }
+  }
+
+  updateOfflineCard();
+  if (offlineQueue.length === 0) {
+    // Mostra confirmação por 2 segundos
+    const card = document.getElementById('offline-card');
+    if (card) {
+      card.style.display = 'block';
+      card.className     = 'offline-card synced';
+      document.getElementById('offline-card-title').textContent = 'Sincronizado!';
+      document.getElementById('offline-card-sub').textContent   = 'Todos os dados foram sincronizados com sucesso.';
+      setTimeout(() => { card.style.display = 'none'; card.className = 'offline-card'; }, 2500);
+    }
+  }
+}
+
+// Monitora conexão
+window.addEventListener('online', () => {
+  isOnline = true;
+  updateOfflineCard();
+  if (offlineQueue.length > 0) syncQueue();
+});
+
+window.addEventListener('offline', () => {
+  isOnline = false;
+  updateOfflineCard();
+});
+
+// Inicializa estado de conexão
+function initOffline() {
+  isOnline = navigator.onLine;
+  updateOfflineCard();
+  // Tenta sincronizar pendentes ao entrar no app
+  if (isOnline && offlineQueue.length > 0) {
+    setTimeout(syncQueue, 2000); // aguarda 2s para carregar dados primeiro
+  }
 }
 
 // ─── INIT (feito pelo auth) ──────────────────────────────
