@@ -586,6 +586,7 @@ input[type=date].date-picker{
       <button class="auth-btn" id="btn-login" onclick="doLogin()">ENTRAR</button>
       <div class="auth-footer">
         <a onclick="switchAuthTab('register')">Não tem conta? Criar agora</a>
+        <a onclick="switchAuthTab('forgot')" style="color:var(--muted);font-size:12px">Esqueceu a senha?</a>
       </div>
     </div>
 
@@ -623,6 +624,27 @@ input[type=date].date-picker{
       <button class="auth-btn" id="btn-register" onclick="doRegister()">CRIAR CONTA</button>
       <div class="auth-footer">
         <a onclick="switchAuthTab('login')">Já tenho conta</a>
+      </div>
+    </div>
+
+    <!-- ESQUECEU A SENHA -->
+    <div class="auth-form" id="form-forgot">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:6px">Recuperar senha</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5">
+          Informe seu e-mail e enviaremos um link para você criar uma nova senha.
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>E-mail da conta</label>
+        <input type="email" id="forgot-email" placeholder="seu@email.com" inputmode="email" autocomplete="email"
+          oninput="clearFieldError('forgot-email')"
+          onblur="if(this.value&&!isValidEmail(this.value))showFieldError('forgot-email','E-mail inválido')"/>
+        <div id="forgot-email-err" style="display:none;color:var(--red);font-size:11px;margin-top:4px"></div>
+      </div>
+      <button class="auth-btn" id="btn-forgot" onclick="doForgotPassword()">ENVIAR LINK</button>
+      <div class="auth-footer">
+        <a onclick="switchAuthTab('login')">← Voltar para o login</a>
       </div>
     </div>
 
@@ -1535,6 +1557,15 @@ const sb = {
     });
     return r.json();
   },
+  async resetPassword(email) {
+    // Envia e-mail com link de recuperação de senha via Supabase
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+      method: 'POST',
+      headers: this._hdr(),
+      body: JSON.stringify({ email }),
+    });
+    return r.json();
+  },
   async signIn(email, password) {
     const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method:'POST', headers:this._hdr(),
@@ -1721,6 +1752,51 @@ function switchAuthTab(tab) {
   document.getElementById('tab-register').classList.toggle('active', tab==='register');
   document.getElementById('form-login').classList.toggle('active', tab==='login');
   document.getElementById('form-register').classList.toggle('active', tab==='register');
+  document.getElementById('form-forgot').classList.toggle('active', tab==='forgot');
+  // Esconde as tabs quando está na tela de recuperação
+  const tabs = document.querySelector('.auth-tabs');
+  if(tabs) tabs.style.display = tab==='forgot' ? 'none' : 'flex';
+}
+
+async function doForgotPassword() {
+  clearAuthMsg();
+  const email = document.getElementById('forgot-email').value.trim();
+
+  // Validações
+  if (!email) {
+    showFieldError('forgot-email', 'Informe seu e-mail'); return;
+  }
+  if (!isValidEmail(email)) {
+    showFieldError('forgot-email', 'Formato de e-mail inválido'); return;
+  }
+
+  const btn = document.getElementById('btn-forgot');
+  btn.disabled = true; btn.textContent = 'ENVIANDO...';
+
+  if (!USE_SUPABASE) {
+    // Modo local — não tem recuperação real
+    showAuthMsg('Recuperação de senha só funciona com conta Supabase.', 'error');
+    btn.disabled = false; btn.textContent = 'ENVIAR LINK';
+    return;
+  }
+
+  try {
+    const data = await sb.resetPassword(email);
+    // Supabase retorna {} em caso de sucesso (não expõe se o e-mail existe)
+    showAuthMsg(
+      `Se existe uma conta com o e-mail <b>${email}</b>, você receberá um link para criar nova senha. Verifique sua caixa de entrada (e o spam).`,
+      'success'
+    );
+    btn.textContent = 'ENVIADO ✓';
+    // Volta para o login após 4 segundos
+    setTimeout(() => {
+      switchAuthTab('login');
+      btn.disabled = false; btn.textContent = 'ENVIAR LINK';
+    }, 4000);
+  } catch(e) {
+    showAuthMsg('Erro de conexão. Verifique sua internet e tente novamente.');
+    btn.disabled = false; btn.textContent = 'ENVIAR LINK';
+  }
 }
 
 // Validações
